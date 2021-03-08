@@ -1,6 +1,8 @@
 import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, Image, Dimensions, ScrollView} from 'react-native';
 
+//The TouchableOpacity is what creates the buttons, this is hard coded but will 
+//be changed in future implementations.
 export default function ProfilePage({ navigation } : {navigation: any}){
     
     var width : number = Dimensions.get('window').width;
