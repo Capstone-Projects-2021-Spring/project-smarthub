@@ -4,8 +4,10 @@ import Swipeout from 'react-native-swipeout';
 import {Icon} from 'native-base'
 import ProfileModal from '../modals/modalForProfileList';
 
-
+//Sample data
 var sampleList = [{key: 'Profile 1'}, {key: 'Profile 2'}, {key: 'Profile 3'}, {key: 'Profile 4'}, {key: 'Profile 5'}, {key: 'Profile 6'}];
+
+//Need to create the interfaces to define the types for props and state variables
 
 interface PropVariables{
     item: any,
@@ -18,6 +20,7 @@ interface StateVariables{
     activeRowKey : any
 }
 
+//This class is for each "individual item" in the Profile List (the ProfileList class is below this one)
 class ProfileListItem extends Component<PropVariables,StateVariables>{
     constructor(props: any){
         super(props);
@@ -75,6 +78,7 @@ class ProfileListItem extends Component<PropVariables,StateVariables>{
     }
 }
 
+//Creates the list of profiles that are present on the home page
 export default class ProfileList extends Component<{navigation: any}>{
 
     constructor(props : any){
