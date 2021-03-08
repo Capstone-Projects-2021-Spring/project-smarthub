@@ -16,7 +16,7 @@ class VideoController {
 
   constructor(httpServer: any){
     // Initialize the socket.io server.
-    this.socketServer = io(httpServer, {query: this});
+    this.socketServer = require("socket.io")(httpServer);
     this.broadcaster = "";
     // Setup server side socket events and bind this instance to the function for access in socket namespace.
     this.socketServer.sockets.on("connection", this.handleEvents.bind(this));
@@ -24,10 +24,10 @@ class VideoController {
 
   private handleEvents(socket: SocketIO.Socket){
 
-    socket.on("broadcast", () => {
+    socket.on("broadcaster", () => {
       this.handleBroadcast(socket);
     });
-    socket.on("watch", () => {
+    socket.on("watcher", () => {
       this.handleWatch(socket);
     });
     socket.on("offer", (id: any, message: any) => {
@@ -46,11 +46,11 @@ class VideoController {
 
   private handleBroadcast(socket: SocketIO.Socket) {
     this.broadcaster = socket.id;
-    socket.broadcast.emit("broadcast");
+    socket.broadcast.emit("broadcaster");
   }
 
   private handleWatch(socket: SocketIO.Socket) {
-    socket.to(this.broadcaster).emit("watch", socket.id);
+    socket.to(this.broadcaster).emit("watcher", socket.id);
   }
 
   private handleOffer(socket: SocketIO.Socket, id: any, message: any) {

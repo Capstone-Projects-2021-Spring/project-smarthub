@@ -2,9 +2,9 @@ import express from 'express';
 import {spawn} from 'child_process';
 import * as socketio from 'socket.io';
 import puppeteer from 'puppeteer';
-import { VideoController } from './videoController';
+import { VideoController } from './VideoController';
 import path from 'path';
-import http from 'http';
+import http = require("http");
 
 const app = express();
 // Express built-in middleware function static allows serving static files.
@@ -16,7 +16,9 @@ const videoController = new VideoController(httpServer);
 
 let browser: any;
 
-const PORT = 3000;
+const PORT = 4000;
+
+// Could incorporate puppeteer into VideoController. Or if puppeteer has compability issues, we use commands.
 
 app.get("/stopStream", async (req, res) => {
   await browser.close();
@@ -27,9 +29,9 @@ app.get("/startStream", (req, res) => {
 });
 
 async function run () {
-    browser = await puppeteer.launch({ignoreDefaultArgs: true, args: ['--use-fake-ui-for-media-stream', '--mute-audio'] });
+    browser = await puppeteer.launch({executablePath: 'chromium-browser', headless: true, args: ['--use-fake-ui-for-media-stream', '--mute-audio'] });
     const page = await browser.newPage();
-    await page.goto("http://localhost:" + PORT + "/video/views/broadcast.html");
+    await page.goto("http://localhost:" + PORT + "/broadcast.html");
 }
 
 httpServer.listen(PORT, () => {

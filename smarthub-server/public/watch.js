@@ -1,10 +1,18 @@
+let peerConnection;
+
+const config = {
+  iceServers: [
+      { 
+        "urls": "stun:stun.l.google.com:19302",
+      },
+  ]
+};
 
 const socket = io.connect(window.location.origin);
 const video = document.getElementById("videoSource");
-var peerConnection;
 
 socket.on("offer", (id, description) => {
-  peerConnection = new RTCPeerConnection();
+  peerConnection = new RTCPeerConnection(config);
   peerConnection
     .setRemoteDescription(description)
     .then(() => peerConnection.createAnswer())
@@ -30,11 +38,11 @@ socket.on("candidate", (id, candidate) => {
 });
 
 socket.on("connect", () => {
-  socket.emit("watch");
+  socket.emit("watcher");
 });
 
-socket.on("broadcast", () => {
-  socket.emit("watch");
+socket.on("broadcaster", () => {
+  socket.emit("watcher");
 });
 
 window.onunload = window.onbeforeunload = () => {

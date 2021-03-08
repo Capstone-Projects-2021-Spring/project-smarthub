@@ -1,18 +1,21 @@
+const peerConnections = {};
+const config = {
+  iceServers: [
+    { 
+      "urls": "stun:stun.l.google.com:19302",
+    },
+  ]
+};
 
 const socket = io.connect(window.location.origin);
 const videoElement = document.getElementById("videoSource");
-const peerConnections = {};
-
-const constraints = {
-  video: true
-};
 
 socket.on("answer", (id, description) => {
   peerConnections[id].setRemoteDescription(description);
 });
 
-socket.on("watch", id => {
-  const peerConnection = new RTCPeerConnection();
+socket.on("watcher", id => {
+  const peerConnection = new RTCPeerConnection(config);
   peerConnections[id] = peerConnection;
 
   let stream = videoElement.srcObject;
@@ -45,8 +48,17 @@ window.onunload = window.onbeforeunload = () => {
   socket.close();
 };
 
-function getStream() {
+getStream();
 
+function getStream() {
+  if (window.stream) {
+    window.stream.getTracks().forEach(track => {
+      track.stop();
+    });
+  }
+  const constraints = {
+    video: true,
+  };
   return navigator.mediaDevices
     .getUserMedia(constraints)
     .then(startStream)
@@ -54,12 +66,11 @@ function getStream() {
 }
 
 function startStream(stream) {
+  window.stream = stream;
   videoElement.srcObject = stream;
-  socket.emit("broadcast");
+  socket.emit("broadcaster");
 }
 
 function handleError(error) {
   console.error("Error: ", error);
 }
-
-getStream();
