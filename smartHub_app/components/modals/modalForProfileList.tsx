@@ -5,6 +5,8 @@ import Button from 'react-native-button';
 
 var screen = Dimensions.get('window');
 
+//Need to create the interfaces to define the types for props and state variables
+
 interface PropVariables{
     parentFlatList: any,
     sampleList: any
