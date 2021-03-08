@@ -10,9 +10,12 @@ import {Icon} from 'native-base'
 
 //App.tsx handles the navigation of the application
 
+//Stack creates individual pages
 const Stack = createStackNavigator();
+//Drawer creates a side menu
 const Drawer = createDrawerNavigator();
 
+//Below creates the drawer effect inside of the Profile Page
 function SelectedProfile({ navigation } : {navigation: any}){
   
   useEffect(() => {
@@ -25,32 +28,38 @@ function SelectedProfile({ navigation } : {navigation: any}){
             }}>
             <Icon name="menu" />
             </TouchableOpacity>  
-    )}
+        )}
     )
-})
+  })
   return(
   <Drawer.Navigator>
     <Drawer.Screen
-    options={{
-      drawerIcon:({focused, color, size}) => (
-        <Icon name="home" style={{fontSize: size, color: color}} />
-      ), }}
-    name = "Profile Page" 
-    component={ProfilePage}/>
+      options={{
+        drawerIcon:({focused, color, size}) => (
+          <Icon name="home" style={{fontSize: size, color: color}} />
+        ), }}
+      name = "Profile Page" 
+      component={ProfilePage}
+    />
+
     <Drawer.Screen 
-    options={{
-      drawerIcon:({focused, color, size}) => (
-        <Icon name="film" style={{fontSize: size, color: color}} />
-      ), }}
-    name="Saved Recordings" 
-    component= {SavedRecordings} />
+      options={{
+        drawerIcon:({focused, color, size}) => (
+          <Icon name="film" style={{fontSize: size, color: color}} />
+        ), }}
+      name="Saved Recordings" 
+      component= {SavedRecordings} 
+    />
+
     <Drawer.Screen 
-    options={{
+      options={{
       drawerIcon:({focused, color, size}) => (
         <Icon name="camera" style={{fontSize: size, color: color}} />
       ), }}
-    name="Saved Images" 
-    component= {SavedImages} />
+      name="Saved Images" 
+      component= {SavedImages} 
+    />
+
   </Drawer.Navigator>
   );
 }
@@ -63,65 +72,69 @@ export default function App({ navigation } : {navigation: any}) {
     <Stack.Navigator initialRouteName="Home">
       
       <Stack.Screen 
-      options={{
-        headerStyle: {
-        backgroundColor: '#EDB230'
-        },
-      }}
-      name="Home" 
-      component= {HomePage}/>
+        options={{
+          headerStyle: {
+          backgroundColor: '#EDB230'
+          },
+        }}
+        name="Home" 
+        component= {HomePage}
+      />
 
       <Stack.Screen 
-      name="Profile" 
-      component= {SelectedProfile} 
-      options={({ route }) => {
-        const routeName = getFocusedRouteNameFromRoute(route) ?? 'Profile Page';
-    
-        switch (routeName) {
-          case 'Profile Page': {
-            return {
-              headerTitle: 'Profile Page',
-              headerStyle: {
-                backgroundColor: '#EDB230'
-              } 
-            };
+        name="Profile" 
+        component= {SelectedProfile} 
+        options={({ route }) => {
+          const routeName = getFocusedRouteNameFromRoute(route) ?? 'Profile Page';
+      
+          switch (routeName) {
+            case 'Profile Page': {
+              return {
+                headerTitle: 'Profile Page',
+                headerStyle: {
+                  backgroundColor: '#EDB230'
+                } 
+              };
+            }
+            case 'Saved Images': {
+              return {
+                headerTitle: 'Saved Images',
+                headerStyle: {
+                  backgroundColor: '#EDB230'
+                } 
+              };
+            }
+            case 'Saved Recordings':
+            default: {
+              return {
+                headerTitle: 'Saved Recordings',
+                headerStyle: {
+                  backgroundColor: '#EDB230'
+                } 
+              };
+            }
           }
-          case 'Saved Images': {
-            return {
-              headerTitle: 'Saved Images',
-              headerStyle: {
-                backgroundColor: '#EDB230'
-              } 
-            };
-          }
-          case 'Saved Recordings':
-          default: {
-            return {
-              headerTitle: 'Saved Recordings',
-              headerStyle: {
-                backgroundColor: '#EDB230'
-              } 
-            };
-          }
-        }
-      }}
+        }}
       /> 
 
       <Stack.Screen 
-      options={{
-        headerStyle: {
-        backgroundColor: '#EDB230',
-      }}} 
-      name="Live Stream" 
-      component= {LiveStream} />
+        options={{
+          headerStyle: {
+          backgroundColor: '#EDB230',
+        }}} 
+        name="Live Stream" 
+        component= {LiveStream} 
+      />
       
       <Stack.Screen 
-      options={{
-        headerStyle: {
-        backgroundColor: '#EDB230',
-      }}} 
-      name="Record" 
-      component= {Record} />
+        options={{
+          headerStyle: {
+          backgroundColor: '#EDB230',
+        }}} 
+        name="Record" 
+        component= {Record} 
+      />
+
     </Stack.Navigator>
   </NavigationContainer>
     );
