@@ -8,7 +8,7 @@ try{
         accessKeyId: config.accessKeyId,
         secretAccessKey: config.secretAccessKey,
         region: 'us-east-1' 
-});
+    });
 }catch(e){
     console.log('Error: ' + e);
 }
