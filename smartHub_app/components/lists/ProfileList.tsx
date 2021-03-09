@@ -3,6 +3,7 @@ import {StyleSheet, View, FlatList, Text, TouchableOpacity, Alert} from 'react-n
 import Swipeout from 'react-native-swipeout';
 import {Icon} from 'native-base'
 import ProfileModal from '../modals/modalForProfileList';
+import { BackHandler } from 'react-native';
 
 //Sample data
 var sampleList = [{key: 'Profile 1'}, {key: 'Profile 2'}, {key: 'Profile 3'}, {key: 'Profile 4'}, {key: 'Profile 5'}, {key: 'Profile 6'}];
@@ -111,6 +112,18 @@ export default class ProfileList extends Component<{navigation: any}>{
                 </TouchableOpacity>  
                 )
     })}
+
+    componentWillMount() {
+        BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
+    }
+
+    componentWillUnmount() {
+        BackHandler.removeEventListener('hardwareBackPress', this.handleBackButtonClick);
+    }
+
+    handleBackButtonClick = () => {
+        return true;
+    };
 
     render(){
     return (
