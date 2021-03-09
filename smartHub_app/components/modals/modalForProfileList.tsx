@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Text, TextInput, Dimensions, Platform} from 'react-native';
+import {StyleSheet, Text, TextInput, Dimensions, Platform} from 'react-native';
 import Modal from 'react-native-modalbox'
 import Button from 'react-native-button';
 
@@ -15,7 +15,6 @@ interface PropVariables{
 interface StateVariables{
     newProfileName: string
 }
-
 
 export default class ProfileModal extends Component<PropVariables, StateVariables>{
     constructor(props: any){
@@ -33,16 +32,9 @@ export default class ProfileModal extends Component<PropVariables, StateVariable
         return(
             <Modal
                 ref={"profileModal"} 
-                style={{
-                    justifyContent: 'center',
-                    borderRadius: Platform.OS === 'ios' ? 30 : 0,
-                    shadowRadius: 10,
-                    width: screen.width - 80,
-                    height: 280
-                }}
+                style={styles.modalStyling}
                 position='center'
-                backdrop={true}
-                
+                backdrop={true}   
             >
                 <Text style={{
                     fontSize: 20,
@@ -50,42 +42,24 @@ export default class ProfileModal extends Component<PropVariables, StateVariable
                     textAlign: 'center',
                 }}>Create a new Profile: </Text>
                 <TextInput
-                    style={{
-                        height: 40,
-                        borderBottomColor: 'gray',
-                        marginLeft: 30,
-                        marginRight: 30,
-                        marginTop: 20,
-                        marginBottom: 10,
-                        borderBottomWidth: 1
-                    }}
+                    style={styles.textInputStyling}
                     onChangeText={(text) => this.setState({newProfileName : text})}
                     placeholder="Profile Name"
                     value={this.state.newProfileName}
                     />
                 <Button
-                    style={{ fontSize: 18, color: 'white'}}
-                    containerStyle={{
-                        padding: 8,
-                        marginTop: 10,
-                        marginLeft: 70,
-                        marginRight: 70,
-                        height: 40,
-                        borderRadius: 6,
-                        backgroundColor: 'mediumseagreen'
-                    }}
+                    style={{ fontSize: 18, color: '#000'}}
+                    containerStyle={styles.buttonStyle}
                     onPress={() => {
                         if(this.state.newProfileName.length === 0){
                             alert("You must enter a Profile Name first.");
                             return;
                         }
                         //need to handle duplicate profile names still
-
                         const newProfile = {
                             key: this.state.newProfileName,
                         }
                         this.props.sampleList.push(newProfile);
-                        //console.log(this.props.sampleList)
                         this.props.parentFlatList.refreshList(this.state.newProfileName)
                         this.setState({newProfileName : ""});
                         this.refs.profileModal.close();
@@ -95,3 +69,34 @@ export default class ProfileModal extends Component<PropVariables, StateVariable
         );
     }
 }
+
+const styles = StyleSheet.create({
+    
+    buttonStyle: {
+        padding: 8,
+        marginTop: 10,
+        marginLeft: 70,
+        marginRight: 70,
+        height: 40,
+        borderRadius: 6,
+        backgroundColor: '#FF9900'
+    },
+
+    textInputStyling: {
+        height: 40,
+        borderBottomColor: 'gray',
+        marginLeft: 30,
+        marginRight: 30,
+        marginTop: 20,
+        marginBottom: 10,
+        borderBottomWidth: 1
+    },
+
+    modalStyling: {
+        justifyContent: 'center',
+        borderRadius: Platform.OS === 'ios' ? 30 : 0,
+        shadowRadius: 10,
+        width: screen.width - 80,
+        height: 280
+    }
+})

@@ -1,9 +1,12 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, FlatList, Text, TouchableOpacity, Alert} from 'react-native';
+import {StyleSheet, View, FlatList, Text, TouchableOpacity, Alert, Dimensions} from 'react-native';
 import Swipeout from 'react-native-swipeout';
 import {Icon} from 'native-base'
 import ProfileModal from '../modals/modalForProfileList';
 import { BackHandler } from 'react-native';
+
+var width : number = Dimensions.get('window').width;
+var height : number = Dimensions.get('window').height;
 
 //Sample data
 var sampleList = [{key: 'Profile 1'}, {key: 'Profile 2'}, {key: 'Profile 3'}, {key: 'Profile 4'}, {key: 'Profile 5'}, {key: 'Profile 6'}];
@@ -29,7 +32,6 @@ class ProfileListItem extends Component<PropVariables,StateVariables>{
             activeRowKey: null
         });
     }
-
     render(){
         let {itemStyle, itemText} = styles;
         
@@ -91,7 +93,7 @@ export default class ProfileList extends Component<{navigation: any}>{
     }
 
     refreshList = (deletedKey : any) => {
-         this.setState((prevState) => {
+         this.setState(() => {
              return {
                  deletedRowKey: deletedKey
              }
@@ -111,7 +113,8 @@ export default class ProfileList extends Component<{navigation: any}>{
                 <Icon name="ios-add" />
                 </TouchableOpacity>  
                 )
-    })}
+        })
+    }
 
     componentWillMount() {
         BackHandler.addEventListener('hardwareBackPress', this.handleBackButtonClick);
@@ -128,7 +131,11 @@ export default class ProfileList extends Component<{navigation: any}>{
     render(){
     return (
         <View style={styles.container}>
+            <View style={styles.welcomeView}>
+                <Text style={{textAlign: 'center', color: '#fff', fontSize: 15}}>Welcome information goes here!</Text>
+            </View>
             <FlatList
+                style={{flex:1}}
                 data={sampleList}
                 renderItem={({item, index} : any)=>{
                     return(
@@ -145,7 +152,7 @@ export default class ProfileList extends Component<{navigation: any}>{
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#293241'
+        backgroundColor: '#222222'
     },
     itemStyle: {
         backgroundColor: '#222222',
@@ -159,5 +166,13 @@ const styles = StyleSheet.create({
         paddingTop: 10,
         textAlign: 'center',
         fontSize: 40
+    },
+
+    welcomeView: {
+        justifyContent: 'center', 
+        width: width, 
+        height: height/4, 
+        borderWidth: 5,
+        borderColor: '#FF1744'
     }
 })

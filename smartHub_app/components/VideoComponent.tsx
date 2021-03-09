@@ -1,13 +1,11 @@
 import React from 'react';
 import {View, Text} from 'react-native';
-import {WebView} from 'react-native-webview'
+import Streaming from './Streaming';
 
 export function LiveStream(){
     return (
-        <WebView
-         source={{html: '<iframe width="500%" height="100%" src="http://100.19.94.49:4000/" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>'}} 
-        />
-    );
+        <Streaming />
+    )
 }
 
 export function Record(){
@@ -16,7 +14,6 @@ export function Record(){
             <Text>Need to implement record functionality here</Text>
         </View>
     );
-
 }
 
 export function SavedRecordings(){

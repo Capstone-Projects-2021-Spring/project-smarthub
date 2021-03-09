@@ -96,7 +96,7 @@ export default function App({ navigation } : {navigation: any}) {
       <Stack.Screen 
         options={{
           headerStyle: {
-            backgroundColor: '#EDB230',
+            backgroundColor: '#FF9900',
           },
           headerLeft: ((props: StackHeaderLeftButtonProps) => null),
           gestureEnabled: false
@@ -116,7 +116,7 @@ export default function App({ navigation } : {navigation: any}) {
               return {
                 headerTitle: 'Profile Page',
                 headerStyle: {
-                  backgroundColor: '#EDB230'
+                  backgroundColor: '#FF9900',
                 } 
               };
             }
@@ -124,7 +124,7 @@ export default function App({ navigation } : {navigation: any}) {
               return {
                 headerTitle: 'Saved Images',
                 headerStyle: {
-                  backgroundColor: '#EDB230'
+                  backgroundColor: '#FF9900'
                 } 
               };
             }
@@ -133,7 +133,7 @@ export default function App({ navigation } : {navigation: any}) {
               return {
                 headerTitle: 'Saved Recordings',
                 headerStyle: {
-                  backgroundColor: '#EDB230'
+                  backgroundColor: '#FF9900'
                 } 
               };
             }
@@ -144,7 +144,7 @@ export default function App({ navigation } : {navigation: any}) {
       <Stack.Screen 
         options={{
           headerStyle: {
-          backgroundColor: '#EDB230',
+          backgroundColor: '#FF9900'
         }}} 
         name="Live Stream" 
         component= {LiveStream} 
@@ -153,7 +153,7 @@ export default function App({ navigation } : {navigation: any}) {
       <Stack.Screen 
         options={{
           headerStyle: {
-          backgroundColor: '#EDB230',
+          backgroundColor: '#FF9900'
         }}} 
         name="Record" 
         component= {Record} 
