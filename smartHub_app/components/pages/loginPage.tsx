@@ -11,9 +11,14 @@ import { NavigationActions, StackActions } from 'react-navigation';
 const {height} = Dimensions.get("screen");
 
 export default class Login extends Component<{navigation: any}>{
+
+    
+
     state = {
         screenAnimation: new Animated.Value(height),
         inputAnimation: new Animated.Value(0),
+        username: "",
+        password: "",
     };
 
 
@@ -69,7 +74,7 @@ export default class Login extends Component<{navigation: any}>{
         // index: 0,
         // actions: [NavigationActions.navigate({ routeName: "Home" })],
         // });
-        // this.props.navigation.dispatch(resetAction);   
+        // this.props.navigation.dispatch(resetAction);
         this.props.navigation.navigate("Home");
         
     }
@@ -86,8 +91,8 @@ export default class Login extends Component<{navigation: any}>{
                     <Animated.View style={[styles.inputContainer, this.AnimatedInput]}>
                         <Text style={{fontSize: 20, fontWeight: "bold", textAlign: "center"}}>SIGN IN</Text>
                         <View style={{marginTop: 30, marginBottom: 10}}>
-                            <TextInput onBlur={() => this.reverseAnimateInput()} onFocus={() => this.AnimateInput()} placeholder="username" style={styles.input} />
-                            <TextInput onBlur={() => this.reverseAnimateInput()} onFocus={() => this.AnimateInput()} secureTextEntry={true} placeholder="password" style={styles.input} />
+                            <TextInput onBlur={() => this.reverseAnimateInput()} onFocus={() => this.AnimateInput()} placeholder="username" style={styles.input} onChangeText={(value) => this.setState({username: value})} />
+                            <TextInput onBlur={() => this.reverseAnimateInput()} onFocus={() => this.AnimateInput()} secureTextEntry={true} placeholder="password" style={styles.input} onChangeText={(value) => this.setState({password: value})} />
                         </View>
                         <View>
                             {/* <View style={{flex: 0.5}}>
@@ -100,7 +105,13 @@ export default class Login extends Component<{navigation: any}>{
                                 </TouchableOpacity>
                             </View> */}
                             <View style={{ alignItems: "center", marginTop: 20}}>
-                                <TouchableOpacity onPress={() => this.signInPressHandler()}>   
+                                <TouchableOpacity onPress={() => {
+                                    if(this.state.username.length != 0 && this.state.password.length != 0)
+                                    {
+                                        this.signInPressHandler()
+                                    }
+                                    else{ alert("You must enter all credentials before signing in.")}
+                                }}>   
                                     <LinearGradient style={{ width: 390/1.3, padding: 10, borderRadius: 20, }} colors={["#FF9900", "#000000"]}>
                                         <Text style={{color: "#FFFFFF", fontSize: 15, fontWeight: "bold", textAlign: "center"}}>Sign In</Text>
                                     </LinearGradient>

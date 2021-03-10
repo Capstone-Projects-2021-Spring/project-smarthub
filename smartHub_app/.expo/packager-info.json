@@ -3,8 +3,8 @@
   "expoServerPort": null,
   "packagerPort": 19000,
   "packagerPid": null,
-  "expoServerNgrokUrl": null,
-  "packagerNgrokUrl": null,
-  "ngrokPid": null,
+  "expoServerNgrokUrl": "https://9u-we2.anonymous.smarthub-app.exp.direct",
+  "packagerNgrokUrl": "https://packager.9u-we2.anonymous.smarthub-app.exp.direct",
+  "ngrokPid": 28000,
   "webpackServerPort": null
 }

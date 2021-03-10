@@ -15,10 +15,10 @@ const styles = StyleSheet.create({
     inputContainer: {
         backgroundColor: "rgba(255,255,255,1)",
         padding: 20,
-        marginTop: -height/1.6,
+        marginTop: -height/1.9,
         borderRadius: 20,
         width: width/1.2,
-        height: height/2,
+        height: height/1.4,
         shadowColor: "#000",
         shadowOpacity: 1.35,
         elevation: 8,

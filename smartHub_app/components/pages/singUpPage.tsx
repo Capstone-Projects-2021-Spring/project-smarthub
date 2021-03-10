@@ -3,7 +3,7 @@ import {LinearGradient} from 'expo-linear-gradient';
 import React, { Component } from 'react';
 
 ;
-import {styles} from "../../styles/style";
+import {styles} from "../../styles/signUpStyle";
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import { CheckBox } from 'native-base';
 
@@ -13,8 +13,12 @@ export default class SignUp extends Component<{navigation: any}>{
     state = {
         screenAnimation: new Animated.Value(height),
         inputAnimation: new Animated.Value(0),
+        firstName: "",
+        lastName: "",
+        email: "",
+        password: "",
+        passwordConfirmation: "",
     };
-
 
     AnimateContainer = () => {
         Animated.timing(this.state.screenAnimation, {
@@ -75,11 +79,11 @@ export default class SignUp extends Component<{navigation: any}>{
                     <Animated.View style={[styles.inputContainer, this.AnimatedInput]}>
                         <Text style={{fontSize: 20, fontWeight: "bold", textAlign: "center"}}>SIGN UP</Text>
                         <View style={{marginTop: 30, marginBottom: 10}}>
-                            <TextInput onBlur={() => this.reverseAnimateInput()} onFocus={() => this.AnimateInput()} placeholder="first name" style={styles.input} />
-                            <TextInput onBlur={() => this.reverseAnimateInput()} onFocus={() => this.AnimateInput()} placeholder="last name" style={styles.input} />
-                            <TextInput onBlur={() => this.reverseAnimateInput()} onFocus={() => this.AnimateInput()} placeholder="profile name" style={styles.input} />
-                            <TextInput onBlur={() => this.reverseAnimateInput()} onFocus={() => this.AnimateInput()} placeholder="username" style={styles.input} />
-                            <TextInput onBlur={() => this.reverseAnimateInput()} onFocus={() => this.AnimateInput()} secureTextEntry={true} placeholder="password" style={styles.input} />
+                            <TextInput onBlur={() => this.reverseAnimateInput()} onFocus={() => this.AnimateInput()} placeholder="first name" style={styles.input} onChangeText={(value) => this.setState({firstName: value})} />
+                            <TextInput onBlur={() => this.reverseAnimateInput()} onFocus={() => this.AnimateInput()} placeholder="last name" style={styles.input} onChangeText={(value) => this.setState({lastName: value})} />
+                            <TextInput onBlur={() => this.reverseAnimateInput()} onFocus={() => this.AnimateInput()} placeholder="email" style={styles.input} onChangeText={(value) => this.setState({email: value})} />
+                            <TextInput onBlur={() => this.reverseAnimateInput()} onFocus={() => this.AnimateInput()} secureTextEntry={true} placeholder="password" style={styles.input} onChangeText={(value) => this.setState({password: value})} />
+                            <TextInput onBlur={() => this.reverseAnimateInput()} onFocus={() => this.AnimateInput()} secureTextEntry={true} placeholder="confirm password" style={styles.input} onChangeText={(value) => this.setState({passwordConfirmation: value})} />
                         </View>
                         <View>
                             {/* <View style={{flex: 0.5}}>
@@ -92,7 +96,18 @@ export default class SignUp extends Component<{navigation: any}>{
                                 </TouchableOpacity>
                             </View> */}
                             <View style={{ alignItems: "center", marginTop: 20}}>
-                                <TouchableOpacity onPress={() => this.signUpPressHandler()}>   
+                                <TouchableOpacity onPress={() => {
+                                    if(this.state.firstName.length == 0 || this.state.lastName.length == 0 || this.state.email.length == 0 || this.state.password.length == 0 || this.state.passwordConfirmation.length == 0)
+                                    {
+                                        
+                                        alert("You must enter all credentials before signing in.")
+                                    }
+                                    else if(this.state.password != this.state.passwordConfirmation)
+                                    {
+                                        alert("Passwords do not match.");
+                                    }
+                                    else{this.signUpPressHandler();}
+                                }}>   
                                     <LinearGradient style={{ width: 390/1.3, padding: 10, borderRadius: 20, }} colors={["#FF9900", "#000000"]}>
                                         <Text style={{color: "#FFFFFF", fontSize: 15, fontWeight: "bold", textAlign: "center"}}>Sign Up</Text>
                                     </LinearGradient>
