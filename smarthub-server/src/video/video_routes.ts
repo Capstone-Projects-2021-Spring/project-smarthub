@@ -18,6 +18,7 @@ routes.post("/stopStream", async (req, res) => {
 });
 
 routes.post("/startStream", (req, res) => {
+	console.log("Stream starting");
 	runLive();
 });
 
@@ -42,14 +43,14 @@ async function runLive () {
 	live_browser = await puppeteer.launch({executablePath: 'chromium-browser', headless: true, args: ['--use-fake-ui-for-media-stream', '--mute-audio'] });
 	const page = await live_browser.newPage();
 	//WARNING, THIS IS HARD CODED AND IT SHOULDNT BE!, PUT STUFF LIKE PORT IN AN ENVIRONMENT VARIABLE OR SOMETHING SO IT CAN BE UPDATED EVERYWHERE IF ITS CHANGED.
-	await page.goto("http://localhost:" + 4000 + "/video/broadcast.html");
+	await page.goto("http://localhost:" + 4000 + "/broadcast.html");
 }
 
 async function runRecording () {
 	recording_browser = await puppeteer.launch({executablePath: 'chromium-browser', headless: true, args: ['--use-fake-ui-for-media-stream', '--mute-audio'] });
 	const page = await recording_browser.newPage();
 	//WARNING, THIS IS HARD CODED AND IT SHOULDNT BE!, PUT STUFF LIKE PORT IN AN ENVIRONMENT VARIABLE OR SOMETHING SO IT CAN BE UPDATED EVERYWHERE IF ITS CHANGED.
-	await page.goto("http://localhost:" + 4000 + "/video/record.html");
+	await page.goto("http://localhost:" + 4000 + "/record.html");
 }
 
 
