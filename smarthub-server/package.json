@@ -3,11 +3,11 @@
   "name": "smartHubServer",
   "version": "1.0.0",
   "description": "",
-  "main": "index.ts",
+  "main": "src/index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc --project ./",
-    "start": "nodemon index.ts"
+    "start": "nodemon src/index.ts"
   },
   "keywords": [],
   "author": "",
