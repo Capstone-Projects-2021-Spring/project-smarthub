@@ -15,6 +15,7 @@
     "axios": "^0.21.1",
     "expo": "^40.0.1",
     "expo-status-bar": "~1.0.3",
+    "faker": "^5.4.0",
     "native-base": "^2.15.2",
     "react": "16.13.1",
     "react-dom": "16.13.1",
@@ -26,10 +27,12 @@
     "react-native-safe-area-context": "3.1.9",
     "react-native-screens": "~2.15.2",
     "react-native-swipeout": "^2.3.6",
+    "react-native-toast-message": "^1.4.9",
     "react-native-vector-icons": "^7.1.0",
     "react-native-web": "~0.13.12",
     "react-native-webview": "11.0.0",
-    "react-navigation": "^4.4.4"
+    "react-navigation": "^4.4.4",
+    "reanimated-bottom-sheet": "^1.0.0-alpha.22"
   },
   "devDependencies": {
     "@babel/core": "~7.9.0",
