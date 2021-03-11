@@ -75,8 +75,7 @@ export default class Login extends Component<{navigation: any}>{
         // actions: [NavigationActions.navigate({ routeName: "Home" })],
         // });
         // this.props.navigation.dispatch(resetAction);
-        this.props.navigation.navigate("Home", this.state.username);
-        
+        this.props.navigation.navigate("Home", this.state.username);   
     }
 
     userSignIn(){
@@ -116,8 +115,6 @@ export default class Login extends Component<{navigation: any}>{
         .catch((error) => {console.error('Error:', error);
         });
     }
-
-    
         
     render(){
         return(
@@ -144,11 +141,9 @@ export default class Login extends Component<{navigation: any}>{
                             </View> */}
                             <View style={{ alignItems: "center", marginTop: 20}}>
                                 <TouchableOpacity onPress={() => {
-                                    if(this.state.username.length != 0 && this.state.password.length != 0)
-                                    {
-                                        this.userSignIn()
-                                    }
-                                    else{ alert("You must enter all credentials before signing in.")}
+                                  
+                                        //this.userSignIn()
+                                        this.signInPressHandler()
                                 }}>   
                                     <LinearGradient style={{ width: 390/1.3, padding: 10, borderRadius: 20, }} colors={["#FF9900", "#000000"]}>
                                         <Text style={{color: "#FFFFFF", fontSize: 15, fontWeight: "bold", textAlign: "center"}}>Sign In</Text>

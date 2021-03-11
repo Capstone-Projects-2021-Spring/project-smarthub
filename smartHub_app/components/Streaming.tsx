@@ -52,7 +52,6 @@ export default class Streaming extends Component<{route: any, navigation: any}, 
         if(this.state.responseText !== 'Stream Closing'){
             axios.get('http://100.19.94.49:4000/stopStream').then((response) => {
                 this.setState({responseText: response.data})
-                console.log(response.data)
                 Toast.show({
                     type: 'error',
                     text1: 'Stop Stream Clicked!',
@@ -78,7 +77,6 @@ export default class Streaming extends Component<{route: any, navigation: any}, 
     }
 
     render(){
-        console.log(this.props.route.params.item.key)
         const toastConfig = {
             success: ({ text1, text2, ...rest } : any) => (
               <BaseToast

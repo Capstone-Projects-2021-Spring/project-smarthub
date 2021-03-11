@@ -21,7 +21,7 @@ export default function ProfilePage({ navigation } : {navigation: any}){
             </TouchableOpacity>
             <TouchableOpacity
                 style={styles.roundButton}
-                onPress={() => navigation.navigate('Record')}>
+                onPress={() => navigation.navigate('Recording Devices')}>
                 <Image style={styles.imageStyle} source={{uri: 'https://cdn3.iconfinder.com/data/icons/flat-icons-web/40/Record-512.png'}}/>
             </TouchableOpacity> 
             </View>   

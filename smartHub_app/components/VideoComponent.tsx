@@ -30,7 +30,7 @@ export function LiveStreamingDevices({ navigation } : {navigation: any}){
     )
 }
 
-export function Record(){
+export function RecordingDevices(){
     return (
         <View>
             <Text>Need to implement record functionality here</Text>
