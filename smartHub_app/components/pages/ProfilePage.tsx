@@ -16,7 +16,7 @@ export default function ProfilePage({ navigation } : {navigation: any}){
             <View style={{paddingTop: 20, flexDirection: 'row', justifyContent: 'center'}}>
             <TouchableOpacity
                 style={styles.roundButton}
-                onPress={() => navigation.navigate('Live Stream')}>
+                onPress={() => navigation.navigate('Live Streaming Devices')}>
                 <Image style={styles.imageStyle} source={{uri: 'https://i.pinimg.com/originals/c1/39/d3/c139d34d479a53a776f874cc718a3881.jpg'}}/>
             </TouchableOpacity>
             <TouchableOpacity
@@ -45,7 +45,7 @@ const styles = StyleSheet.create ({
         justifyContent: 'center',
         alignItems: 'center',
         alignSelf: 'center',
-        backgroundColor: '#EE6C4D',
+        backgroundColor: '#FF9900',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 3 },
         shadowOpacity: 0.5,
