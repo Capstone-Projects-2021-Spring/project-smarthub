@@ -2,29 +2,27 @@ import {View, Image, Text, Animated, Dimensions, Easing, Pressable} from 'react-
 import {LinearGradient} from 'expo-linear-gradient';
 import React, { Component } from 'react';
 
-import {styles} from "../../styles/style";
+;
+import {styles} from "../../styles/signUpStyle";
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import { CheckBox } from 'native-base';
-import SignUp from "./signUpPage";
-import { NavigationActions, StackActions } from 'react-navigation';
 
 const {height} = Dimensions.get("screen");
 
-export default class Login extends Component<{navigation: any}>{
-
-    
-
+export default class SignUp extends Component<{navigation: any}>{
     state = {
         screenAnimation: new Animated.Value(height),
         inputAnimation: new Animated.Value(0),
-        username: "",
+        firstName: "",
+        lastName: "",
+        email: "",
         password: "",
+        passwordConfirmation: "",
     };
-
 
     AnimateContainer = () => {
         Animated.timing(this.state.screenAnimation, {
-            toValue: height/3,
+            toValue: height/5,
             duration: 1500,
             useNativeDriver: false,
             easing: Easing.elastic(1.3),
@@ -63,61 +61,15 @@ export default class Login extends Component<{navigation: any}>{
         ]
     }
 
-    signUpPressHandler(){
-        this.props.navigation.navigate("Sign Up");
-    }
-
     signInPressHandler(){
-        // this.props.navigation.pop("Sign In");
-        // StackActions.pop();
-        // const resetAction = StackActions.reset({
-        // index: 0,
-        // actions: [NavigationActions.navigate({ routeName: "Home" })],
-        // });
-        // this.props.navigation.dispatch(resetAction);
-        this.props.navigation.navigate("Home", this.state.username);
-        
+        this.props.navigation.navigate("Sign In");
     }
 
-    userSignIn(){
-        let collection: any = {}
-        collection.email=this.state.username
-        collection.password=this.state.password
-        // console.warn(collection);
-
-        var url = "https://b2bgr96nbc.execute-api.us-east-1.amazonaws.com/dev/user/login"
-        
-        fetch(url, {
-        method: 'POST', // or 'PUT'
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(collection),
-        })
-        .then(response => {
-            if(response.status == 400)
-            {
-                alert("Incorrect Password!");
-            }
-            else if(response.status == 500)
-            {
-                alert("Invalid Email.");
-            }
-            else if( response.status == 200)
-            {
-                this.signInPressHandler();
-            }
-
-            response.json();})
-        // .then(data => this.state.signInData = data)
-        
-        // .then(() => console.warn(this.state.signInData))
-        // .then(() => console.warn(response.status))
-        .catch((error) => {console.error('Error:', error);
-        });
+    signUpPressHandler(){
+        this.props.navigation.navigate("Home", this.state.email);
     }
 
-    
+
         
     render(){
         return(
@@ -127,10 +79,13 @@ export default class Login extends Component<{navigation: any}>{
                 </LinearGradient>
                 <View style={[styles.centerAlign, {marginTop: 2, backgroundColor: "rgba(200,200,200,0.9", height: height}]}>
                     <Animated.View style={[styles.inputContainer, this.AnimatedInput]}>
-                        <Text style={{fontSize: 20, fontWeight: "bold", textAlign: "center"}}>SIGN IN</Text>
+                        <Text style={{fontSize: 20, fontWeight: "bold", textAlign: "center"}}>SIGN UP</Text>
                         <View style={{marginTop: 30, marginBottom: 10}}>
-                            <TextInput onBlur={() => this.reverseAnimateInput()} onFocus={() => this.AnimateInput()} placeholder="username" style={styles.input} onChangeText={(value) => this.setState({username: value})} />
+                            <TextInput onBlur={() => this.reverseAnimateInput()} onFocus={() => this.AnimateInput()} placeholder="first name" style={styles.input} onChangeText={(value) => this.setState({firstName: value})} />
+                            <TextInput onBlur={() => this.reverseAnimateInput()} onFocus={() => this.AnimateInput()} placeholder="last name" style={styles.input} onChangeText={(value) => this.setState({lastName: value})} />
+                            <TextInput onBlur={() => this.reverseAnimateInput()} onFocus={() => this.AnimateInput()} placeholder="email" style={styles.input} onChangeText={(value) => this.setState({email: value})} />
                             <TextInput onBlur={() => this.reverseAnimateInput()} onFocus={() => this.AnimateInput()} secureTextEntry={true} placeholder="password" style={styles.input} onChangeText={(value) => this.setState({password: value})} />
+                            <TextInput onBlur={() => this.reverseAnimateInput()} onFocus={() => this.AnimateInput()} secureTextEntry={true} placeholder="confirm password" style={styles.input} onChangeText={(value) => this.setState({passwordConfirmation: value})} />
                         </View>
                         <View>
                             {/* <View style={{flex: 0.5}}>
@@ -144,21 +99,26 @@ export default class Login extends Component<{navigation: any}>{
                             </View> */}
                             <View style={{ alignItems: "center", marginTop: 20}}>
                                 <TouchableOpacity onPress={() => {
-                                    if(this.state.username.length != 0 && this.state.password.length != 0)
+                                    if(this.state.firstName.length == 0 || this.state.lastName.length == 0 || this.state.email.length == 0 || this.state.password.length == 0 || this.state.passwordConfirmation.length == 0)
                                     {
-                                        this.userSignIn()
+                                        
+                                        alert("You must enter all credentials before signing in.")
                                     }
-                                    else{ alert("You must enter all credentials before signing in.")}
+                                    else if(this.state.password != this.state.passwordConfirmation)
+                                    {
+                                        alert("Passwords do not match.");
+                                    }
+                                    else{this.signUpPressHandler();}
                                 }}>   
                                     <LinearGradient style={{ width: 390/1.3, padding: 10, borderRadius: 20, }} colors={["#FF9900", "#000000"]}>
-                                        <Text style={{color: "#FFFFFF", fontSize: 15, fontWeight: "bold", textAlign: "center"}}>Sign In</Text>
+                                        <Text style={{color: "#FFFFFF", fontSize: 15, fontWeight: "bold", textAlign: "center"}}>Sign Up</Text>
                                     </LinearGradient>
                                 </TouchableOpacity>
                             </View>
-                            <View style={{ alignItems: "center", marginTop: 20, flexDirection: "row", marginLeft: 35}}>
-                                <Text style={{fontSize: 15}}>Don't Have An Account?</Text>
-                                    <TouchableOpacity style={{marginLeft: 10}} onPress={() => this.signUpPressHandler()}>   
-                                        <Text style={{color: "#FF9900", fontSize: 15}}>Sign Up</Text>
+                            <View style={{ alignItems: "center", marginTop: 20, flexDirection: "row", marginLeft: 85}}>
+                                <Text style={{fontSize: 15}}>Go Back To</Text>
+                                    <TouchableOpacity style={{marginLeft: 10}} onPress={() => this.signInPressHandler()}>   
+                                        <Text style={{color: "#FF9900", fontSize: 15}}>Login</Text>
                                     </TouchableOpacity>
                             </View> 
                         </View>
