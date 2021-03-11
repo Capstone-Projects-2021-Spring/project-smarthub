@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {Component} from 'react';
 import { DrawerActions, getFocusedRouteNameFromRoute, NavigationContainer } from '@react-navigation/native';
 import {createStackNavigator, StackHeaderLeftButtonProps} from '@react-navigation/stack';
 import { StyleSheet, TouchableOpacity} from 'react-native';
@@ -19,56 +19,62 @@ const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 
 //Below creates the drawer effect inside of the Profile Page
-function SelectedProfile({ navigation } : {navigation: any}){
-  
-  useEffect(() => {
-    navigation.setOptions({
+class SelectedProfileNavigation extends Component<{route: any, navigation: any}>{
+
+  //after the comp renders this will make sure the header changes to the page that was clicked 
+  //and it creates the drawer menu in each of the pages
+  componentDidMount = () => {
+    this.props.navigation.setOptions({
+        headerTitle: this.props.route.params.key,
         headerRight: () => (
-            <TouchableOpacity
-            style={{marginRight: 10}}
-            onPress={() => {
-              navigation.dispatch(DrawerActions.openDrawer())
-            }}>
-            <Icon name="menu" />
-            </TouchableOpacity>  
-        )}
-    )
-  })
-  return(
-  <Drawer.Navigator>
-    <Drawer.Screen
-      options={{
-        drawerIcon:({focused, color, size}) => (
-          <Icon name="home" style={{fontSize: size, color: color}} />
+          <TouchableOpacity
+          style={{marginRight: 10}}
+          onPress={() => {
+            this.props.navigation.dispatch(DrawerActions.openDrawer())
+          }}>
+          <Icon name="menu" />
+          </TouchableOpacity>  
+        )
+    })
+  }
+
+  render(){
+    return(
+    <Drawer.Navigator>
+      <Drawer.Screen
+        options={{
+          drawerIcon:({color, size}) => (
+            <Icon name="home" style={{fontSize: size, color: color}} />
+          ), }}
+        name = "Profile Page" 
+        component={ProfilePage}
+      />
+
+      <Drawer.Screen 
+        options={{
+          drawerIcon:({color, size}) => (
+            <Icon name="film" style={{fontSize: size, color: color}} />
+          ), }}
+        name="Saved Recordings" 
+        component= {SavedRecordings} 
+      />
+
+      <Drawer.Screen 
+        options={{
+        drawerIcon:({color, size}) => (
+          <Icon name="camera" style={{fontSize: size, color: color}} />
         ), }}
-      name = "Profile Page" 
-      component={ProfilePage}
-    />
+        name="Saved Images" 
+        component= {SavedImages} 
+      />
 
-    <Drawer.Screen 
-      options={{
-        drawerIcon:({focused, color, size}) => (
-          <Icon name="film" style={{fontSize: size, color: color}} />
-        ), }}
-      name="Saved Recordings" 
-      component= {SavedRecordings} 
-    />
-
-    <Drawer.Screen 
-      options={{
-      drawerIcon:({focused, color, size}) => (
-        <Icon name="camera" style={{fontSize: size, color: color}} />
-      ), }}
-      name="Saved Images" 
-      component= {SavedImages} 
-    />
-
-  </Drawer.Navigator>
-  );
+    </Drawer.Navigator>
+    );
+  }
 }
 
 
-export default function App({ navigation } : {navigation: any}) {
+export default function App() {
   return (
   
   <NavigationContainer>
@@ -108,7 +114,7 @@ export default function App({ navigation } : {navigation: any}) {
 
       <Stack.Screen 
         name="Profile" 
-        component= {SelectedProfile} 
+        component= {SelectedProfileNavigation} 
         options={({ route }) => {
           const routeName = getFocusedRouteNameFromRoute(route) ?? 'Profile Page';
       

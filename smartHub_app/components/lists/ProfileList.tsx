@@ -1,17 +1,20 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, FlatList, Text, TouchableOpacity, Alert, Dimensions} from 'react-native';
+import {StyleSheet, View, FlatList, Text, TouchableOpacity, Alert, Dimensions, Image} from 'react-native';
 import Swipeout from 'react-native-swipeout';
 import {Icon} from 'native-base'
 import ProfileModal from '../modals/modalForProfileList';
-import faker from 'faker';
 import { BackHandler } from 'react-native';
 
 var width : number = Dimensions.get('window').width;
 var height : number = Dimensions.get('window').height;
 
-faker.seed(1);
 //Sample data
-var sampleList = [{key: 'Profile 1'}, {key: 'Profile 2'}, {key: 'Profile 3'}, {key: 'Profile 4'}, {key: 'Profile 5'}, {key: 'Profile 6'}];
+var sampleList = [{key: 'Profile 1'}, 
+{key: 'Profile 2'}, 
+{key: 'Profile 3'}, 
+{key: 'Profile 4'}, 
+{key: 'Profile 5'}, 
+{key: 'Profile 6'}];
 
 //Need to create the interfaces to define the types for props and state variables
 
@@ -35,9 +38,7 @@ class ProfileListItem extends Component<PropVariables,StateVariables>{
         });
     }
     render(){
-        let {itemStyle, itemText} = styles;
-        var image = faker.image.avatar();
-        console.log(image)
+        let {itemStyle} = styles;
         const swipeSettings = {
             autoClose: true,
             onClose: () => {
@@ -76,8 +77,9 @@ class ProfileListItem extends Component<PropVariables,StateVariables>{
             <Swipeout {...swipeSettings}>
             <TouchableOpacity
             style={itemStyle}
-            onPress={() => this.props.navigation.navigate('Profile')}>
+            onPress={() => this.props.navigation.navigate('Profile', this.props.item)}>
             <Text style={{color: '#fff'}}>{this.props.item.key}</Text>
+            <Image style={{flex:1, height: 10, width: 20}} source={{uri: this.props.item.image}}/>
             </TouchableOpacity>
             </Swipeout>
         );
