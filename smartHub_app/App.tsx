@@ -3,7 +3,7 @@ import { DrawerActions, getFocusedRouteNameFromRoute, NavigationContainer } from
 import {createStackNavigator, StackHeaderLeftButtonProps} from '@react-navigation/stack';
 import { StyleSheet, TouchableOpacity} from 'react-native';
 import ProfilePage from './components/pages/ProfilePage';
-import { LiveStreamingDevices, Record, SavedRecordings, SavedImages } from './components/VideoComponent';
+import { LiveStreamingDevices, RecordingDevices, SavedRecordings, SavedImages } from './components/VideoComponent';
 import HomePage from './components/pages/HomePage';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import {Icon} from 'native-base'
@@ -67,7 +67,6 @@ class SelectedProfileNavigation extends Component<{route: any, navigation: any}>
         name="Saved Images" 
         component= {SavedImages} 
       />
-
     </Drawer.Navigator>
     );
   }
@@ -171,8 +170,8 @@ export default function App() {
           headerStyle: {
           backgroundColor: '#FF9900'
         }}} 
-        name="Record" 
-        component= {Record} 
+        name="Recording Devices" 
+        component={RecordingDevices} 
       />
 
     </Stack.Navigator>
