@@ -3,12 +3,13 @@ import { DrawerActions, getFocusedRouteNameFromRoute, NavigationContainer } from
 import {createStackNavigator, StackHeaderLeftButtonProps} from '@react-navigation/stack';
 import { StyleSheet, TouchableOpacity} from 'react-native';
 import ProfilePage from './components/pages/ProfilePage';
-import { LiveStream, Record, SavedRecordings, SavedImages } from './components/VideoComponent';
+import { LiveStreamingDevices, Record, SavedRecordings, SavedImages } from './components/VideoComponent';
 import HomePage from './components/pages/HomePage';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import {Icon} from 'native-base'
 import Login from './components/pages/loginPage';
 import SignUp from './components/pages/singUpPage';
+import Streaming from './components/Streaming';
 
 //App.tsx handles the navigation of the application
 
@@ -146,10 +147,19 @@ export default function App({ navigation } : {navigation: any}) {
           headerStyle: {
           backgroundColor: '#FF9900'
         }}} 
-        name="Live Stream" 
-        component= {LiveStream} 
+        name="Live Streaming Devices" 
+        component= {LiveStreamingDevices} 
       />
       
+      <Stack.Screen 
+        options={{
+          headerStyle: {
+          backgroundColor: '#FF9900'
+        }}} 
+        name="Live Stream" 
+        component= {Streaming} 
+      />
+
       <Stack.Screen 
         options={{
           headerStyle: {
