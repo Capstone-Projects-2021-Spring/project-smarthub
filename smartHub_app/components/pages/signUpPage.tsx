@@ -69,6 +69,43 @@ export default class SignUp extends Component<{navigation: any}>{
         this.props.navigation.navigate("Home", this.state.email);
     }
 
+    userSignUp(){
+        let collection: any = {}
+        collection.first_name = this.state.firstName;
+        collection.last_name = this.state.lastName;
+        collection.email = this.state.email;
+        collection.password = this.state.password;
+        collection.confirm_password = this.state.passwordConfirmation;
+        // console.warn(collection);
+
+        var url = "https://b2bgr96nbc.execute-api.us-east-1.amazonaws.com/dev/user/register"
+        
+        fetch(url, {
+        method: 'POST', // or 'PUT'
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(collection),
+        })
+        .then(response => {
+            if(response.status == 500)
+            {
+                alert("Fields are either incomplete or incorrect.");
+            }
+            else if( response.status == 200)
+            {
+                this.signUpPressHandler();
+            }
+
+            response.json();})
+        // .then(data => this.state.signInData = data)
+        
+        // .then(() => console.warn(this.state.signInData))
+        // .then(() => console.warn(response.status))
+        .catch((error) => {console.error('Error:', error);
+        });
+    }
+
 
         
     render(){
@@ -108,7 +145,7 @@ export default class SignUp extends Component<{navigation: any}>{
                                     {
                                         alert("Passwords do not match.");
                                     }
-                                    else{this.signUpPressHandler();}
+                                    else{this.userSignUp();}
                                 }}>   
                                     <LinearGradient style={{ width: 390/1.3, padding: 10, borderRadius: 20, }} colors={["#FF9900", "#000000"]}>
                                         <Text style={{color: "#FFFFFF", fontSize: 15, fontWeight: "bold", textAlign: "center"}}>Sign Up</Text>
