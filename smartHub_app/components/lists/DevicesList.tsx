@@ -16,7 +16,8 @@ interface PropVariables{
     item: any,
     index: any,
     parentFlatList: any,
-    navigation: any
+    navigation: any,
+    stackScreen: string
 }
 
 interface StateVariables{
@@ -24,7 +25,7 @@ interface StateVariables{
 }
 
 //This class is for each "individual item" in the Profile List (the ProfileList class is below this one)
-class StreamingListItem extends Component<PropVariables,StateVariables>{
+class ListItem extends Component<PropVariables,StateVariables>{
     constructor(props: any){
         super(props);
         this.state= ({
@@ -32,6 +33,7 @@ class StreamingListItem extends Component<PropVariables,StateVariables>{
         });
     }
     render(){
+        console.log(this.props.stackScreen)
         const swipeSettings = {
             autoClose: true,
             onClose: () => {
@@ -70,7 +72,7 @@ class StreamingListItem extends Component<PropVariables,StateVariables>{
             <Swipeout {...swipeSettings} style={{backgroundColor:"#222222"}}>
             <TouchableOpacity
             style={styles.pillButton}
-            onPress={() => this.props.navigation.navigate('Live Stream', this.props.item)}>
+            onPress={() => this.props.navigation.navigate(this.props.stackScreen, this.props.item)}>
             <Text style={{color: '#000', fontSize: 20}}>{this.props.item.DeviceName}</Text>
             </TouchableOpacity>
             </Swipeout>
@@ -78,7 +80,7 @@ class StreamingListItem extends Component<PropVariables,StateVariables>{
     }
 }
 
-export class StreamingDevicesList extends Component<{navigation: any}>{
+export class DevicesList extends Component<{navigation: any, stackScreen: string}>{
 
     constructor(props: any){
         super(props);
@@ -118,7 +120,7 @@ export class StreamingDevicesList extends Component<{navigation: any}>{
                     data={sampleList}
                     renderItem={({item, index} : any)=>{
                         return(
-                            <StreamingListItem item={item} index={index} parentFlatList={this} navigation={this.props.navigation}/>
+                            <ListItem item={item} index={index} parentFlatList={this} stackScreen={this.props.stackScreen} navigation={this.props.navigation}/>
                         );
                     }}
                     ListEmptyComponent={() => {

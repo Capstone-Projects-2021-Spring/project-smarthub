@@ -1,10 +1,10 @@
 import React from 'react';
 import {StyleSheet, View, Text} from 'react-native';
-import { StreamingDevicesList } from './lists/StreamingDevicesList';
+import { DevicesList } from './lists/DevicesList';
 
 export function LiveStreamingDevices({ navigation } : {navigation: any}){
     return (
-        <StreamingDevicesList navigation={navigation}/>
+        <DevicesList stackScreen={'Live Stream'} navigation={navigation}/>
     )
 }
 
