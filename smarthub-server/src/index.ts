@@ -35,12 +35,16 @@ const videoController = new VideoController(httpServer);
 //Telling express to use the routes found in /video/video_routes.ts (Access these routes by http using /video/startStream, /video/startRecord etc...)
 app.use('/video', videoRoutes);
 
-app.get('/start_recording', (req : any, res : any) => {
+app.post('/start_recording', (req : any, res : any) => {
   videoController.startRecording();
+  console.log("start_recording route: recording starting...");
+  return res.status(200).json({ message: "start_recording route: recording starting..." });
 });
 
-app.get('/stop_recording', (req : any, res : any) => {
+app.post('/stop_recording', (req : any, res : any) => {
   videoController.stopRecording();
+  console.log("stop_recording route: recording stopping...");
+  return res.status(200).json({ message: "stop_recording route: recording stopping..." });
 });
 
 httpServer.listen(PORT, () => {
