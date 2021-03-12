@@ -161,7 +161,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/smarthub-login-api/dev/1615153575215-2021-03-07T21:46:15.215Z/smarthub-login-api.zip"
+          "S3Key": "serverless/smarthub-login-api/dev/1615520653549-2021-03-12T03:44:13.549Z/smarthub-login-api.zip"
         },
         "Handler": "src/handler.users",
         "Runtime": "nodejs12.x",
@@ -179,14 +179,14 @@
         "LoginDashapiLogGroup"
       ]
     },
-    "LoginDashapiLambdaVersiondsz2uGNsPtx91B1bPuEuruYvLBfGumBUcpxmHIP1g": {
+    "LoginDashapiLambdaVersionDVWYCnFKPNWEjsizCXplobY7rQ3CunGZmuTikawuMg": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "LoginDashapiLambdaFunction"
         },
-        "CodeSha256": "1+I4jWho/YA2vVz1yPTxQVAvadUEMyrOMQhn3GvUkPQ="
+        "CodeSha256": "p3KCUsbWP5Dd4gOUsqYKGWM0M8iDBaiui1ZYJ+xc/cY="
       }
     },
     "ApiGatewayRestApi": {
@@ -398,7 +398,7 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayDeployment1615153571110": {
+    "ApiGatewayDeployment1615520647604": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -460,7 +460,7 @@
     "LoginDashapiLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "LoginDashapiLambdaVersiondsz2uGNsPtx91B1bPuEuruYvLBfGumBUcpxmHIP1g"
+        "Ref": "LoginDashapiLambdaVersionDVWYCnFKPNWEjsizCXplobY7rQ3CunGZmuTikawuMg"
       }
     },
     "ServiceEndpoint": {

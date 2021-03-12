@@ -7,13 +7,12 @@ const validateRegistration = require('../validation/validateRegistration');
 const validateLogin = require('../validation/validateLogin');
 const connections = require('../queries/connect');
 
-
-
 //Setting up environment variables.
 require("dotenv").config();
 const envVars = process.env;
 const { USER, HOST, DATABASE, PASSWORD, PORT} = envVars;
 
+//Client configuration stuff.
 const pgClient = new pg.Client({
     user: envVars.USER,
     host: envVars.HOST,
@@ -27,7 +26,7 @@ const routes = express.Router({
 });
 
 routes.get('/', (req, res) => {
-    res.status(200).json({msg: "You shouldnt be here..."});
+    res.status(200).json({message: "You shouldnt be here..."});
 });
 
 routes.post('/login', async (req, res) => {
@@ -46,30 +45,21 @@ routes.post('/login', async (req, res) => {
     }
 
     //Check if email exists
-    var test1 = await pgClient.query(await connections.getEmail(req.body.email));
-    console.log("GET EMAIL: " + test1);
-    if(test1.rowCount == 0) {
-        console.log("HERE");
-        return res.status(500).json({error: "A user with this email does not exist."});
+    var query = await pgClient.query(await connections.getEmail(req.body.email));
+    if(query.rowCount == 0) {
+        return res.status(500).json({message: "A user with this email does not exist."});
     }
 
     //Comparing the password in the database with the password entered.
     var test2 = await pgClient.query(await connections.getPassword(req.body.email));
     bcrypt.compare(req.body.password, test2.rows[0].user_password, function(err, result) {
         if(result){
-            console.log("HELLO: " + result);
-            return res.status(200).json({success: "Login Successful!"});
+            return res.status(200).json({message: "Login Successful!"});
         }
         else{
-            return res.status(400).json({error: "Incorrect password!"});
+            return res.status(500).json({message: "Incorrect password!"});
         }
     });
-
-
-
-
-    
-    //validatedData.notValid ? res.status(500).json(validatedData.errors) : res.status(200).json({status: "Success!"});
 });
 
 routes.post('/register', async (req, res) => {
@@ -103,20 +93,17 @@ routes.post('/register', async (req, res) => {
     //If the email already exists in the database, return an error, otherwise add the user to the database.
     var test1 = await pgClient.query(await connections.getEmail(req.body.email));
     if(test1.rowCount != 0) {
-        return res.status(500).json({error: "A user with this email aready exists."});
+        return res.status(500).json({message: "A user with this email aready exists."});
     }
-    else {
-        
+    else {   
         try {
             var data = await pgClient.query(await connections.addUserQuery(req.body.first_name, req.body.last_name, req.body.email, req.body.password));
         }
         catch(err) {
-            console.log("ERRORs: " + err);
+            console.log("ERROR: " + err);
         }
         
     }
-
-    validatedData.notValid ? res.status(500).json(validatedData.errors) : res.status(200).json({status: "Success!"});
 });
 
 module.exports = {
