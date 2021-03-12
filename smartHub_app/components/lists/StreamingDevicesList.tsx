@@ -1,13 +1,14 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, Text, TouchableOpacity, Dimensions, FlatList, Alert} from 'react-native';
+import {StyleSheet, View, Text, TouchableOpacity, Dimensions, FlatList, Alert, Image} from 'react-native';
 import Swipeout from 'react-native-swipeout';
 import {Icon} from 'native-base'
 import DeviceModal from '../modals/modalForAddingDevice';
 
-var sampleList = [
-    {DeviceName: "Web Cam x360",},
-    {DeviceName: "Security Camera B121"}]
+var sampleList : any = []
+
 var width : number = Dimensions.get('window').width;
+var height : number = Dimensions.get('window').height;
+
 
 //Need to create the interfaces to define the types for props and state variables
 
@@ -112,15 +113,24 @@ export class StreamingDevicesList extends Component<{navigation: any}>{
     }
     render(){ 
         return (
-            <View style={{flex: 1, backgroundColor: "#222222"}}>
-                <Text style={{paddingTop: 18, fontSize: 18, color: "#fff", fontWeight: 'bold', textAlign: 'center', paddingBottom: 20}}>Select the device you would like to stream from:</Text>
+            <View style={{flex: 1, backgroundColor: "#222222", alignItems: 'center', paddingTop: 20}}>
                 <FlatList
                     data={sampleList}
                     renderItem={({item, index} : any)=>{
                         return(
                             <StreamingListItem item={item} index={index} parentFlatList={this} navigation={this.props.navigation}/>
                         );
-                    }} />
+                    }}
+                    ListEmptyComponent={() => {
+                        return(
+                            <View style={{marginTop: height/6, flex: 1, alignItems: 'center', height: height/2, justifyContent: 'center'}}>
+                                <Text style={{paddingTop: 18, fontSize: 18, color: "#fff", fontWeight: 'bold'}}>Oops looks like you haven't added any devices.</Text>
+                                <Text style={{paddingTop: 18, fontSize: 15, color: "#fff", fontWeight: 'bold', paddingBottom: 20}}>Click the "+" on the top right to add a device.</Text>
+                                <Image style={styles.ImageStyle} source={{uri: 'https://image.flaticon.com/icons/png/512/122/122935.png'}}/>
+                            </View>
+                        )
+                    }}
+                />
                 <DeviceModal ref={'deviceModal'}  parentFlatList={this} sampleList={sampleList} />
             </View>
         );
@@ -143,5 +153,13 @@ const styles = StyleSheet.create ({
         shadowOpacity: 0.5,
         shadowRadius: 5, 
     },
+
+    ImageStyle: {
+        flex:1,
+        justifyContent:'center',
+        alignItems:'center',
+        width: width-60,
+        height: height-20
+    }
 
 })
