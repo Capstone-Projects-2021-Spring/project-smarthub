@@ -8,11 +8,11 @@ module.exports = function validateLogin(input) {
 	input.password = !isEmpty(input.password) ? input.password : "";
 
 	if(validator.isEmpty(input.email) || !validator.isEmail(input.email)) {
-		errors.email = "You must enter a valid email.";
+		errors.message = "You must enter a valid email.";
 	}
 
 	if(validator.isEmpty(input.password)) {
-		errors.password = "Please enter a valid password.";
+		errors.message = "Please enter a valid password.";
 	}
 
 	return {errors, notValid: Object.keys(errors).length ? true:false};
