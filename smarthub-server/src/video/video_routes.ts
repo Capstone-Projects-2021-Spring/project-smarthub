@@ -2,7 +2,7 @@ import express from 'express' ;
 import {spawn} from 'child_process';
 import * as socketio from 'socket.io';
 import puppeteer from 'puppeteer';
-const createFolder = require('../aws/amazon_s3').createFolder
+const createFile = require('../aws/amazon_s3').createFile
 
 
 let live_browser: any;
@@ -31,12 +31,11 @@ routes.post("/startRecording", (req, res) => {
 });
 
 //-----------------------------------------s3---------------------------------------
-
-//Below will create two folders a users folder (account) and sub folder(s) (profiles)
-routes.post("/createS3Folder", (req : any, res : any) => {
-	createFolder(req.body.userName, req.body.profileName);  
+//Below will create two folders a users folder (userEmail), sub folder(s) (profiles) and file
+//you will not overwrite the folder if you call it again
+routes.post("/createS3File", (req : any, res : any) => {
+	createFile(req.body.userEmail, req.body.profileName, req.body.fileName);  
 })
-
 //--------------------------------------------------------------------------------
   
 async function runLive () {

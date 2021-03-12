@@ -16,11 +16,11 @@ try{
 //s3 object to interact with physical s3 on aws
 const s3 = new AWS.S3();
 
-//accountName is a folder and profileName is a subFolder in accountName
-module.exports.createFolder = async function (accountName : String, profileName : String){
+//userEmail is a folder and profileName is a subFolder in userEmail, the last param is the file
+module.exports.createFile = async function (userEmail : String, profileName : String, fileName: String){
     const response = await s3.putObject({
         Bucket: 'sh-video-storage',
-        Key: accountName + "/" + profileName + "/"
+        Key: userEmail + "/" + profileName + "/" + fileName
     }).promise();
     console.log("Folder creation was successful");
     return response;

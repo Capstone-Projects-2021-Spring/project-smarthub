@@ -34,7 +34,6 @@ const videoController = new VideoController(httpServer);
 //Telling express to use the routes found in /video/video_routes.ts (Access these routes by http using /video/startStream, /video/startRecord etc...)
 app.use('/video', videoRoutes);
 
-
 httpServer.listen(PORT, () => {
   console.log('Server running on http://localhost:' + PORT);
 });
