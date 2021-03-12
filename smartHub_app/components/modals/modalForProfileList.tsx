@@ -51,16 +51,24 @@ export default class ProfileModal extends Component<PropVariables, StateVariable
                     style={{ fontSize: 18, color: '#000'}}
                     containerStyle={styles.buttonStyle}
                     onPress={() => {
+                        //handles empty profile name
                         if(this.state.newProfileName.length === 0){
                             alert("You must enter a Profile Name first.");
                             return;
                         }
-                        //need to handle duplicate profile names still
+                        //handles duplicate profile name
+                        if(this.props.sampleList.some((item : any) => item.key === this.state.newProfileName)){
+                            alert(this.state.newProfileName + ' already exists.')
+                            return;
+                        }
                         const newProfile = {
                             key: this.state.newProfileName,
                         }
+                        //Push the item to the list and then refresh the list
+                        //which would rerender the component
                         this.props.sampleList.push(newProfile);
                         this.props.parentFlatList.refreshList(this.state.newProfileName)
+                        //Reset the state afterwards
                         this.setState({newProfileName : ""});
                         this.refs.profileModal.close();
                     }}

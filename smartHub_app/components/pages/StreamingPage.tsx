@@ -4,7 +4,6 @@ import {WebView} from 'react-native-webview'
 import axios from 'axios'
 import Toast, {BaseToast} from 'react-native-toast-message'
 
-
 export default class Streaming extends Component<{route: any, navigation: any}, {responseText: String}>{
 
     constructor(props: any){
@@ -13,7 +12,11 @@ export default class Streaming extends Component<{route: any, navigation: any}, 
             responseText: ""
         })
         this.beginStream = this.beginStream.bind(this);
-        this.stopStream = this.stopStream.bind(this);
+        this.stopStream = this.stopStream.bind(this);        
+    }
+
+    getData = () => {
+      //I need the ip and device name from the backend  
     }
 
     beginStream = () => {
@@ -72,7 +75,7 @@ export default class Streaming extends Component<{route: any, navigation: any}, 
 
     componentDidMount = () => {
         this.props.navigation.setOptions({
-            headerTitle: this.props.route.params.item.key
+            headerTitle: this.props.route.params.DeviceName,
         })
     }
 
@@ -136,7 +139,7 @@ export default class Streaming extends Component<{route: any, navigation: any}, 
                 style={styles.pillButton}
                 onPress={this.stopStream}>
                 <Text style={{fontSize: 20}}>Stop Stream</Text>
-            </TouchableOpacity>    
+            </TouchableOpacity>
             </View>
         </View>
         );

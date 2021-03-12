@@ -9,7 +9,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import {Icon} from 'native-base'
 import Login from './components/pages/loginPage';
 import SignUp from './components/pages/signUpPage';
-import Streaming from './components/Streaming';
+import Streaming from './components/pages/StreamingPage';
 
 //App.tsx handles the navigation of the application
 

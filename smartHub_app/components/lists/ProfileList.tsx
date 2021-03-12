@@ -74,7 +74,7 @@ class ProfileListItem extends Component<PropVariables,StateVariables>{
             sectionId: 1
         };
         return(
-            <Swipeout {...swipeSettings}>
+            <Swipeout {...swipeSettings} style={{backgroundColor:"#222222"}} >
             <TouchableOpacity
             style={itemStyle}
             onPress={() => this.props.navigation.navigate('Profile', this.props.item)}>
@@ -148,7 +148,7 @@ export default class ProfileList extends Component<{navigation: any}>{
                     );
                 }}
             />
-            <ProfileModal ref={'profileModal'}  parentFlatList={this} sampleList={sampleList} />
+            <ProfileModal ref={'profileModal'} parentFlatList={this} sampleList={sampleList} />
         </View>
     );
     }
@@ -160,9 +160,13 @@ const styles = StyleSheet.create({
         backgroundColor: '#222222'
     },
     itemStyle: {
-        backgroundColor: '#222222',
-        height: 100,
+        backgroundColor: '#E8694E',
+        height: 90,
         margin: 10,
+        shadowOffset: { width: 0, height: 0 },
+        shadowColor: "#fff",
+        shadowOpacity: 1.00,
+        elevation: 10,
         flex:1
     },
 

@@ -26,7 +26,6 @@ export default function ProfilePage({ navigation } : {navigation: any}){
             </TouchableOpacity> 
             </View>   
         </View>
-        
     );
 }
 
