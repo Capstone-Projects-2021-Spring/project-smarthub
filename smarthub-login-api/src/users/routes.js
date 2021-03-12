@@ -104,6 +104,8 @@ routes.post('/register', async (req, res) => {
         }
         
     }
+
+    validatedData.notValid ? res.status(500).json(validatedData.errors) : res.status(200).json({status: "Success!"});
 });
 
 module.exports = {
