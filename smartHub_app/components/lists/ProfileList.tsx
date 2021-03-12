@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, FlatList, Text, TouchableOpacity, Alert, Dimensions, Image} from 'react-native';
+import {StyleSheet, View, FlatList, Text, TouchableOpacity, Alert, Dimensions, Image, ImageBackground} from 'react-native';
 import Swipeout from 'react-native-swipeout';
 import {Icon} from 'native-base'
 import ProfileModal from '../modals/modalForProfileList';
@@ -12,9 +12,7 @@ var height : number = Dimensions.get('window').height;
 var sampleList = [{key: 'Profile 1'}, 
 {key: 'Profile 2'}, 
 {key: 'Profile 3'}, 
-{key: 'Profile 4'}, 
-{key: 'Profile 5'}, 
-{key: 'Profile 6'}];
+{key: 'Profile 4'}];
 
 //Need to create the interfaces to define the types for props and state variables
 
@@ -78,7 +76,7 @@ class ProfileListItem extends Component<PropVariables,StateVariables>{
             <TouchableOpacity
             style={itemStyle}
             onPress={() => this.props.navigation.navigate('Profile', this.props.item)}>
-            <Text style={{color: '#fff'}}>{this.props.item.key}</Text>
+            <Text style={{paddingLeft: 5, paddingTop: 5, fontWeight: 'bold', fontSize: 20, color: '#fff'}}>{this.props.item.key}</Text>
             <Image style={{flex:1, height: 10, width: 20}} source={{uri: this.props.item.image}}/>
             </TouchableOpacity>
             </Swipeout>
@@ -87,7 +85,7 @@ class ProfileListItem extends Component<PropVariables,StateVariables>{
 }
 
 //Creates the list of profiles that are present on the home page
-export default class ProfileList extends Component<{navigation: any}>{
+export default class ProfileList extends Component<{navigation: any, userName: string}>{
 
     constructor(props : any){
         super(props);
@@ -137,7 +135,7 @@ export default class ProfileList extends Component<{navigation: any}>{
     return (
         <View style={styles.container}>
             <View style={styles.welcomeView}>
-                <Text style={{textAlign: 'center', color: '#fff', fontSize: 15}}>Welcome information goes here!</Text>
+                <Text style={{textAlign: 'center', color: '#fff', fontSize: 25, fontWeight: 'bold'}}>Welcome, {this.props.userName}</Text>
             </View>
             <FlatList
                 style={{flex:1}}
@@ -157,14 +155,15 @@ export default class ProfileList extends Component<{navigation: any}>{
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#222222'
+        backgroundColor: '#222222',
     },
     itemStyle: {
-        backgroundColor: '#E8694E',
+        backgroundColor: '#000',
         height: 90,
         margin: 10,
-        shadowOffset: { width: 0, height: 0 },
-        shadowColor: "#fff",
+        borderWidth: 2,
+        borderColor: "#ffa31a",
+        shadowOffset: { width: 0, height: 5 },
         shadowOpacity: 1.00,
         elevation: 10,
         flex:1
@@ -181,7 +180,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center', 
         width: width, 
         height: height/4, 
-        borderWidth: 5,
-        borderColor: '#FF1744'
+        borderWidth: 4,
+        borderColor: "lightgray",
     }
 })

@@ -10,19 +10,19 @@ export default function ProfilePage({ navigation } : {navigation: any}){
     
     return(
         <View style={styles.container}>
-             <View style={styles.welcomeView}>
-                <Text style={{textAlign: 'center', color: '#fff'}}>This is where we would grab the profile information into</Text>
-            </View>
-            <View style={{paddingTop: 20, flexDirection: 'row', justifyContent: 'center'}}>
+            <Text style={{marginTop: 50, fontSize: 25, fontWeight: 'bold', textAlign: 'center', color: '#fff'}}>SmartHub Services:</Text>
+            <View style={{paddingTop: 20, flexDirection: 'column', justifyContent: 'center'}}>
             <TouchableOpacity
-                style={styles.roundButton}
+                style={styles.button}
                 onPress={() => navigation.navigate('Live Streaming Devices')}>
-                <Image style={styles.imageStyle} source={{uri: 'https://i.pinimg.com/originals/c1/39/d3/c139d34d479a53a776f874cc718a3881.jpg'}}/>
+                <Text style={{color: "#fff", textAlign: 'center', fontSize: 22}}>Live Streaming</Text>
+                <Image style={styles.LiveImageStyle} source={{uri: 'https://cdn4.iconfinder.com/data/icons/communication-multimedia-vol-2/512/live_stream_radio_broadcast-256.png'}}/>
             </TouchableOpacity>
             <TouchableOpacity
-                style={styles.roundButton}
+                style={styles.button}
                 onPress={() => navigation.navigate('Recording Devices')}>
-                <Image style={styles.imageStyle} source={{uri: 'https://cdn3.iconfinder.com/data/icons/flat-icons-web/40/Record-512.png'}}/>
+                <Text style={{color: "#fff", textAlign: 'center', fontSize: 22}}>Recording</Text>
+                <Image style={styles.RecordImageStyle} source={{uri: 'https://cdn3.iconfinder.com/data/icons/flat-icons-web/40/Record-512.png'}}/>
             </TouchableOpacity> 
             </View>   
         </View>
@@ -36,28 +36,40 @@ const styles = StyleSheet.create ({
         backgroundColor: '#222222'
     },
 
-    roundButton: {
-        width: 75,
-        height: 75,
-        borderRadius: 100,
-        margin: 10,
+    button: {
+        backgroundColor: '#000',
         justifyContent: 'center',
         alignItems: 'center',
-        alignSelf: 'center',
-        backgroundColor: '#FF9900',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 3 },
-        shadowOpacity: 0.5,
-        shadowRadius: 5, 
+        height: 90,
+        width: width-20,
+        margin: 10,
+        borderWidth: 2,
+        borderColor: "#ffa31a",
+        shadowOffset: { width: 0, height: 5 },
+        shadowOpacity: 1.00,
+        elevation: 10,
     },
 
-    imageStyle: {
-        width: 65,
-        height: 65,
+    RecordImageStyle: {
+        width: 80,
+        height: 80,
+        position: 'absolute',
+        left:0,
+        marginLeft: 10,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#fff',
-        borderRadius: 100
+        backgroundColor: '#000',
+    },
+
+    LiveImageStyle: {
+        width: 60,
+        height: 60,
+        position: 'absolute',
+        left:0,
+        marginLeft: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#000',
     },
 
     welcomeView: {
@@ -65,6 +77,6 @@ const styles = StyleSheet.create ({
         width: width, 
         height: height/4, 
         borderWidth: 5,
-        borderColor: '#FF1744'
+        borderColor: 'lightgrey'
     }
 })
