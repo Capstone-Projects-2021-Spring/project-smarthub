@@ -123,10 +123,10 @@ export class StreamingDevicesList extends Component<{navigation: any}>{
                     }}
                     ListEmptyComponent={() => {
                         return(
-                            <View style={{marginTop: height/6, flex: 1, alignItems: 'center', height: height/2, justifyContent: 'center'}}>
-                                <Text style={{paddingTop: 18, fontSize: 18, color: "#fff", fontWeight: 'bold'}}>Oops looks like you haven't added any devices.</Text>
-                                <Text style={{paddingTop: 18, fontSize: 15, color: "#fff", fontWeight: 'bold', paddingBottom: 20}}>Click the "+" on the top right to add a device.</Text>
-                                <Image style={styles.ImageStyle} source={{uri: 'https://image.flaticon.com/icons/png/512/122/122935.png'}}/>
+                            <View style={{marginTop: 60, flex: 1, alignItems: 'center', height: height/2, justifyContent: 'center'}}>
+                                <Text style={{paddingTop: 18, fontSize: 19, color: "#fff", fontWeight: 'bold'}}>Looks like you haven't added any devices.</Text>
+                                <Text style={{paddingTop: 18, fontSize: 17, color: "#fff", fontWeight: 'bold', paddingBottom: 30}}>Click the "+" on the top right to add a new device.</Text>
+                                <Image style={styles.ImageStyle} source={{uri: 'https://www.pngkit.com/png/full/118-1180951_image-transparent-icons-free-color-desktops-and-gadgets.png'}}/>
                             </View>
                         )
                     }}
@@ -158,8 +158,8 @@ const styles = StyleSheet.create ({
         flex:1,
         justifyContent:'center',
         alignItems:'center',
-        width: width-60,
-        height: height-20
+        width: width-40,
+        height: height
     }
 
 })

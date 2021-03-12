@@ -9,10 +9,7 @@ var width : number = Dimensions.get('window').width;
 var height : number = Dimensions.get('window').height;
 
 //Sample data
-var sampleList = [{key: 'Profile 1'}, 
-{key: 'Profile 2'}, 
-{key: 'Profile 3'}, 
-{key: 'Profile 4'}];
+var sampleList: any = [{key: '123 Sample Street'}];
 
 //Need to create the interfaces to define the types for props and state variables
 
@@ -145,6 +142,15 @@ export default class ProfileList extends Component<{navigation: any, userName: s
                         <ProfileListItem item={item} index={index} parentFlatList={this} navigation={this.props.navigation}></ProfileListItem>
                     );
                 }}
+                ListEmptyComponent={() => {
+                    return(
+                        <View style={{marginTop: 12, flex: 1, alignItems: 'center', height: height/2, justifyContent: 'center'}}>
+                            <Text style={{paddingTop: 18, fontSize: 18, color: "#fff", fontWeight: 'bold'}}>Looks like you haven't added any Profiles.</Text>
+                            <Text style={{paddingTop: 18, fontSize: 15, color: "#fff", fontWeight: 'bold', paddingBottom: 20}}>Click the "+" on the top right to add a new Profile.</Text>
+                            <Image style={styles.ImageStyle} source={{uri: 'https://image.flaticon.com/icons/png/512/122/122935.png'}}/>
+                        </View>
+                    )
+                }}
             />
             <ProfileModal ref={'profileModal'} parentFlatList={this} sampleList={sampleList} />
         </View>
@@ -182,5 +188,13 @@ const styles = StyleSheet.create({
         height: height/4, 
         borderWidth: 4,
         borderColor: "lightgray",
+    },
+
+    ImageStyle: {
+        flex:1,
+        justifyContent:'center',
+        alignItems:'center',
+        width: width-60,
+        height: height-20
     }
 })
