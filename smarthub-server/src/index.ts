@@ -79,6 +79,24 @@ app.post('/stop_recording', (req : any, res : any) => {
   return res.status(200).json({ message: "stop_recording route: recording stopping..." });
 });
 
+app.post('get_file', (req : any, res : any) => {
+
+  const key = req.body.key;
+
+  const response = getFile(key);
+  return res.status(200).json({ video: response });
+});
+
+app.post('get_key_list', (req : any, res : any) => {
+
+  const accountName = req.body.accountName;
+  const profileName = req.body.profileName;
+
+  const response = getKeyList(accountName, profileName);
+
+  return res.status(200).json({ keyList: response });
+});
+
 httpServer.listen(PORT, () => {
   console.log('Server running on http://localhost:' + PORT);
 });
