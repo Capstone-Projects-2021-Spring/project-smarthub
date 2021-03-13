@@ -3,13 +3,14 @@ import { DrawerActions, getFocusedRouteNameFromRoute, NavigationContainer } from
 import {createStackNavigator, StackHeaderLeftButtonProps} from '@react-navigation/stack';
 import { StyleSheet, TouchableOpacity} from 'react-native';
 import ProfilePage from './components/pages/ProfilePage';
-import { LiveStreamingDevices, RecordingDevices, SavedRecordings, SavedImages } from './components/VideoComponent';
+import { LiveStreamingDevices, LiveRecordingDevices, SavedRecordings, SavedImages } from './components/VideoComponent';
 import HomePage from './components/pages/HomePage';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import {Icon} from 'native-base'
 import Login from './components/pages/loginPage';
 import SignUp from './components/pages/signUpPage';
 import Streaming from './components/pages/StreamingPage';
+import Recording from './components/pages/RecordingPage';
 
 //App.tsx handles the navigation of the application
 
@@ -170,8 +171,17 @@ export default function App() {
           headerStyle: {
           backgroundColor: '#FF9900'
         }}} 
+        name="Live Recording Devices" 
+        component={LiveRecordingDevices} 
+      />
+
+      <Stack.Screen 
+        options={{
+          headerStyle: {
+          backgroundColor: '#FF9900'
+        }}} 
         name="Recording Devices" 
-        component={RecordingDevices} 
+        component= {Recording} 
       />
 
     </Stack.Navigator>

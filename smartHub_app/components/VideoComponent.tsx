@@ -8,12 +8,10 @@ export function LiveStreamingDevices({ navigation } : {navigation: any}){
     )
 }
 
-export function RecordingDevices(){
+export function LiveRecordingDevices({ navigation } : {navigation: any}){
     return (
-        <View>
-            <Text>Need to implement record functionality here</Text>
-        </View>
-    );
+        <DevicesList stackScreen={'Recording Devices'} navigation={navigation}/>
+    )
 }
 
 export function SavedRecordings(){

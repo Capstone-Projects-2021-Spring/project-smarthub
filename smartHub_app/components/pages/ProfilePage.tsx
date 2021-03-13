@@ -20,7 +20,7 @@ export default function ProfilePage({ navigation } : {navigation: any}){
             </TouchableOpacity>
             <TouchableOpacity
                 style={styles.button}
-                onPress={() => navigation.navigate('Recording Devices')}>
+                onPress={() => navigation.navigate('Live Recording Devices')}>
                 <Text style={{color: "#fff", textAlign: 'center', fontSize: 22}}>Recording</Text>
                 <Image style={styles.RecordImageStyle} source={{uri: 'https://cdn3.iconfinder.com/data/icons/flat-icons-web/40/Record-512.png'}}/>
             </TouchableOpacity> 
