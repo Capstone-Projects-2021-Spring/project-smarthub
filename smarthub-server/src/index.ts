@@ -4,6 +4,7 @@ import http = require("http");
 import bodyParser from 'body-parser';
 import { VideoController } from './controllers/VideoController';
 const { routes: videoRoutes } = require('./video/video_routes');
+const { routes: profileRoutes } = require('./profiles/profile_routes');
 
 const app = express();
 // Express built-in middleware function static allows serving static files.
@@ -33,6 +34,7 @@ const videoController = new VideoController(httpServer);
 
 //Telling express to use the routes found in /video/video_routes.ts (Access these routes by http using /video/startStream, /video/startRecord etc...)
 app.use('/video', videoRoutes);
+app.use('/profiles', profileRoutes);
 
 
 httpServer.listen(PORT, () => {
