@@ -6,6 +6,7 @@ import React, { Component } from 'react';
 import {styles} from "../../styles/signUpStyle";
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import { CheckBox } from 'native-base';
+import axios from 'axios';
 
 const {height} = Dimensions.get("screen");
 
@@ -80,30 +81,11 @@ export default class SignUp extends Component<{navigation: any}>{
 
         var url = "https://b2bgr96nbc.execute-api.us-east-1.amazonaws.com/dev/user/register"
         
-        fetch(url, {
-        method: 'POST', // or 'PUT'
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(collection),
+        axios.post(url, collection).then((response) => {
+            this.userSignUp();
+        }, ({error, response}) => {
+            alert(response.data.message);
         })
-        .then(response => {
-            if(response.status == 500)
-            {
-                alert("Fields are either incomplete or incorrect.");
-            }
-            else if( response.status == 200)
-            {
-                this.signUpPressHandler();
-            }
-
-            response.json();})
-        // .then(data => this.state.signInData = data)
-        
-        // .then(() => console.warn(this.state.signInData))
-        // .then(() => console.warn(response.status))
-        .catch((error) => {console.error('Error:', error);
-        });
     }
 
 
