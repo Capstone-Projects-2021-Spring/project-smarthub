@@ -62,11 +62,12 @@ export default class ProfileModal extends Component<PropVariables, StateVariable
                             return;
                         }
                         const newProfile = {
-                            key: this.state.newProfileName,
+                            profileName: this.state.newProfileName,
                         }
                         //Push the item to the list and then refresh the list
                         //which would rerender the component
                         this.props.sampleList.push(newProfile);
+                        console.log(this.props.sampleList)
                         this.props.parentFlatList.refreshList(this.state.newProfileName)
                         //Reset the state afterwards
                         this.setState({newProfileName : ""});

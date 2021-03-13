@@ -8,7 +8,7 @@ export default class HomePage extends Component<{route: any, navigation: any}>{
     render(){
         return (
             <View style={styles.container}>
-            <ProfileList navigation={this.props.navigation} userName = {this.props.route.params}/>
+            <ProfileList navigation={this.props.navigation} />
             </View>
         );
     }

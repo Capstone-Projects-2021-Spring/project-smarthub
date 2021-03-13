@@ -18,7 +18,6 @@ interface PropVariables{
     index: any,
     parentFlatList: any,
     navigation: any,
-    userName: string
 }
 
 interface StateVariables{
@@ -35,7 +34,6 @@ class ProfileListItem extends Component<PropVariables,StateVariables>{
     }
     render(){
         let item = this.props.item;
-        let userName = this.props.userName
         let {itemStyle} = styles;
         const swipeSettings = {
             autoClose: true,
@@ -75,7 +73,7 @@ class ProfileListItem extends Component<PropVariables,StateVariables>{
             <Swipeout {...swipeSettings} style={{backgroundColor:"#222222"}} >
             <TouchableOpacity
             style={itemStyle}
-            onPress={() => this.props.navigation.navigate('Profile', {item, userName})}>
+            onPress={() => this.props.navigation.navigate('Profile', {item})}>
             <Text style={{paddingLeft: 5, paddingTop: 5, fontWeight: 'bold', fontSize: 20, color: '#fff'}}>{this.props.item.profileName}</Text>
             <Image style={{flex:1, height: 10, width: 20}} source={{uri: this.props.item.image}}/>
             </TouchableOpacity>
@@ -139,7 +137,7 @@ export default class ProfileList extends Component<{navigation: any, userName: s
                 data={sampleList}
                 renderItem={({item, index} : any)=>{
                     return(
-                        <ProfileListItem item={item} index={index} parentFlatList={this} navigation={this.props.navigation} userName={this.props.userName} ></ProfileListItem>
+                        <ProfileListItem item={item} index={index} parentFlatList={this} navigation={this.props.navigation}></ProfileListItem>
                     );
                 }}
                 ListEmptyComponent={() => {
