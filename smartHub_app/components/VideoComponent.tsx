@@ -13,7 +13,7 @@ export class LiveStreamingDevices extends Component<{route: any, navigation: any
 export class LiveRecordingDevices extends Component<{route: any, navigation: any}>{
     render(){
         return (
-            <DevicesList routeObject={this.props.route.params} stackScreen={'Recording Devices'} navigation={navigation}/>
+            <DevicesList routeObject={this.props.route.params} stackScreen={'Recording Devices'} navigation={this.props.navigation}/>
         )
     }
 }
