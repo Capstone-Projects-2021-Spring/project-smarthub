@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import { SafeAreaView, View, FlatList, StyleSheet, Text, Button } from 'react-native';
 import { Video, AVPlaybackStatus } from 'expo-av';
+import axios from 'axios';
 // import * as VideoThumbnails from 'expo-video-thumbnails';
 
 const Videos = [
@@ -16,10 +17,10 @@ const Videos = [
 },
 ];
 
-
 export class PlayVideos extends Component<{navigation: any, stackScreen: string, routeObject: any}>{
     render(){
         return (
+            // getRecordings();
             <View style={styles.container}>
                 <Video
                     source={{uri: 'http://dl5.webmfiles.org/big-buck-bunny_trailer.webm'}}
@@ -54,3 +55,13 @@ const styles = StyleSheet.create({
       alignItems: 'center',
     },
 });
+
+// function getRecordings() {
+//     var path: "";
+    
+//     axios.post(path).then((response) => {
+//     }, ({error, response}) => {
+//         alert(response.data.message);
+//     })
+//     throw new Error('Function not implemented.');
+// }
