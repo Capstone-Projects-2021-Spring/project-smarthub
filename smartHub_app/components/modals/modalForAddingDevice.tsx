@@ -9,7 +9,8 @@ var screen = Dimensions.get('window');
 interface PropVariables{
     parentFlatList: any,
     sampleList: any,
-    routeObject: any
+    routeObject: any,
+    stackScreen: string
 }
 
 interface StateVariables{
@@ -34,6 +35,7 @@ export default class DeviceModal extends Component<PropVariables, StateVariables
 
     render(){
         //console.log(this.props.routeObject)
+        //console.log(this.props.stackScreen)
         return(
             <Modal
                 ref={"deviceModal"} 

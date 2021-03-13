@@ -6,7 +6,7 @@ import { PlayVideos } from './lists/SavedRecordings';
 export class LiveStreamingDevices extends Component<{route: any, navigation: any}>{
     render(){
         return (
-            <DevicesList routeObject={this.props.route.params} stackScreen={'Live Stream'} navigation={this.props.navigation}/>
+            <DevicesList routeObject={this.props.route.params} stackScreen={'Streaming Devices'} navigation={this.props.navigation}/>
         )
     }
 }

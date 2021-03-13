@@ -133,7 +133,7 @@ export class DevicesList extends Component<{navigation: any, stackScreen: string
                         )
                     }}
                 />
-                <DeviceModal ref={'deviceModal'} routeObject={this.props.routeObject} parentFlatList={this} sampleList={sampleList} />
+                <DeviceModal ref={'deviceModal'} stackScreen={this.props.stackScreen} routeObject={this.props.routeObject} parentFlatList={this} sampleList={sampleList} />
             </View>
         );
     }

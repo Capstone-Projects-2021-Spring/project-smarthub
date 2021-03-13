@@ -163,7 +163,7 @@ export default function App(){
           headerStyle: {
           backgroundColor: '#FF9900'
         }}} 
-        name="Live Stream" 
+        name="Streaming Devices" 
         component= {Streaming} 
       />
 
