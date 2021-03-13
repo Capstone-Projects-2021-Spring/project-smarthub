@@ -113,7 +113,7 @@ export class DevicesList extends Component<{navigation: any, stackScreen: string
               )
         })
     }
-    render(){ 
+    render(){
         return (
             <View style={{flex: 1, backgroundColor: "#222222", alignItems: 'center', paddingTop: 20}}>
                 <FlatList
@@ -133,7 +133,7 @@ export class DevicesList extends Component<{navigation: any, stackScreen: string
                         )
                     }}
                 />
-                <DeviceModal ref={'deviceModal'}  parentFlatList={this} sampleList={sampleList} />
+                <DeviceModal ref={'deviceModal'} routeObject={this.props.routeObject} parentFlatList={this} sampleList={sampleList} />
             </View>
         );
     }

@@ -6,7 +6,7 @@ var height : number = Dimensions.get('window').height;
 
 //The TouchableOpacity is what creates the buttons, this is hard coded but will 
 //be changed in future implementations.
-export default class ProfilePage extends Component<{navigation: any, routeObject: any}, {responseText: String}>{
+export default class ProfilePage extends Component<{navigation: any, routeObject: any}>{
     render(){
     return(
         <View style={styles.container}>

@@ -18,6 +18,7 @@ interface PropVariables{
     index: any,
     parentFlatList: any,
     navigation: any,
+    userEmail: string
 }
 
 interface StateVariables{
@@ -34,6 +35,7 @@ class ProfileListItem extends Component<PropVariables,StateVariables>{
     }
     render(){
         let item = this.props.item;
+        let userEmail = this.props.userEmail;
         let {itemStyle} = styles;
         const swipeSettings = {
             autoClose: true,
@@ -73,7 +75,7 @@ class ProfileListItem extends Component<PropVariables,StateVariables>{
             <Swipeout {...swipeSettings} style={{backgroundColor:"#222222"}} >
             <TouchableOpacity
             style={itemStyle}
-            onPress={() => this.props.navigation.navigate('Profile', {item})}>
+            onPress={() => this.props.navigation.navigate('Profile', {item, userEmail})}>
             <Text style={{paddingLeft: 5, paddingTop: 5, fontWeight: 'bold', fontSize: 20, color: '#fff'}}>{this.props.item.profileName}</Text>
             <Image style={{flex:1, height: 10, width: 20}} source={{uri: this.props.item.image}}/>
             </TouchableOpacity>
@@ -83,7 +85,7 @@ class ProfileListItem extends Component<PropVariables,StateVariables>{
 }
 
 //Creates the list of profiles that are present on the home page
-export default class ProfileList extends Component<{navigation: any}>{
+export default class ProfileList extends Component<{navigation: any, userEmail: string}>{
 
     constructor(props : any){
         super(props);
@@ -130,29 +132,29 @@ export default class ProfileList extends Component<{navigation: any}>{
     };
 
     render(){
-    return (
-        <View style={styles.container}>
-            <FlatList
-                style={{flex:1}}
-                data={sampleList}
-                renderItem={({item, index} : any)=>{
-                    return(
-                        <ProfileListItem item={item} index={index} parentFlatList={this} navigation={this.props.navigation}></ProfileListItem>
-                    );
-                }}
-                ListEmptyComponent={() => {
-                    return(
-                        <View style={{marginTop: height/7, flex: 1, alignItems: 'center', height: height/2, justifyContent: 'center'}}>
-                            <Text style={{paddingTop: 18, fontSize: 18, color: "#fff", fontWeight: 'bold'}}>Looks like you haven't added any Profiles.</Text>
-                            <Text style={{paddingTop: 18, fontSize: 15, color: "#fff", fontWeight: 'bold', paddingBottom: 20}}>Click the "+" on the top right to add a new Profile.</Text>
-                            <Image style={styles.ImageStyle} source={{uri: 'https://image.flaticon.com/icons/png/512/122/122935.png'}}/>
-                        </View>
-                    )
-                }}
-            />
-            <ProfileModal ref={'profileModal'} parentFlatList={this} sampleList={sampleList} />
-        </View>
-    );
+        return (
+            <View style={styles.container}>
+                <FlatList
+                    style={{flex:1}}
+                    data={sampleList}
+                    renderItem={({item, index} : any)=>{
+                        return(
+                            <ProfileListItem item={item} index={index} userEmail={this.props.userEmail} parentFlatList={this} navigation={this.props.navigation}></ProfileListItem>
+                        );
+                    }}
+                    ListEmptyComponent={() => {
+                        return(
+                            <View style={{marginTop: height/7, flex: 1, alignItems: 'center', height: height/2, justifyContent: 'center'}}>
+                                <Text style={{paddingTop: 18, fontSize: 18, color: "#fff", fontWeight: 'bold'}}>Looks like you haven't added any Profiles.</Text>
+                                <Text style={{paddingTop: 18, fontSize: 15, color: "#fff", fontWeight: 'bold', paddingBottom: 20}}>Click the "+" on the top right to add a new Profile.</Text>
+                                <Image style={styles.ImageStyle} source={{uri: 'https://image.flaticon.com/icons/png/512/122/122935.png'}}/>
+                            </View>
+                        )
+                    }}
+                />
+                <ProfileModal ref={'profileModal'} parentFlatList={this} sampleList={sampleList} />
+            </View>
+        );
     }
 }
 
