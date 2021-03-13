@@ -2,7 +2,6 @@ import express from 'express';
 import {spawn} from 'child_process';
 import * as socketio from 'socket.io';
 import puppeteer from 'puppeteer-core';
-const createFolder = require('../aws/amazon_s3').createFolder;
 
 let live_browser: any;
 let recording_browser: any;
@@ -42,9 +41,9 @@ routes.post("/start_stream", (req: any, res: any) => {
 //-----------------------------------------s3---------------------------------------
 
 //Below will create two folders a users folder (account) and sub folder(s) (profiles)
-routes.post("/createS3Folder", (req : any, res : any) => {
-	createFolder(req.body.userName, req.body.profileName);
-})
+// routes.post("/createS3Folder", (req : any, res : any) => {
+// 	createFolder(req.body.userName, req.body.profileName);
+// })
 
 //--------------------------------------------------------------------------------
 

@@ -1,10 +1,22 @@
 import express from 'express' ;
 import path from 'path';
+import {exec} from 'child_process';
 import http = require("http");
 import bodyParser from 'body-parser';
 import puppeteer from 'puppeteer-core';
 import { VideoController } from './controllers/VideoController';
 const { routes: videoRoutes } = require('./video/video_routes');
+const createFolder = require('./aws/amazon_s3').createFolder;
+const uploadFile = require('./aws/amazon_s3').uploadFile;
+const getKeyList = require('./aws/amazon_s3').getKeyList;
+const getFile = require('./aws/amazon_s3').getFile;
+
+// Tests on S3 functions.
+// getKeyList("test2", "sampleProfile");
+// getFile("test2/sampleProfile/vid_Fri_Mar_12_2021_17:25:44_GMT-0500_(Eastern_Standard_Time)");
+
+const OSplatform = process.platform;
+const localStoragePath = path.resolve(__dirname, "./output/output.webm");
 
 const app = express();
 // Express built-in middleware function static allows serving static files.
@@ -35,15 +47,37 @@ const videoController = new VideoController(httpServer);
 //Telling express to use the routes found in /video/video_routes.ts (Access these routes by http using /video/startStream, /video/startRecord etc...)
 app.use('/video', videoRoutes);
 
-app.post('/start_recording', (req : any, res : any) => {
+app.get('/start_recording', (req : any, res : any) => {
+
   videoController.startRecording();
   console.log("start_recording route: recording starting...");
   return res.status(200).json({ message: "start_recording route: recording starting..." });
 });
 
-app.post('/stop_recording', (req : any, res : any) => {
+
+
+app.get('/stop_recording', (req : any, res : any) => {
+
+  const accountName = req.body.accountName;
+  const profileName = req.body.profileName;
+
   videoController.stopRecording();
-  console.log("stop_recording route: recording stopping...");
+
+  console.log("stop_recording route: Starting upload to " + localStoragePath);
+
+  uploadFile(accountName, profileName, localStoragePath);
+
+    console.log("stop_recording route: recording stopping...");
+
+  if (OSplatform === 'win32') {
+    exec('del ' + localStoragePath);
+  }
+  else{
+    exec('rm ' + localStoragePath);
+  }
+
+  console.log("stop_recording_route: cleaned local storage.");
+
   return res.status(200).json({ message: "stop_recording route: recording stopping..." });
 });
 
