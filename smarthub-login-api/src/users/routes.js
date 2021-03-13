@@ -52,14 +52,21 @@ routes.post('/login', async (req, res) => {
 
     //Comparing the password in the database with the password entered.
     var test2 = await pgClient.query(await connections.getPassword(req.body.email));
-    bcrypt.compare(req.body.password, test2.rows[0].user_password, function(err, result) {
-        if(result){
-            return res.status(200).json({message: "Login Successful!"});
-        }
-        else{
-            return res.status(500).json({message: "Incorrect password!"});
-        }
-    });
+    if(test2.rows[0].user_password != req.body.password) {
+        return res.status(500).json({message: "Incorrect password!"});
+    }
+    else {
+        return res.status(200).json({message: "Login Successful!"});
+    }
+    // bcrypt.compare(req.body.password, test2.rows[0].user_password, function(err, result) {
+    //     if(result){
+    //         return res.status(200).json({message: "Login Successful!"});
+    //     }
+    //     else{
+    //         return res.status(500).json({message: "Incorrect password!"});
+    //     }
+    // });w
+    
 });
 
 routes.post('/register', async (req, res) => {
@@ -70,18 +77,18 @@ routes.post('/register', async (req, res) => {
         return res.status(500).json(validatedData.errors);
     }
 
-    //For some reason this password hashing doesnt work below the database connection.
-    var saltRounds = 10;
-    //This is kind of confusing but the function accepting (err, salt) is a callback that only gets fired after the salt has been generated. https://www.npmjs.com/package/bcrypt
-    bcrypt.genSalt(saltRounds, (err, salt) => {
-        bcrypt.hash(req.body.password, salt, (err, hash) => {
-            if (err) {
-                throw err;
-            }
-            //Updating the user password to be the new hash, so we never store the plaintext anywhere.
-            req.body.password = hash;
-        });
-    });
+    // //For some reason this password hashing doesnt work below the database connection.
+    // var saltRounds = 10;
+    // //This is kind of confusing but the function accepting (err, salt) is a callback that only gets fired after the salt has been generated. https://www.npmjs.com/package/bcrypt
+    // bcrypt.genSalt(saltRounds, (err, salt) => {
+    //     bcrypt.hash(req.body.password, salt, (err, hash) => {
+    //         if (err) {
+    //             throw err;
+    //         }
+    //         //Updating the user password to be the new hash, so we never store the plaintext anywhere.
+    //         req.body.password = hash;
+    //     });
+    // });
 
     //Connecting to database.
     try {
