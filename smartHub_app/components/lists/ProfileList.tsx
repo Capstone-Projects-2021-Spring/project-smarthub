@@ -83,7 +83,7 @@ class ProfileListItem extends Component<PropVariables,StateVariables>{
 }
 
 //Creates the list of profiles that are present on the home page
-export default class ProfileList extends Component<{navigation: any, userName: string}>{
+export default class ProfileList extends Component<{navigation: any}>{
 
     constructor(props : any){
         super(props);
