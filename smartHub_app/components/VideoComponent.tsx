@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {StyleSheet, View, Text} from 'react-native';
 import { DevicesList } from './lists/DevicesList';
+import { PlayVideos } from './lists/SavedRecordings';
 
 export class LiveStreamingDevices extends Component<{route: any, navigation: any}>{
     render(){
@@ -18,12 +19,12 @@ export class LiveRecordingDevices extends Component<{route: any, navigation: any
     }
 }
 
-export function SavedRecordings(){
-    return (
-        <View>
-            <Text>Need to grab all recordings from s3 and place them here</Text>
-        </View>
-    );
+export class SavedRecordings extends Component<{route: any, navigation: any}>{
+    render(){
+        return (
+            <PlayVideos routeObject={this.props.route.params} stackScreen={'playVideo'} navigation={this.props.navigation}/>
+        );
+    }
 }
 
 export function SavedImages(){

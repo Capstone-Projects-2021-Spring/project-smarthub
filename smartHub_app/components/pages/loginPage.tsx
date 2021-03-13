@@ -7,6 +7,7 @@ import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import { CheckBox } from 'native-base';
 import SignUp from "./signUpPage";
 import { NavigationActions, StackActions } from 'react-navigation';
+import axios from 'axios';
 
 const {height} = Dimensions.get("screen");
 
@@ -87,34 +88,11 @@ export default class Login extends Component<{navigation: any}>{
 
         var url = "https://b2bgr96nbc.execute-api.us-east-1.amazonaws.com/dev/user/login"
         
-        fetch(url, {
-        method: 'POST', // or 'PUT'
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(collection),
+        axios.post(url, collection).then((response) => {
+            this.signInPressHandler();
+        }, ({error, response}) => {
+            alert(response.data.message);
         })
-        .then(response => {
-            if(response.status == 400)
-            {
-                alert("Incorrect Password!");
-            }
-            else if(response.status == 500)
-            {
-                alert("Invalid Email.");
-            }
-            else if( response.status == 200)
-            {
-                this.signInPressHandler();
-            }
-
-            response.json();})
-        // .then(data => this.state.signInData = data)
-        
-        // .then(() => console.warn(this.state.signInData))
-        // .then(() => console.warn(response.status))
-        .catch((error) => {console.error('Error:', error);
-        });
     }
 
     
@@ -146,7 +124,8 @@ export default class Login extends Component<{navigation: any}>{
                                 <TouchableOpacity onPress={() => {
                                     if(this.state.username.length != 0 && this.state.password.length != 0)
                                     {
-                                        this.userSignIn()
+                                        // this.signInPressHandler();
+                                        this.userSignIn();
                                     }
                                     else{ alert("You must enter all credentials before signing in.")}
                                 }}>   
