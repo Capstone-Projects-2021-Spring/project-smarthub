@@ -17,7 +17,7 @@ interface PropVariables{
     index: any,
     parentFlatList: any,
     navigation: any,
-    stackScreen: string
+    stackScreen: string,
 }
 
 interface StateVariables{
@@ -80,7 +80,7 @@ class ListItem extends Component<PropVariables,StateVariables>{
     }
 }
 
-export class DevicesList extends Component<{navigation: any, stackScreen: string}>{
+export class DevicesList extends Component<{navigation: any, stackScreen: string, routeObject: any}>{
 
     constructor(props: any){
         super(props);

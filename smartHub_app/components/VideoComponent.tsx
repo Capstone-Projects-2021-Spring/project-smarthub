@@ -1,17 +1,21 @@
-import React from 'react';
+import React, {Component} from 'react';
 import {StyleSheet, View, Text} from 'react-native';
 import { DevicesList } from './lists/DevicesList';
 
-export function LiveStreamingDevices({ navigation } : {navigation: any}){
-    return (
-        <DevicesList stackScreen={'Live Stream'} navigation={navigation}/>
-    )
+export class LiveStreamingDevices extends Component<{route: any, navigation: any}>{
+    render(){
+        return (
+            <DevicesList routeObject={this.props.route.params} stackScreen={'Live Stream'} navigation={this.props.navigation}/>
+        )
+    }
 }
 
-export function LiveRecordingDevices({ navigation } : {navigation: any}){
-    return (
-        <DevicesList stackScreen={'Recording Devices'} navigation={navigation}/>
-    )
+export class LiveRecordingDevices extends Component<{route: any, navigation: any}>{
+    render(){
+        return (
+            <DevicesList routeObject={this.props.route.params} stackScreen={'Recording Devices'} navigation={navigation}/>
+        )
+    }
 }
 
 export function SavedRecordings(){

@@ -26,7 +26,7 @@ class SelectedProfileNavigation extends Component<{route: any, navigation: any}>
   //and it creates the drawer menu in each of the pages
   componentDidMount = () => {
     this.props.navigation.setOptions({
-        headerTitle: this.props.route.params.key,
+        headerTitle: this.props.route.params.item.profileName,
         headerRight: () => (
           <TouchableOpacity
           style={{marginRight: 10}}
@@ -46,9 +46,10 @@ class SelectedProfileNavigation extends Component<{route: any, navigation: any}>
         options={{
           drawerIcon:({color, size}) => (
             <Icon name="home" style={{fontSize: size, color: color}} />
-          ), }}
+          ),
+        }}
         name = "Profile Page" 
-        component={ProfilePage}
+        component={ () => <ProfilePage navigation={this.props.navigation} routeObject={this.props.route}/>}
       />
 
       <Drawer.Screen 
@@ -73,10 +74,10 @@ class SelectedProfileNavigation extends Component<{route: any, navigation: any}>
   }
 }
 
-
-export default function App() {
-  return (
+export default function App(){
   
+  return (  
+
   <NavigationContainer>
     <Stack.Navigator initialRouteName="Login">
       
@@ -188,6 +189,7 @@ export default function App() {
   </NavigationContainer>
     );
 }
+
 
 const styles = StyleSheet.create({
   container: {
