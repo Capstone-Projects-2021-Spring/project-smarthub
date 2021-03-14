@@ -1,0 +1,4 @@
+smarthub-server/node_modules
+smarthub-server/.env
+smarthub-login-api/node_modules
+smarthub-login-api/.env

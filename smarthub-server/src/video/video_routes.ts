@@ -4,7 +4,6 @@ import * as socketio from 'socket.io';
 import puppeteer from 'puppeteer-core';
 
 let live_browser: any;
-let recording_browser: any;
 let browserIsLive: boolean = false;
 const PORT = 4000;
 
@@ -13,6 +12,7 @@ const routes = express.Router({
 });
 
 // Could incorporate puppeteer into VideoController. Or if puppeteer has compability issues, we use commands.
+
 routes.post("/stop_stream", async (req: any, res: any) => {
 
 	console.log("stop_stream route: Stream closing...");
@@ -71,6 +71,10 @@ async function runLive () {
 		});
 	}
 }
+
+routes.post("/createS3Folder", (req : any, res : any) => {
+	createFolder(req.body.userName, req.body.profileName);  
+});
 
 module.exports = {
 	routes

@@ -6,6 +6,7 @@ import bodyParser from 'body-parser';
 import puppeteer from 'puppeteer-core';
 import { VideoController } from './controllers/VideoController';
 const { routes: videoRoutes } = require('./video/video_routes');
+const { routes: profileRoutes } = require('./profiles/profile_routes');
 const createFolder = require('./aws/amazon_s3').createFolder;
 const uploadFile = require('./aws/amazon_s3').uploadFile;
 const getKeyList = require('./aws/amazon_s3').getKeyList;
@@ -17,6 +18,7 @@ const getFile = require('./aws/amazon_s3').getFile;
 
 const OSplatform = process.platform;
 const localStoragePath = path.resolve(__dirname, "./output/output.webm");
+
 
 const app = express();
 // Express built-in middleware function static allows serving static files.
@@ -104,6 +106,8 @@ app.post('/get_key_list', async (req : any, res : any) => {
 
   return res.status(200).json({ keyList: response });
 });
+
+app.use('/profiles', profileRoutes);
 
 httpServer.listen(PORT, () => {
   console.log('Server running on http://localhost:' + PORT);

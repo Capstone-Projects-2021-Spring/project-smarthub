@@ -44,9 +44,11 @@ class VideoController {
     socket.on("candidate", (id: any, message: any) => {
       this.handleCandidate(socket, id, message);
     });
+
     socket.on("receive_recording", (data: any) => {
       this.handleReceiveRecording(data);
     });
+
     socket.on("disconnect", () => {
       this.handleDisconnect(socket);
     });
@@ -96,7 +98,6 @@ class VideoController {
     this.socketServer.to(this.broadcaster).emit("stop_recording");
 
   }
-
 }
 
 export { VideoController };
