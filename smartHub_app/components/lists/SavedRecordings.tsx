@@ -4,6 +4,7 @@ import { SafeAreaView, View, FlatList, StyleSheet, Text, Button } from 'react-na
 import { Video, AVPlaybackStatus } from 'expo-av';
 import axios from 'axios';
 import { List } from 'native-base';
+import { getAddressString } from '../../utils/utilities';
 // import * as VideoThumbnails from 'expo-video-thumbnails';
 
 const Videos = [
@@ -36,7 +37,7 @@ export class PlayVideos extends Component<{navigation: any, stackScreen: string,
         collection.profile_name = this.props.routeObject.item.profileName;
         console.log(collection.profile_name)
     
-        axios.post('http://192.168.86.202:5000/get_key_list', collection).then((response) => {
+        axios.post(getAddressString() + '/get_key_list', collection).then((response) => {
             this.setState({recordingsList: response.data.keyList});
             
             this.getFileFromProfile();
@@ -52,7 +53,7 @@ export class PlayVideos extends Component<{navigation: any, stackScreen: string,
         collection.key = this.state.recordingsList[1];
         console.log(collection.key);
     
-        axios.post('http://192.168.86.202:5000/get_file', collection).then((response) => {
+        axios.post(getAddressString() + '/get_file', collection).then((response) => {
             // this.setState({recordingsList: response.data.keyList});
             this.setState({retrievedVideo: response.data.video.Body})
             console.log(this.state.retrievedVideo);

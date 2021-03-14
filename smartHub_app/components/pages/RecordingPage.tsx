@@ -3,6 +3,7 @@ import {StyleSheet, View, Text, TouchableOpacity, Dimensions} from 'react-native
 import {WebView} from 'react-native-webview'
 import axios from 'axios'
 import Toast, {BaseToast} from 'react-native-toast-message'
+import { getAddressString } from '../../utils/utilities';
 
 export default class Recording extends Component<{route: any, navigation: any}, {responseText: String, deviceIP: String, recordingResponseText: any}>{
 
@@ -26,7 +27,7 @@ export default class Recording extends Component<{route: any, navigation: any}, 
         collection.device_name = this.props.route.params.device_name;
         collection.device_type = this.props.route.params.device_type;
 
-        await axios.post('http://192.168.86.202:5000/profiles/getProfileAddress', collection).then((response) => {
+        await axios.post(getAddressString() + '/profiles/getProfileAddress', collection).then((response) => {
             //return response.data.profiles
             this.setState({deviceIP: response.data.profile.device_address})
             console.log(this.state.deviceIP)

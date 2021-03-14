@@ -3,6 +3,7 @@ import {StyleSheet, Text, TextInput, Dimensions, Platform} from 'react-native';
 import Modal from 'react-native-modalbox'
 import Button from 'react-native-button';
 import axios from 'axios'
+import { getAddressString } from '../../utils/utilities';
 
 var screen = Dimensions.get('window');
 
@@ -93,7 +94,7 @@ export default class DeviceModal extends Component<PropVariables, StateVariables
                         // console.warn(collection);
                       
                        
-                        axios.post('http://192.168.86.202:5000/profiles/addProfile', collection).then((response) => {
+                        axios.post(getAddressString() + '/profiles/addProfile', collection).then((response) => {
                             console.log(response.status)
                             //Push the item to the list and then refresh the list
                             //which would rerender the component

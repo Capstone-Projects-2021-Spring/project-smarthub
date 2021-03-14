@@ -4,6 +4,7 @@ import Swipeout from 'react-native-swipeout';
 import {Icon} from 'native-base';
 import axios from 'axios';
 import DeviceModal from '../modals/modalForAddingDevice';
+import {getAddressString} from '../../utils/utilities';
 
 var width : number = Dimensions.get('window').width;
 var height : number = Dimensions.get('window').height;
@@ -141,8 +142,7 @@ export class DevicesList extends Component<{navigation: any, stackScreen: string
         collection.user_email = this.props.routeObject.params.userEmail;
         collection.profile_name = this.props.routeObject.params.item.profileName;
         collection.device_type = this.props.stackScreen;
-
-        await axios.post('http://192.168.86.202:5000/profiles/getProfiles', collection).then((response) => {
+        await axios.post(getAddressString() + '/profiles/getProfiles', collection).then((response) => {
             //return response.data.profiles
             this.setState({deviceList: response.data.profiles})
             console.log(response.data)
