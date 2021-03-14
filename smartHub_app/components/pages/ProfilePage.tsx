@@ -8,25 +8,25 @@ var height : number = Dimensions.get('window').height;
 //be changed in future implementations.
 export default class ProfilePage extends Component<{navigation: any, routeObject: any}>{
     render(){
-    return(
-        <View style={styles.container}>
-            <Text style={{marginTop: 50, fontSize: 25, fontWeight: 'bold', textAlign: 'center', color: '#fff'}}>SmartHub Services:</Text>
-            <View style={{paddingTop: 20, flexDirection: 'column', justifyContent: 'center'}}>
-            <TouchableOpacity
-                style={styles.button}
-                onPress={() => this.props.navigation.navigate('Live Streaming Devices', this.props.routeObject)}>
-                <Text style={{color: "#fff", textAlign: 'center', fontSize: 22}}>Live Streaming</Text>
-                <Image style={styles.LiveImageStyle} source={{uri: 'https://cdn4.iconfinder.com/data/icons/communication-multimedia-vol-2/512/live_stream_radio_broadcast-256.png'}}/>
-            </TouchableOpacity>
-            <TouchableOpacity
-                style={styles.button}
-                onPress={() => this.props.navigation.navigate('Live Recording Devices', this.props.routeObject)}>
-                <Text style={{color: "#fff", textAlign: 'center', fontSize: 22}}>Recording</Text>
-                <Image style={styles.RecordImageStyle} source={{uri: 'https://cdn3.iconfinder.com/data/icons/flat-icons-web/40/Record-512.png'}}/>
-            </TouchableOpacity> 
-            </View>   
-        </View>
-    );
+        return(
+            <View style={styles.container}>
+                <Text style={{marginTop: 50, fontSize: 25, fontWeight: 'bold', textAlign: 'center', color: '#fff'}}>SmartHub Services:</Text>
+                <View style={{paddingTop: 20, flexDirection: 'column', justifyContent: 'center'}}>
+                <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => this.props.navigation.navigate('Live Streaming Devices', this.props.routeObject)}>
+                    <Text style={{color: "#fff", textAlign: 'center', fontSize: 22}}>Live Streaming</Text>
+                    <Image style={styles.LiveImageStyle} source={{uri: 'https://cdn4.iconfinder.com/data/icons/communication-multimedia-vol-2/512/live_stream_radio_broadcast-256.png'}}/>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => this.props.navigation.navigate('Live Recording Devices', this.props.routeObject)}>
+                    <Text style={{color: "#fff", textAlign: 'center', fontSize: 22}}>Recording</Text>
+                    <Image style={styles.RecordImageStyle} source={{uri: 'https://cdn3.iconfinder.com/data/icons/flat-icons-web/40/Record-512.png'}}/>
+                </TouchableOpacity> 
+                </View>   
+            </View>
+        );
     }
 }
 

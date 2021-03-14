@@ -1,10 +1,9 @@
 import React, {Component} from 'react';
 import {StyleSheet, View, Text, TouchableOpacity, Dimensions, FlatList, Alert, Image} from 'react-native';
 import Swipeout from 'react-native-swipeout';
-import {Icon} from 'native-base'
+import {Icon} from 'native-base';
+import axios from 'axios';
 import DeviceModal from '../modals/modalForAddingDevice';
-
-var sampleList : any = []
 
 var width : number = Dimensions.get('window').width;
 var height : number = Dimensions.get('window').height;
@@ -18,10 +17,13 @@ interface PropVariables{
     parentFlatList: any,
     navigation: any,
     stackScreen: string,
+    deviceList : any,
+    routeObject: any
+
 }
 
 interface StateVariables{
-    activeRowKey : any
+    activeRowKey : any,
 }
 
 //This class is for each "individual item" in the Profile List (the ProfileList class is below this one)
@@ -29,11 +31,16 @@ class ListItem extends Component<PropVariables,StateVariables>{
     constructor(props: any){
         super(props);
         this.state= ({
-            activeRowKey: null
+            activeRowKey: null,
         });
     }
     render(){
-        console.log(this.props.stackScreen)
+        let routeObject = {
+            device_name: this.props.item.device_name,
+            userEmail: this.props.routeObject.params.userEmail,
+            profileName: this.props.routeObject.params.item.profileName,
+            device_type: this.props.stackScreen
+        }
         const swipeSettings = {
             autoClose: true,
             onClose: () => {
@@ -54,9 +61,9 @@ class ListItem extends Component<PropVariables,StateVariables>{
                             [
                                 {text: 'No', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
                                 {text: 'Yes', onPress: () => {
-                                    sampleList.splice(this.props.index, 1);
+                                    this.props.deviceList.splice(this.props.index, 1);
                                     //Refresh list
-                                    this.props.parentFlatList.refreshList(rowToDelete);
+                                    this.props.parentFlatList.refreshListDelete(rowToDelete);
                                 }},
                             ],
                             {cancelable: true}
@@ -72,31 +79,44 @@ class ListItem extends Component<PropVariables,StateVariables>{
             <Swipeout {...swipeSettings} style={{backgroundColor:"#222222"}}>
             <TouchableOpacity
             style={styles.pillButton}
-            onPress={() => this.props.navigation.navigate(this.props.stackScreen, this.props.item)}>
-            <Text style={{color: '#000', fontSize: 20}}>{this.props.item.DeviceName}</Text>
+            onPress={() => this.props.navigation.navigate(this.props.stackScreen, routeObject)}>
+            <Text style={{color: '#000', fontSize: 20}}>{this.props.item.device_name}</Text>
             </TouchableOpacity>
             </Swipeout>
         );
     }
 }
 
-export class DevicesList extends Component<{navigation: any, stackScreen: string, routeObject: any}>{
+export class DevicesList extends Component<{navigation: any, stackScreen: string, routeObject: any}, {deletedRowKey: any, insertedRowKey: any, deviceList: any}>{
 
     constructor(props: any){
         super(props);
         this.state = ({
-            deletedRowKey: null
+            deletedRowKey: null,
+            insertedRowKey: null,
+            deviceList: []
         });
         this.launchModal = this.launchModal.bind(this);
+        this.getDevices = this.getDevices.bind(this);
     }
 
-    refreshList = (deletedKey : any) => {
+    refreshListInsert = (insertedKey : any) => {
         this.setState(() => {
             return {
-                deletedRowKey: deletedKey
+                insertedRowKey: insertedKey
             }
         });
+        this.getDevices()
    }
+
+   refreshListDelete = (deletedKey : any) => {
+    this.setState(() => {
+        return {
+            deletedRowKey: deletedKey
+        }
+    });
+    this.getDevices()
+    }
 
     launchModal = () => {
         this.refs.deviceModal.showModal();
@@ -112,15 +132,33 @@ export class DevicesList extends Component<{navigation: any, stackScreen: string
                 </TouchableOpacity>  
               )
         })
+        this.getDevices()
+    }
+
+    getDevices = async() => {
+
+        let collection: any = {}
+        collection.user_email = this.props.routeObject.params.userEmail;
+        collection.profile_name = this.props.routeObject.params.item.profileName;
+        collection.device_type = this.props.stackScreen;
+
+        await axios.post('http://192.168.7.63:5000/profiles/getProfiles', collection).then((response) => {
+            //return response.data.profiles
+            this.setState({deviceList: response.data.profiles})
+            console.log(response.data)
+        }, (error) => {
+            console.log(error);
+        })
+
     }
     render(){
-        return (
+       return (
             <View style={{flex: 1, backgroundColor: "#222222", alignItems: 'center', paddingTop: 20}}>
                 <FlatList
-                    data={sampleList}
+                    data={this.state.deviceList}
                     renderItem={({item, index} : any)=>{
                         return(
-                            <ListItem item={item} index={index} parentFlatList={this} stackScreen={this.props.stackScreen} navigation={this.props.navigation}/>
+                            <ListItem item={item} index={index} parentFlatList={this} stackScreen={this.props.stackScreen} navigation={this.props.navigation} routeObject={this.props.routeObject} deviceList={this.state.deviceList} />
                         );
                     }}
                     ListEmptyComponent={() => {
@@ -133,7 +171,7 @@ export class DevicesList extends Component<{navigation: any, stackScreen: string
                         )
                     }}
                 />
-                <DeviceModal ref={'deviceModal'} stackScreen={this.props.stackScreen} routeObject={this.props.routeObject} parentFlatList={this} sampleList={sampleList} />
+                <DeviceModal ref={'deviceModal'} stackScreen={this.props.stackScreen} routeObject={this.props.routeObject} parentFlatList={this} deviceList={this.state.deviceList} />
             </View>
         );
     }

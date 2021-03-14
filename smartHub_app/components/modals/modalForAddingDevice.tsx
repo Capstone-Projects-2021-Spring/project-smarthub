@@ -2,13 +2,14 @@ import React, {Component} from 'react';
 import {StyleSheet, Text, TextInput, Dimensions, Platform} from 'react-native';
 import Modal from 'react-native-modalbox'
 import Button from 'react-native-button';
+import axios from 'axios'
 
 var screen = Dimensions.get('window');
 
 //Need to create the interfaces to define the types for props and state variables
 interface PropVariables{
     parentFlatList: any,
-    sampleList: any,
+    deviceList: any,
     routeObject: any,
     stackScreen: string
 }
@@ -34,7 +35,7 @@ export default class DeviceModal extends Component<PropVariables, StateVariables
     }
 
     render(){
-        //console.log(this.props.routeObject)
+        //console.log(this.props.routeObject.params.userEmail)
         //console.log(this.props.stackScreen)
         return(
             <Modal
@@ -75,19 +76,35 @@ export default class DeviceModal extends Component<PropVariables, StateVariables
                             return;
                         }
                         //handles duplicate device name
-                        if(this.props.sampleList.some((item : any) => item.DeviceName === this.state.DeviceName)){
+                        if(this.props.deviceList.some((item : any) => item.DeviceName === this.state.DeviceName)){
                             alert(this.state.DeviceName+ ' already exists.')
                             return;
                         }
                         const DeviceName = {
                             DeviceName: this.state.DeviceName
                         }
-                        //Push the item to the list and then refresh the list
-                        //which would rerender the component
-                        this.props.sampleList.push(DeviceName);
-                        this.props.parentFlatList.refreshList(this.state.DeviceName)
-                        //Reset the state afterwards
-                        this.setState({DeviceName : "", DeviceIP: ""});
+
+                         let collection: any = {}
+                        collection.user_email = this.props.routeObject.params.userEmail;
+                        collection.profile_name = this.props.routeObject.params.item.profileName;
+                        collection.device_address = this.state.DeviceIP;
+                        collection.device_name = this.state.DeviceName;
+                        collection.device_type = this.props.stackScreen;
+                        // console.warn(collection);
+                      
+                       
+                        axios.post('http://192.168.7.63:5000/profiles/addProfile', collection).then((response) => {
+                            console.log(response.status)
+                            //Push the item to the list and then refresh the list
+                            //which would rerender the component
+                            this.props.deviceList.push(DeviceName);
+                            this.props.parentFlatList.refreshListInsert(this.state.DeviceName)
+                            //Reset the state afterwards
+                            this.setState({DeviceName : "", DeviceIP: ""});
+                        }, (error) => {
+                            console.log(error);
+                        })
+
                         this.refs.deviceModal.close();
                     }}
                 >Save</Button>
