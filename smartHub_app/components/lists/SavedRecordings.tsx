@@ -20,47 +20,48 @@ const Videos = [
 ];
 
 
-export class PlayVideos extends Component<{navigation: any, stackScreen: string, routeObject: any}, {retrievedVideo: any, recordingsList: any}>{
+export class PlayVideos extends Component<{navigation: any, stackScreen: string, route: any}, {retrievedVideo: any, recordingsList: any}>{
 
     constructor(props: any){
         super(props);
         this.state = ({
             retrievedVideo: "",
             recordingsList : []
+            
         });
     }
 
-    getRecordingsFromProfile = () => {
-        let collection: any = {}
-        collection.user_email = this.props.routeObject.userEmail;
-        console.log(collection.user_email)
-        collection.profile_name = this.props.routeObject.item.profileName;
-        console.log(collection.profile_name)
+    // getRecordingsFromProfile = () => {
+    //     let collection: any = {}
+    //     collection.user_email = this.props.routeObject.userEmail;
+    //     console.log(collection.user_email)
+    //     collection.profile_name = this.props.routeObject.item.profileName;
+    //     console.log(collection.profile_name)
     
-        axios.post(getAddressString() + '/get_key_list', collection).then((response) => {
-            this.setState({recordingsList: response.data.keyList});
+    //     axios.post(getAddressString() + '/get_key_list', collection).then((response) => {
+    //         this.setState({recordingsList: response.data.keyList});
             
-            this.getFileFromProfile();
-            // this.trimRecordingsList();
-        }, (error) => {
-            console.log(error);
-        })
-    }
+    //         this.getFileFromProfile();
+    //         // this.trimRecordingsList();
+    //     }, (error) => {
+    //         console.log(error);
+    //     })
+    // }
 
-    getFileFromProfile = () => {
-        let collection: any = {}
-        console.log(this.state.recordingsList[1]);
-        collection.key = this.state.recordingsList[1];
-        console.log(collection.key);
+    // getFileFromProfile = () => {
+    //     let collection: any = {}
+    //     console.log(this.state.recordingsList[1]);
+    //     collection.key = this.state.recordingsList[1];
+    //     console.log(collection.key);
     
-        axios.post(getAddressString() + '/get_file', collection).then((response) => {
-            // this.setState({recordingsList: response.data.keyList});
-            this.setState({retrievedVideo: response.data.video.Body})
-            console.log(this.state.retrievedVideo);
-        }, (error) => {
-            console.log(error);
-        })
-    }
+    //     axios.post(getAddressString() + '/get_file', collection).then((response) => {
+    //         // this.setState({recordingsList: response.data.keyList});
+    //         this.setState({retrievedVideo: response.data.video.Body})
+    //         console.log(this.state.retrievedVideo);
+    //     }, (error) => {
+    //         console.log(error);
+    //     })
+    // }
 
     // trimRecordingsList = () => {
     //     for(let i = 0; i < this.state.recordingsList.length; i++)
@@ -70,12 +71,12 @@ export class PlayVideos extends Component<{navigation: any, stackScreen: string,
     //     console.log(this.state.recordingsList);
     // }
 
-    componentDidMount = () => {
-        this.getRecordingsFromProfile();
-    }
+    // componentDidMount = () => {
+    //     this.getFileFromProfile();
+    // }
     
     render(){
-        // console.log(this.props.routeObject);
+        console.log(this.props.route);
         return (
             // <List>
 
@@ -85,7 +86,7 @@ export class PlayVideos extends Component<{navigation: any, stackScreen: string,
             <View style={styles.container}>
                 
                 <Video
-                    source={{uri: "https://sh-video-storage.s3.us-east-2.amazonaws.com/dep15%40gmail.com/123_Sample_Street/vid_Sun_Mar_14_2021_00%3A48%3A12_GMT-0500_%28Eastern_Standard_Time%29?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA2LQILJ5CSW5Q4RNB%2F20210314%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20210314T083812Z&X-Amz-Expires=300&X-Amz-Signature=487a43ab3f5ddfddeb238c2a20745f244da5f92de7fba7751ceec8661a6b0971&X-Amz-SignedHeaders=host"}}
+                    source={{uri: this.props.route.params}}
                     rate={1.0}
                     volume={1.0}
                     isMuted={false}

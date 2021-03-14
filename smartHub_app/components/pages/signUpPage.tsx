@@ -82,7 +82,7 @@ export default class SignUp extends Component<{navigation: any}>{
         var url = "https://b2bgr96nbc.execute-api.us-east-1.amazonaws.com/dev/user/register"
         
         axios.post(url, collection).then((response) => {
-            this.userSignUp();
+            this.signUpPressHandler();
         }, ({error, response}) => {
             alert(response.data.message);
         })
@@ -118,16 +118,7 @@ export default class SignUp extends Component<{navigation: any}>{
                             </View> */}
                             <View style={{ alignItems: "center", marginTop: 20}}>
                                 <TouchableOpacity onPress={() => {
-                                    if(this.state.firstName.length == 0 || this.state.lastName.length == 0 || this.state.email.length == 0 || this.state.password.length == 0 || this.state.passwordConfirmation.length == 0)
-                                    {
-                                        
-                                        alert("You must enter all credentials before signing in.")
-                                    }
-                                    else if(this.state.password != this.state.passwordConfirmation)
-                                    {
-                                        alert("Passwords do not match.");
-                                    }
-                                    else{this.userSignUp();}
+                                    this.userSignUp();
                                 }}>   
                                     <LinearGradient style={{ width: 390/1.3, padding: 10, borderRadius: 20, }} colors={["#FF9900", "#000000"]}>
                                         <Text style={{color: "#FFFFFF", fontSize: 15, fontWeight: "bold", textAlign: "center"}}>Sign Up</Text>

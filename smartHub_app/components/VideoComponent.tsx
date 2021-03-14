@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {StyleSheet, View, Text} from 'react-native';
 import { DevicesList } from './lists/DevicesList';
 import { PlayVideos } from './lists/SavedRecordings';
+import { SavedRecordingsList } from './lists/SavedRecordingsList';
 
 export class LiveStreamingDevices extends Component<{route: any, navigation: any}>{
     render(){
@@ -21,8 +22,10 @@ export class LiveRecordingDevices extends Component<{route: any, navigation: any
 
 export class SavedRecordings extends Component<{routeObject: any, navigation: any}>{
     render(){
+        console.log(this.props.routeObject);
         return (
-            <PlayVideos routeObject={this.props.routeObject.params} stackScreen={'Saved Recordings'} navigation={this.props.navigation}/>
+            <SavedRecordingsList routeObject={this.props.routeObject.params} stackScreen={'Saved Recordings'} navigation={this.props.navigation}/>
+            // <PlayVideos routeObject={this.props.routeObject.params} stackScreen={'Saved Recordings'} navigation={this.props.navigation}/>
         );
     }
 }

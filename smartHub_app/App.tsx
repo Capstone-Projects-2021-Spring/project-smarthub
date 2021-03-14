@@ -11,6 +11,7 @@ import Login from './components/pages/loginPage';
 import SignUp from './components/pages/signUpPage';
 import Streaming from './components/pages/StreamingPage';
 import Recording from './components/pages/RecordingPage';
+import { PlayVideos } from './components/lists/SavedRecordings';
 
 //App.tsx handles the navigation of the application
 
@@ -183,6 +184,15 @@ export default function App(){
         }}} 
         name="Recording Devices" 
         component= {Recording} 
+      />
+
+      <Stack.Screen 
+        options={{
+          headerStyle: {
+          backgroundColor: '#FF9900'
+        }}} 
+        name="Recorded Video Screen" 
+        component= {PlayVideos} 
       />
 
     </Stack.Navigator>
