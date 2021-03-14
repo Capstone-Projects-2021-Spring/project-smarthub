@@ -51,7 +51,7 @@ app.post('/start_recording', (req : any, res : any) => {
 
   videoController.startRecording();
   console.log("start_recording route: recording starting...");
-  return res.status(200).json({ message: "start_recording route: recording starting..." });
+  return res.status(200).send("Recording Starting.");
 });
 
 app.post('/stop_recording', async (req : any, res : any) => {
@@ -76,7 +76,7 @@ app.post('/stop_recording', async (req : any, res : any) => {
 
   console.log("stop_recording_route: cleaned local storage.");
 
-  return res.status(200).json({ message: "stop_recording route: recording stopping..." });
+  return res.status(200).send("Recording Stopping.");
 });
 
 app.post('/get_file', async (req : any, res : any) => {

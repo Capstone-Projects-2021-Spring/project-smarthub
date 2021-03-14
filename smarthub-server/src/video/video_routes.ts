@@ -28,14 +28,14 @@ routes.post("/stop_stream", async (req: any, res: any) => {
 	}
 
 	console.log("stop_stream route: Stream stopped.");
-	return res.status(200).json({ message: "stop_stream route: Stream stopped."});
+	return res.status(200).send("Stream Closing.");
 });
 
 routes.post("/start_stream", (req: any, res: any) => {
 	console.log("start_stream route: Stream starting...");
 	runLive();
 	console.log("start_stream route: Stream started.");
-	return res.status(200).json({ message: "start_stream route: Stream started."});
+	return res.status(200).send("Stream Starting.");
 });
 
 //-----------------------------------------s3---------------------------------------
