@@ -22,7 +22,7 @@ function deleteProfile(userEmail: string, profileName: string, deviceAddress: st
 
 function getProfiles(userEmail: string, profileName: string, deviceType: string) {
 
-    return knex("profiles").select("device_name").where(function(this:any) {
+    return knex("profiles").select("device_name", "device_type", "device_address").where(function(this:any) {
         this.where("user_email", userEmail).andWhere("profile_name", profileName).andWhere("device_type", deviceType);
     }).then((rows: any) => {
         return rows;
