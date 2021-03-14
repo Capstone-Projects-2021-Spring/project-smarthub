@@ -14,7 +14,7 @@ function addProfile(userEmail: string, profileName: string, deviceAddress: strin
 function deleteProfile(userEmail: string, profileName: string, deviceAddress: string, deviceName: string, deviceType: string) {
 
     return knex("profiles").where(function(this:any) {
-        this.where("user_email", userEmail).andWhere("profile_name", profileName).andWhere("device_type", deviceType);
+        this.where("user_email", userEmail).andWhere("profile_name", profileName).andWhere("device_type", deviceType).andWhere("device_address", deviceAddress).andWhere("device_name", deviceName);
     }).del().then((rows: any) => {
         return rows;
     });
