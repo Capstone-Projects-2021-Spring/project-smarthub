@@ -27,7 +27,7 @@ export default class Streaming extends Component<{route: any, navigation: any}, 
         await axios.post(getAddressString() + '/profiles/getProfileAddress', collection).then((response) => {
             //return response.data.profiles
             this.setState({deviceIP: response.data.profile.device_address})
-            console.log(this.state.deviceIP)
+            //console.log(this.state.deviceIP)
             console.log(response.status)
         }, (error) => {
             console.log(error);
@@ -35,9 +35,9 @@ export default class Streaming extends Component<{route: any, navigation: any}, 
     }
 
     beginStream = () => {
-        console.log(this.state.deviceIP);
         var url = 'http://' + this.state.deviceIP + ':4000/video/start_stream';
-        if(this.state.deviceIP !== '100.19.94.49'){
+        console.log(this.state.deviceIP);
+        if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
             alert(this.props.route.params.device_name + ' not compatible for live streaming.')
             return;
         }
@@ -55,7 +55,7 @@ export default class Streaming extends Component<{route: any, navigation: any}, 
                         Toast.show({
                             type: 'success',
                             text1: 'The Stream Is Live!',
-                            text2: 'Press the play button to begin.',
+                            text2: 'Enjoy.',
                             visibilityTime: 2000
                         })
                     }
@@ -76,7 +76,7 @@ export default class Streaming extends Component<{route: any, navigation: any}, 
     
     stopStream = () => {
         var url = 'http://' + this.state.deviceIP + ':4000/video/stop_stream';
-        if(this.state.deviceIP !== '100.19.94.49'){
+        if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
             alert(this.props.route.params.device_name + ' not compatible for live streaming.')
             return;
         }
@@ -163,7 +163,7 @@ export default class Streaming extends Component<{route: any, navigation: any}, 
                     flex: 1,
                 }}
                 originWhitelist={['*']}
-                source={{html: '<iframe style="box-sizing: border-box; width: 100%; height: 100%; border: 15px solid #FF9900; background-color: #222222"; src="http://100.19.94.49:4000/watch.html" frameborder="0" allow="autoplay encrypted-media" allowfullscreen></iframe>'}} 
+                source={{html: '<iframe style="box-sizing: border-box; width: 100%; height: 100%; border: 15px solid #FF9900; background-color: #222222"; src="http://petepicam1234.zapto.org:4000/watch.html" frameborder="0" allow="autoplay encrypted-media" allowfullscreen></iframe>'}} 
                 mediaPlaybackRequiresUserAction={false}
                 />
             <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', padding: 50, paddingBottom: 80}}>

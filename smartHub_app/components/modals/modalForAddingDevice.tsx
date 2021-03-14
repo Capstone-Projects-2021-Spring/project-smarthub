@@ -59,7 +59,7 @@ export default class DeviceModal extends Component<PropVariables, StateVariables
                 <TextInput
                 style={styles.textInputStyling}
                 onChangeText={(text) => this.setState({DeviceIP : text})}
-                placeholder="Device IP Address"
+                placeholder="Device Domain Name"
                 value={this.state.DeviceIP}
                 />
                 <Button
@@ -73,7 +73,7 @@ export default class DeviceModal extends Component<PropVariables, StateVariables
                         }
                         //handles empty ip address
                         if(this.state.DeviceIP.length === 0){
-                            alert("You must enter a Device IP Address.");
+                            alert("You must enter a Device Domain Name.");
                             return;
                         }
                         //handles duplicate device name

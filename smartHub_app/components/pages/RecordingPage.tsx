@@ -40,8 +40,8 @@ export default class Recording extends Component<{route: any, navigation: any}, 
     beginStream = () => {
         console.log(this.state.deviceIP);
         var url = 'http://' + this.state.deviceIP + ':4000/video/start_stream';
-        console.log(url);
-        if(this.state.deviceIP !== '100.19.94.49'){
+        //console.log(url);
+        if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
             alert(this.props.route.params.device_name + ' not compatible for live streaming.')
             return;
         }
@@ -80,7 +80,7 @@ export default class Recording extends Component<{route: any, navigation: any}, 
     
     stopStream = () => {
         var url = 'http://' + this.state.deviceIP + ':4000/video/stop_stream';
-        if(this.state.deviceIP !== '100.19.94.49'){
+        if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
             alert(this.props.route.params.device_name + ' not compatible for live streaming.')
             return;
         }
@@ -109,7 +109,7 @@ export default class Recording extends Component<{route: any, navigation: any}, 
     startRecord = () => {
 
         var url = 'http://' + this.state.deviceIP + ':4000/start_recording';
-        if(this.state.deviceIP !== '100.19.94.49'){
+        if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
             alert(this.props.route.params.device_name + ' not compatible for live streaming.')
             return;
         }
@@ -140,7 +140,7 @@ export default class Recording extends Component<{route: any, navigation: any}, 
     stopRecord = () => {
 
         var url = 'http://' + this.state.deviceIP + ':4000/stop_recording';
-        if(this.state.deviceIP !== '100.19.94.49'){
+        if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
             alert(this.props.route.params.device_name + ' not compatible for live streaming.')
             return;
         }
