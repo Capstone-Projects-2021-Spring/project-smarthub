@@ -2,6 +2,7 @@ import express from 'express';
 import {spawn} from 'child_process';
 import * as socketio from 'socket.io';
 import puppeteer from 'puppeteer-core';
+const createFile = require('../aws/amazon_s3').createFile;
 
 let live_browser: any;
 let browserIsLive: boolean = false;
@@ -45,7 +46,12 @@ routes.post("/start_stream", (req: any, res: any) => {
 // 	createFolder(req.body.userName, req.body.profileName);
 // })
 
-//--------------------------------------------------------------------------------
+//Below will create two folders a users folder (userEmail), sub folder(s) (profiles) and file
+//you will not overwrite the folder if you call it again
+routes.post("/createS3File", (req : any, res : any) => {
+	createFile(req.body.userEmail, req.body.profileName, req.body.fileName);  
+})
+
 
 async function runLive () {
 	// For now some safety to avoid multiple browser processes open.
