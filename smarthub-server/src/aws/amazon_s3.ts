@@ -47,6 +47,8 @@ module.exports.uploadFile = async function (accountName : String, profileName : 
 
 module.exports.getFile = async function (key: String) {
 
+  key = key.replace(/\s/g, "_");
+
   const params = {
     Bucket: 'sh-video-storage',
     Key: key,
@@ -59,9 +61,11 @@ module.exports.getFile = async function (key: String) {
 
 module.exports.getKeyList = async function (accountName : String, profileName : String) {
 
+  const key: string = (accountName + "/" + profileName + "/").replace(/\s/g, "_");
+
   const params = {
     Bucket: 'sh-video-storage',
-    Prefix: accountName + "/" + profileName + "/",
+    Prefix: key,
     ContinuationToken: null
   };
 

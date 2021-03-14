@@ -72,10 +72,6 @@ async function runLive () {
 	}
 }
 
-routes.post("/createS3Folder", (req : any, res : any) => {
-	createFolder(req.body.userName, req.body.profileName);  
-});
-
 module.exports = {
 	routes
 };
