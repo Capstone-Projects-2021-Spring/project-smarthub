@@ -1,5 +1,6 @@
+import fs from 'fs';
 var AWS = require('aws-sdk');
-var config = require('./config.json')
+var config = require('./config.json');
 
 //credential validation
 try{
@@ -7,7 +8,7 @@ try{
     AWS.config.update({
         accessKeyId: config.accessKeyId,
         secretAccessKey: config.secretAccessKey,
-        region: 'us-east-1' 
+        region: 'us-east-1'
     });
 }catch(e){
     console.log('Error: ' + e);
@@ -20,8 +21,69 @@ const s3 = new AWS.S3();
 module.exports.createFolder = async function (accountName : String, profileName : String){
     const response = await s3.putObject({
         Bucket: 'sh-video-storage',
-        Key: accountName + "/" + profileName + "/"
+        Key: (accountName + "/" + profileName + "/").replace(/\s/g, "_"),
     }).promise();
     console.log("Folder creation was successful");
     return response;
+};
+
+module.exports.uploadFile = async function (accountName : String, profileName : String, filePath : any) {
+
+  const fileContent = fs.readFileSync(filePath);
+
+  const params = {
+    Bucket: 'sh-video-storage',
+    Key: (accountName + "/" + profileName + "/" + "vid_" + new Date()).replace(/\s/g, "_"),
+    Body: fileContent,
+    ContentType: "video/webm"
+  };
+
+  const response = await s3.upload(params).promise();
+
+  console.log("File Upload Complete.");
+
+  return response;
+};
+
+module.exports.getFile = async function (key: String) {
+
+  const params = {
+    Bucket: 'sh-video-storage',
+    Key: key,
+  };
+
+  const response = await s3.getObject(params).promise();
+
+  return response;
+}
+
+module.exports.getKeyList = async function (accountName : String, profileName : String) {
+
+  const params = {
+    Bucket: 'sh-video-storage',
+    Prefix: accountName + "/" + profileName + "/",
+    ContinuationToken: null
+  };
+
+  var allKeys: any = [];
+
+  async function listAllKeys() {
+
+    const response = await s3.listObjectsV2(params).promise();
+
+    var contents = response.Contents;
+
+    for(var i = 1; i < contents.length; i++) {
+      allKeys.push(contents[i].Key);
+    }
+
+    if (response.NextContinuationToken) {
+      params.ContinuationToken = response.NextContinuationToken;
+      await listAllKeys(); // RECURSIVE CALL
+    }
+  }
+
+  await listAllKeys();
+
+  return allKeys;
 };
