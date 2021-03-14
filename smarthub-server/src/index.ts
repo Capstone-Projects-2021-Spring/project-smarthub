@@ -54,7 +54,7 @@ app.post('/start_recording', (req : any, res : any) => {
   return res.status(200).json({ message: "start_recording route: recording starting..." });
 });
 
-app.post('/stop_recording', (req : any, res : any) => {
+app.post('/stop_recording', async (req : any, res : any) => {
 
   const accountName = req.body.accountName;
   const profileName = req.body.profileName;
@@ -63,9 +63,9 @@ app.post('/stop_recording', (req : any, res : any) => {
 
   console.log("stop_recording route: Starting upload to " + localStoragePath);
 
-  uploadFile(accountName, profileName, localStoragePath);
+  await uploadFile(accountName, profileName, localStoragePath);
 
-    console.log("stop_recording route: recording stopping...");
+  console.log("stop_recording route: recording stopping...");
 
   if (OSplatform === 'win32') {
     exec('del ' + localStoragePath);
