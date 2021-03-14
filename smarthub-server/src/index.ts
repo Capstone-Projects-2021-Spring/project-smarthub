@@ -56,10 +56,14 @@ app.post('/start_recording', (req : any, res : any) => {
 
 app.post('/stop_recording', async (req : any, res : any) => {
 
-  const accountName = req.body.accountName;
-  const profileName = req.body.profileName;
+  const accountName = req.body.user_email;
+  const profileName = req.body.profile_name;
 
   videoController.stopRecording();
+
+  console.log("stop_recording route: Creating folder...");
+
+  await createFolder(accountName, profileName);
 
   console.log("stop_recording route: Starting upload to " + localStoragePath);
 

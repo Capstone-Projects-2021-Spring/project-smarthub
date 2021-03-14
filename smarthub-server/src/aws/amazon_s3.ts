@@ -21,7 +21,7 @@ const s3 = new AWS.S3();
 module.exports.createFolder = async function (accountName : String, profileName : String){
     const response = await s3.putObject({
         Bucket: 'sh-video-storage',
-        Key: accountName + "/" + profileName + "/"
+        Key: (accountName + "/" + profileName + "/").replace(/\s/g, "_"),
     }).promise();
     console.log("Folder creation was successful");
     return response;
