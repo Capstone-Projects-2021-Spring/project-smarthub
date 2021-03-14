@@ -8,14 +8,14 @@ try{
     AWS.config.update({
         accessKeyId: config.accessKeyId,
         secretAccessKey: config.secretAccessKey,
-        region: 'us-east-1'
+        region: 'us-east-2'
     });
 }catch(e){
     console.log('Error: ' + e);
 }
 
 //s3 object to interact with physical s3 on aws
-const s3 = new AWS.S3();
+const s3 = new AWS.S3({signatureVersion: 'v4'});
 
 //accountName is a folder and profileName is a subFolder in accountName
 module.exports.createFolder = async function (accountName : String, profileName : String){
@@ -49,12 +49,15 @@ module.exports.getFile = async function (key: String) {
 
   key = key.replace(/\s/g, "_");
 
+  const signedUrlExpireSeconds: any = 60 * 5;
+
   const params = {
     Bucket: 'sh-video-storage',
     Key: key,
+    Expires: signedUrlExpireSeconds
   };
 
-  const response = await s3.getObject(params).promise();
+  const response = await s3.getSignedUrl('getObject', params);
 
   return response;
 }
