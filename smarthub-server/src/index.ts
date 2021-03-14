@@ -79,20 +79,24 @@ app.post('/stop_recording', async (req : any, res : any) => {
   return res.status(200).json({ message: "stop_recording route: recording stopping..." });
 });
 
-app.post('get_file', (req : any, res : any) => {
+app.post('/get_file', async (req : any, res : any) => {
 
   const key = req.body.key;
 
-  const response = getFile(key);
+  console.log("Get File Called. key: " + key);
+
+  const response = await getFile(key);
   return res.status(200).json({ video: response });
 });
 
-app.post('get_key_list', (req : any, res : any) => {
+app.post('/get_key_list', async (req : any, res : any) => {
 
   const accountName = req.body.accountName;
   const profileName = req.body.profileName;
 
-  const response = getKeyList(accountName, profileName);
+  console.log("Get Key List Called. accountName: " + accountName + " profileName: " + profileName);
+
+  const response = await getKeyList(accountName, profileName);
 
   return res.status(200).json({ keyList: response });
 });
