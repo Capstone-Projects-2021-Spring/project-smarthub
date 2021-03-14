@@ -29,6 +29,23 @@ routes.post("/addProfile", async (req, res) => {
 
 });
 
+routes.post("/deleteProfile", async (req, res) => {
+
+    Profiles.deleteProfile(req.body.user_email, req.body.profile_name, req.body.device_address, req.body.device_name, req.body.device_type).then((profile: any) => {
+        //If the insertion was a success, respond with the profile data that was inserted.
+        if(profile) {
+            return res.status(200).json({message: "Profile deleted."});
+        }
+        else {
+            return res.status(500).json({message: "Profile does not exist(?). Unable to delete profile."});
+        }
+    }).catch((err: any) => {
+        console.log(err);
+        return res.status(500).json({message: err});
+    });
+
+});
+
 routes.post("/getProfiles", async (req, res) => {
 	Profiles.getProfiles(req.body.user_email, req.body.profile_name, req.body.device_type).then((profiles:any) => {
         if(profiles) {
@@ -44,7 +61,7 @@ routes.post("/getProfiles", async (req, res) => {
 });
 
 routes.post("/getProfileAddress", async (req, res) => {
-	Profiles.getProfileAddress(req.body.user_email, req.body.profile_name, req.body.device_type).then((profile:any) => {
+	Profiles.getProfileAddress(req.body.user_email, req.body.profile_name, req.body.device_name, req.body.device_type).then((profile:any) => {
         if(profile) {
             res.status(200).json({profile});
         }
