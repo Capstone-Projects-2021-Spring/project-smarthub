@@ -61,12 +61,32 @@ class ListItem extends Component<PropVariables,StateVariables>{
                             'Are you sure you want to delete this profile?',
                             [
                                 {text: 'No', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-                                {text: 'Yes', onPress: () => {
-                                    this.props.deviceList.splice(this.props.index, 1);
-                                    //Refresh list
-                                    this.props.parentFlatList.refreshListDelete(rowToDelete);
-                                }},
-                            ],
+                                {text: 'Yes', onPress:  () => {
+                                    // this.props.deviceList.splice(this.props.index, 1);
+                                     //Refresh list
+                                     
+                                     let collection: any = {}
+                                     collection.user_email = this.props.routeObject.params.userEmail;
+                                     collection.profile_name = this.props.routeObject.params.item.profileName;
+                                     collection.device_address = this.props.item.device_address;
+                                     collection.device_name = this.props.item.device_name;
+                                     collection.device_type = this.props.item.device_type;
+                                     // console.warn(collection);
+                                     console.log(collection)
+                                     
+                                    axios.post(getAddressString() + '/profiles/deleteProfile', collection).then((response) => {
+                                         console.log(response.status)
+                                         //splice the item to the list and then refresh the list
+                                         //which would rerender the component
+                                         this.props.deviceList.splice(this.props.index, 1);
+                                         this.props.parentFlatList.refreshListDelete(rowToDelete);
+                                     }, ({error, response}) => {
+                                         console.log(response.data.message);
+                                     })
+                                    
+                                    
+                                 }},
+                             ],
                             {cancelable: true}
                         )
                     },
