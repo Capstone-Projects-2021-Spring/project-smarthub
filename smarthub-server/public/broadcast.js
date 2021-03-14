@@ -9,6 +9,11 @@ const videoElement = document.getElementById("videoSource");
 
 let mediaRecorder;
 
+//creating canvas width and height
+let width = 320;
+let height = 0;
+
+
 // Configuration for RTC peer connections. STUN and TURN servers.
 // STUN for identifying public ip address.
 // TURN for NAT traversal (getting pass firewalls).
