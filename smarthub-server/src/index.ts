@@ -95,8 +95,8 @@ app.post('/get_file', async (req : any, res : any) => {
 
 app.post('/get_key_list', async (req : any, res : any) => {
 
-  const accountName = req.body.accountName;
-  const profileName = req.body.profileName;
+  const accountName = req.body.user_email;
+  const profileName = req.body.profile_name;
 
   console.log("Get Key List Called. accountName: " + accountName + " profileName: " + profileName);
 
