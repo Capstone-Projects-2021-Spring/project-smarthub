@@ -45,7 +45,7 @@ module.exports.uploadFile = async function (accountName : String, profileName : 
   return response;
 };
 
-module.exports.getFile = async function (key: String) {
+async function getFile (key: String) {
 
   key = key.replace(/\s/g, "_");
 
@@ -92,5 +92,13 @@ module.exports.getKeyList = async function (accountName : String, profileName : 
 
   await listAllKeys();
 
-  return allKeys;
+  var keyUrlPairs: any = {};
+
+  for (var i = 0; i < allKeys.length; i++){
+
+     keyUrlPairs[allKeys[i]] = await getFile(allKeys[i]);
+
+  }
+
+  return keyUrlPairs;
 };
