@@ -18,7 +18,7 @@ try{
 const s3 = new AWS.S3({signatureVersion: 'v4'});
 
 //userEmail is a folder and profileName is a subFolder in userEmail, the last param is the file
-module.exports.createFile = async function (userEmail : String, profileName : String, fileName: String){
+module.exports.createFolder = async function (accountName : String, profileName: String){
     const response = await s3.putObject({
         Bucket: 'sh-video-storage',
         Key: (accountName + "/" + profileName + "/").replace(/\s/g, "_"),
