@@ -49,7 +49,7 @@ async function getFile (key: String) {
 
   key = key.replace(/\s/g, "_");
 
-  const signedUrlExpireSeconds: any = 60 * 5;
+  const signedUrlExpireSeconds: any = 60 * 43200;
 
   const params = {
     Bucket: 'sh-video-storage',
