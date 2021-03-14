@@ -2,24 +2,10 @@
 //Essential modules.
 const express = require('express');
 const bcrypt = require('bcryptjs');
-const pg = require('pg');
 const validateRegistration = require('../validation/validateRegistration');
 const validateLogin = require('../validation/validateLogin');
-const connections = require('../queries/connect');
+const User = require('../db/users');
 
-//Setting up environment variables.
-require("dotenv").config();
-const envVars = process.env;
-const { USER, HOST, DATABASE, PASSWORD, PORT} = envVars;
-
-//Client configuration stuff.
-const pgClient = new pg.Client({
-    user: envVars.USER,
-    host: envVars.HOST,
-    database: envVars.DATABASE,
-    password: envVars.PASSWORD,
-    port: envVars.PORT,
-});
 
 const routes = express.Router({
     mergeParams: true
@@ -37,36 +23,33 @@ routes.post('/login', async (req, res) => {
         return res.status(500).json(validatedData.errors);
     }
 
-    //Connecting to database.
-    try {
-        await pgClient.connect();   
-    } catch (error) {
-        console.log("ERRORs: " + error);
-    }
-
     //Check if email exists
-    var query = await pgClient.query(await connections.getEmail(req.body.email));
-    if(query.rowCount == 0) {
-        return res.status(500).json({message: "A user with this email does not exist."});
-    }
+    User.getEmail(req.body.email).then((user) => {
+        //If the insertion was a success, respond with the profile data that was inserted.
+        if(user == undefined) {
+            res.status(500).json({message: "A user with that email address does not exist."});
+        }
+        else {
+            //Comparing the password in the database with the password entered.
+            User.getPassword(req.body.email).then(password => {
+                bcrypt.compare(req.body.password, password, function(err, result) {
+                    if(result){  
+                        return res.status(200).json({message: "Login Successful!"});
+                    }
+                    else{
+                        return res.status(500).json({message: "Incorrect password!"});
+                    }
+                });
+            }).catch(err => {
+                console.log("Error: ", err)
+                res.status(500).json({message: err});
+            });
+        }
+    }).catch((err) => {
+        console.log(err);
+        return res.status(500).json({message: err});
+    });
 
-    //Comparing the password in the database with the password entered.
-    var test2 = await pgClient.query(await connections.getPassword(req.body.email));
-    if(test2.rows[0].user_password != req.body.password) {
-        return res.status(500).json({message: "Incorrect password!"});
-    }
-    else {
-        return res.status(200).json({message: "Login Successful!"});
-    }
-    // bcrypt.compare(req.body.password, test2.rows[0].user_password, function(err, result) {
-    //     if(result){
-    //         return res.status(200).json({message: "Login Successful!"});
-    //     }
-    //     else{
-    //         return res.status(500).json({message: "Incorrect password!"});
-    //     }
-    // });w
-    
 });
 
 routes.post('/register', async (req, res) => {
@@ -77,42 +60,36 @@ routes.post('/register', async (req, res) => {
         return res.status(500).json(validatedData.errors);
     }
 
-    // //For some reason this password hashing doesnt work below the database connection.
-    // var saltRounds = 10;
-    // //This is kind of confusing but the function accepting (err, salt) is a callback that only gets fired after the salt has been generated. https://www.npmjs.com/package/bcrypt
-    // bcrypt.genSalt(saltRounds, (err, salt) => {
-    //     bcrypt.hash(req.body.password, salt, (err, hash) => {
-    //         if (err) {
-    //             throw err;
-    //         }
-    //         //Updating the user password to be the new hash, so we never store the plaintext anywhere.
-    //         req.body.password = hash;
-    //     });
-    // });
-
-    //Connecting to database.
-    try {
-        await pgClient.connect();   
-    } catch (error) {
-        console.log("ERRORs: " + error);
-    }
-
-    //If the email already exists in the database, return an error, otherwise add the user to the database.
-    var test1 = await pgClient.query(await connections.getEmail(req.body.email));
-    if(test1.rowCount != 0) {
-        return res.status(500).json({message: "A user with this email aready exists."});
-    }
-    else {   
-        try {
-            var data = await pgClient.query(await connections.addUserQuery(req.body.first_name, req.body.last_name, req.body.email, req.body.password));
+    //Check if email exists
+    User.getEmail(req.body.email).then((user) => {
+        //If the insertion was a success, respond with the profile data that was inserted.
+        if(user != undefined) {
+            console.log("THIS SHOsULD BE RUNNING");
+            res.status(500).json({message: "A user with that email address already exists."});
         }
-        catch(err) {
-            console.log("ERROR: " + err);
+        else {
+            var saltRounds = 10;
+            bcrypt.genSalt(saltRounds, (err, salt) => {
+                bcrypt.hash(req.body.password, salt, (err, hash) => {
+                    if (err) {
+                        throw err;
+                    }
+                    User.register(req.body.first_name, req.body.last_name, req.body.email, hash).then((user) => {
+                        //If the insertion was a success, respond with the profile data that was inserted.
+                        return res.status(200).json(user);
+                    }).catch((err) => {
+                        console.log(err);
+                        return res.status(500).json({message: err});
+                    });
+                
+                });
+            });
         }
-        
-    }
+    }).catch((err) => {
+        console.log(err);
+        return res.status(500).json({message: err});
+    });
 
-    validatedData.notValid ? res.status(500).json(validatedData.errors) : res.status(200).json({status: "Success!"});
 });
 
 module.exports = {

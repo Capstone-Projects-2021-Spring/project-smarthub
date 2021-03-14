@@ -175,7 +175,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/smarthub-login-api/dev/1615612849621-2021-03-13T05:20:49.621Z/smarthub-login-api.zip"
+                "S3Key": "serverless/smarthub-login-api/dev/1615686034691-2021-03-14T01:40:34.691Z/smarthub-login-api.zip"
               },
               "Handler": "src/handler.users",
               "Runtime": "nodejs12.x",
@@ -193,14 +193,14 @@
               "LoginDashapiLogGroup"
             ]
           },
-          "LoginDashapiLambdaVersion8DAcy3E4hnzFvt9OeBPT4YlhIOQcixnlOuNNuzDcNVk": {
+          "LoginDashapiLambdaVersion0kAcfxHKryV7oXstxraFYOTiJETeUWDWU3Iit9GUsLk": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "LoginDashapiLambdaFunction"
               },
-              "CodeSha256": "Aj5KDGt3KRa6nVpKMJmzhaHvL43hM/tGPGYMPx550k4="
+              "CodeSha256": "GzU0bJbwhxuOoT0MMJ+JNWAFqU1nVbAm3sJvQf19yIw="
             }
           },
           "ApiGatewayRestApi": {
@@ -412,7 +412,7 @@
               "MethodResponses": []
             }
           },
-          "ApiGatewayDeployment1615612845482": {
+          "ApiGatewayDeployment1615686026939": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -474,7 +474,7 @@
           "LoginDashapiLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "LoginDashapiLambdaVersion8DAcy3E4hnzFvt9OeBPT4YlhIOQcixnlOuNNuzDcNVk"
+              "Ref": "LoginDashapiLambdaVersion0kAcfxHKryV7oXstxraFYOTiJETeUWDWU3Iit9GUsLk"
             }
           },
           "ServiceEndpoint": {
@@ -650,7 +650,7 @@
         "timeout": 6,
         "runtime": "nodejs12.x",
         "vpc": {},
-        "versionLogicalId": "LoginDashapiLambdaVersion8DAcy3E4hnzFvt9OeBPT4YlhIOQcixnlOuNNuzDcNVk"
+        "versionLogicalId": "LoginDashapiLambdaVersion0kAcfxHKryV7oXstxraFYOTiJETeUWDWU3Iit9GUsLk"
       }
     },
     "configValidationMode": "warn",
@@ -672,7 +672,7 @@
     "artifact": "C:\\Users\\luked\\Documents\\Spring 2021\\Projects in Computer Science\\project-smarthub\\smarthub-login-api\\.serverless\\smarthub-login-api.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/smarthub-login-api/dev/1615612849621-2021-03-13T05:20:49.621Z",
+    "artifactDirectoryName": "serverless/smarthub-login-api/dev/1615686034691-2021-03-14T01:40:34.691Z",
     "artifact": "smarthub-login-api.zip"
   }
 }
