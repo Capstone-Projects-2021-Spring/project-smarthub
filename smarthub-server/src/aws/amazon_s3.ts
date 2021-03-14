@@ -92,11 +92,15 @@ module.exports.getKeyList = async function (accountName : String, profileName : 
 
   await listAllKeys();
 
-  var keyUrlPairs: any = {};
+  var keyUrlPairs: any = [];
 
   for (var i = 0; i < allKeys.length; i++){
 
-     keyUrlPairs[allKeys[i]] = await getFile(allKeys[i]);
+     var newPair: any = {};
+     newPair["key"] = allKeys[i];
+     newPair["url"] = await getFile(allKeys[i]);
+
+     keyUrlPairs[i] = newPair;
 
   }
 
