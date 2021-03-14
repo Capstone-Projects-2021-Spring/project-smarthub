@@ -9,6 +9,63 @@ const videoElement = document.getElementById("videoSource");
 
 let mediaRecorder;
 
+let width = 320;
+let height = 0;
+let streaming = false;
+
+
+const canvas = document.getElementById("canvas");
+const photos = document.getElementById("photos");
+//get media stream
+navigator.mediaDevices.getUserMedia({videoElement:true, audio: false})
+.then(function(stream){
+  //link to the video source
+  videoSource.srcObject = stream;
+  //play video
+  videoElement.play();
+})
+.catch(function(err){
+  console.log('Error: $(err)');
+});
+//play when ready
+videoElement.addEventListener('canplay', function(e){
+  if(!streaming){
+height = videoElement.videoElementHeight / (videoElement.videoElementWidth / width);
+videoElement.setAttribute('width' , width);
+videoElement.setAttribute('height' , height);
+canvas.setAttribute('width' , width);
+canvas.setAttribute('height' , height);
+streaming = true;
+
+  }
+}, false);
+
+
+//take picture from canvas
+function takepicture() {
+  //create canvas
+  const context = canvas.getContext('2d');
+  const videoIsPlaying = videoElement.onplay;
+  if(videoIsPlaying && width && height){
+    //set canvas props
+    canvas.width = width;
+    canvas.height = height;
+    //draw image of the video on the canvas
+    context.drawImage(videoElement, 0, 0,  width, height);
+    //create image from canvas
+    const imgURL = canvas.toDataURL('image/png');
+    //create img element
+    const img = document.createElement('img');
+    //set image source
+   img.setAttribute('src', imgURL);
+   //add img to photos
+    photos.appendChild(img);
+  } else{
+    clearPhoto();
+  }
+}
+
+
 // Configuration for RTC peer connections. STUN and TURN servers.
 // STUN for identifying public ip address.
 // TURN for NAT traversal (getting pass firewalls).
@@ -140,6 +197,15 @@ function handleDataAvailable(event) {
 
 function stopRecording() {
   mediaRecorder.stop();
+}
+
+function clearPhoto() {
+  var context = canvas.getContext('2d');
+  context.fillStyle = "#AAA";
+  context.fillRect(0, 0, canvas.width, canvas.height);
+
+  var data = canvas.toDataURL('image/png');
+  photo.setAttribute('src', data);
 }
 
 getStream();
