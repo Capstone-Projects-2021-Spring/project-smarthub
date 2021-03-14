@@ -142,7 +142,7 @@ export class DevicesList extends Component<{navigation: any, stackScreen: string
         collection.profile_name = this.props.routeObject.params.item.profileName;
         collection.device_type = this.props.stackScreen;
 
-        await axios.post('http://192.168.7.63:5000/profiles/getProfiles', collection).then((response) => {
+        await axios.post('http://192.168.86.202:5000/profiles/getProfiles', collection).then((response) => {
             //return response.data.profiles
             this.setState({deviceList: response.data.profiles})
             console.log(response.data)
@@ -152,6 +152,7 @@ export class DevicesList extends Component<{navigation: any, stackScreen: string
 
     }
     render(){
+        console.log(this.props.routeObject)
        return (
             <View style={{flex: 1, backgroundColor: "#222222", alignItems: 'center', paddingTop: 20}}>
                 <FlatList

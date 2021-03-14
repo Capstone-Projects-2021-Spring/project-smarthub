@@ -4,40 +4,66 @@ import {WebView} from 'react-native-webview'
 import axios from 'axios'
 import Toast, {BaseToast} from 'react-native-toast-message'
 
-export default class Recording extends Component<{route: any, navigation: any}, {responseText: String}>{
+export default class Recording extends Component<{route: any, navigation: any}, {responseText: String, deviceIP: String, recordingResponseText: any}>{
 
     constructor(props: any){
         super(props);
         this.state= ({
-            responseText: ""
+            responseText: "",
+            recordingResponseText: "",
+            deviceIP: ""
         })
         this.beginStream = this.beginStream.bind(this);
-        this.stopStream = this.stopStream.bind(this);        
+        this.stopStream = this.stopStream.bind(this);    
+        this.startRecord = this.startRecord.bind(this);
+        this.stopRecord = this.stopRecord.bind(this);        
     }
 
-    getData = () => {
-      //I need the ip and device name from the backend  
+    getDeviceIP = async () => {
+        let collection: any = {}
+        collection.user_email = this.props.route.params.userEmail;
+        collection.profile_name = this.props.route.params.profileName;
+        collection.device_name = this.props.route.params.device_name;
+        collection.device_type = this.props.route.params.device_type;
+
+        await axios.post('http://192.168.86.202:5000/profiles/getProfileAddress', collection).then((response) => {
+            //return response.data.profiles
+            this.setState({deviceIP: response.data.profile.device_address})
+            console.log(this.state.deviceIP)
+            console.log(response.status)
+        }, (error) => {
+            console.log(error);
+        })
     }
 
     beginStream = () => {
+        console.log(this.state.deviceIP);
+        var url = 'http://' + this.state.deviceIP + ':4000/video/start_stream';
+        console.log(url);
+        if(this.state.deviceIP !== '100.19.94.49'){
+            alert(this.props.route.params.device_name + ' not compatible for live streaming.')
+            return;
+        }
         if(this.state.responseText!== 'Stream Starting.'){
-            axios.get('http://100.19.94.49:4000/video/startStream').then((response) => {
-                    Toast.show({
-                        type: 'success',
-                        text1: 'Processing Request Please Wait...',
-                        visibilityTime: 5000
-                    })
-                    setTimeout(() => {
-                            this.setState({responseText: response.data})
-                            Toast.show({
-                                type: 'success',
-                                text1: 'The Stream Is Live!',
-                                text2: 'Press the play button to begin.',
-                                visibilityTime: 2000
-                            })
-                        }
-                    ,
-                    5000);
+            console.log(this.state.deviceIP)
+            axios.post(url).then((response) => {
+                console.log(response.status)
+                Toast.show({
+                    type: 'success',
+                    text1: 'Processing Request Please Wait...',
+                    visibilityTime: 5000
+                })
+                setTimeout(() => {
+                        this.setState({responseText: response.data})
+                        Toast.show({
+                            type: 'success',
+                            text1: 'The Stream Is Live!',
+                            text2: 'Press the play button to begin.',
+                            visibilityTime: 2000
+                        })
+                    }
+                ,
+                5000);
             }, (error) => {
              console.log(error);
          })
@@ -52,8 +78,13 @@ export default class Recording extends Component<{route: any, navigation: any}, 
     }
     
     stopStream = () => {
-        if(this.state.responseText !== 'Stream Closing'){
-            axios.get('http://100.19.94.49:4000/video/stopStream').then((response) => {
+        var url = 'http://' + this.state.deviceIP + ':4000/video/stop_stream';
+        if(this.state.deviceIP !== '100.19.94.49'){
+            alert(this.props.route.params.device_name + ' not compatible for live streaming.')
+            return;
+        }
+        if(this.state.responseText !== 'Stream Closing.'){
+            axios.post(url).then((response) => {
                 this.setState({responseText: response.data})
                 Toast.show({
                     type: 'error',
@@ -61,6 +92,7 @@ export default class Recording extends Component<{route: any, navigation: any}, 
                     text2: 'The stream is no longer live.',
                     visibilityTime: 2000
                 });
+                console.log(response.data)
             }, (error) => {
                 console.log(error);
             })
@@ -73,13 +105,88 @@ export default class Recording extends Component<{route: any, navigation: any}, 
         }
     }
 
+    startRecord = () => {
+
+        var url = 'http://' + this.state.deviceIP + ':4000/start_recording';
+        if(this.state.deviceIP !== '100.19.94.49'){
+            alert(this.props.route.params.device_name + ' not compatible for live streaming.')
+            return;
+        }
+        
+        if(this.state.recordingResponseText !== 'Recording Starting.'){
+            axios.post(url).then((response) => {
+                alert("Recording");
+                this.setState({recordingResponseText: response.data})
+                Toast.show({
+                    type: 'error',
+                    text1: 'Start Record Clicked!',
+                    text2: 'The Recording is live.',
+                    visibilityTime: 2000
+                });
+            }, (error) => {
+                alert("Error Starting Recording");
+                console.log(error);
+            })
+        }else{
+            Toast.show({
+                type: 'success',
+                text1: 'The Recording has already started!',
+                visibilityTime: 2000
+            })
+        }
+    }
+
+    stopRecord = () => {
+
+        var url = 'http://' + this.state.deviceIP + ':4000/stop_recording';
+        if(this.state.deviceIP !== '100.19.94.49'){
+            alert(this.props.route.params.device_name + ' not compatible for live streaming.')
+            return;
+        }
+        console.log(url);
+        let collection: any = {}
+        collection.user_email = this.props.route.params.userEmail;
+        collection.profile_name = this.props.route.params.profileName;
+
+        if(this.state.recordingResponseText !== 'Recording Stopping.'){
+            axios.post(url, collection).then((response) => {
+                alert("Stopping Recording");
+                this.setState({recordingResponseText: response.data})
+                Toast.show({
+                    type: 'error',
+                    text1: 'Stop Record Clicked!',
+                    text2: 'The Recording is no longer live.',
+                    visibilityTime: 2000
+                });
+            }, (error) => {
+                alert("Error Stopping Recording");
+                console.log(error);
+            })
+        }else{
+            Toast.show({
+                type: 'success',
+                text1: 'The Recording has already stopped!',
+                visibilityTime: 2000
+            })
+        }
+    }
+
     componentDidMount = () => {
         this.props.navigation.setOptions({
-            headerTitle: this.props.route.params.DeviceName,
+            headerTitle: this.props.route.params.device_name,
+            headerLeft: () => 
+            <View>
+                <TouchableOpacity
+                    onPress={()=>{this.stopStream(); this.props.navigation.navigate('Live Recording Devices')}}>
+                <Text style={{paddingLeft: 20, paddingBottom: 10, fontSize:15, fontWeight: 'bold'}}>Back</Text>
+                </TouchableOpacity>
+            </View>
         })
+        this.getDeviceIP();
     }
 
     render(){
+       // console.log(this.props.route)
         const toastConfig = {
             success: ({ text1, text2, ...rest } : any) => (
               <BaseToast
@@ -121,12 +228,11 @@ export default class Recording extends Component<{route: any, navigation: any}, 
         <View style={{flex:1, backgroundColor: "#222222"}}>
             <Toast style={{zIndex: 1}} config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
                <WebView
-                automaticallyAdjustContentInsets={false}
                 style={{
                     flex: 1,
                 }}
                 originWhitelist={['*']}
-                source={{html: '<iframe style="box-sizing: border-box; width: 100%; height: 99%; border: 15px solid #FF9900; background-color: #222222"; src="http://100.19.94.49:4000/video/watch.html" frameborder="0" allow="autoplay encrypted-media" allowfullscreen></iframe>'}} 
+                source={{html: '<iframe style="box-sizing: border-box; width: 100%; height: 100%; border: 15px solid #FF9900; background-color: #222222"; src="http://100.19.94.49:4000/watch.html" frameborder="0" allow="autoplay encrypted-media" allowfullscreen></iframe>'}} 
                 mediaPlaybackRequiresUserAction={false}
                 />
             <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', padding: 50, paddingBottom: 80}}>
@@ -144,12 +250,14 @@ export default class Recording extends Component<{route: any, navigation: any}, 
 
             <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', padding: 50, paddingBottom: 80}}>
             <TouchableOpacity
-                style={styles.pillButton}>
-                <Text style={{fontSize: 20}}>Record</Text>
+                style={styles.pillButton}
+                onPress={this.startRecord}>
+                <Text style={{fontSize: 20}}>Begin Recording</Text>
             </TouchableOpacity>
             <TouchableOpacity
-                style={styles.pillButton}>
-                <Text style={{fontSize: 20}}>Stop Record</Text>
+                style={styles.pillButton}
+                onPress={this.stopRecord}>
+                <Text style={{fontSize: 20}}>Stop Recording</Text>
             </TouchableOpacity>
             </View>
         </View>

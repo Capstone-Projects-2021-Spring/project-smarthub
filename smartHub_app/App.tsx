@@ -58,7 +58,7 @@ class SelectedProfileNavigation extends Component<{route: any, navigation: any}>
             <Icon name="film" style={{fontSize: size, color: color}} />
           ), }}
         name="Saved Recordings" 
-        component= {SavedRecordings} 
+        component={ () => <SavedRecordings navigation={this.props.navigation} routeObject={this.props.route}/>}
       />
 
       <Drawer.Screen 

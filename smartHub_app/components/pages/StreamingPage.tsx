@@ -23,7 +23,7 @@ export default class Streaming extends Component<{route: any, navigation: any}, 
         collection.device_name = this.props.route.params.device_name;
         collection.device_type = this.props.route.params.device_type;
 
-        await axios.post('http://192.168.7.63:5000/profiles/getProfileAddress', collection).then((response) => {
+        await axios.post('http://192.168.56.202:5000/profiles/getProfileAddress', collection).then((response) => {
             //return response.data.profiles
             this.setState({deviceIP: response.data.profile.device_address})
             console.log(this.state.deviceIP)

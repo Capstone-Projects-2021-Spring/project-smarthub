@@ -19,10 +19,10 @@ export class LiveRecordingDevices extends Component<{route: any, navigation: any
     }
 }
 
-export class SavedRecordings extends Component<{route: any, navigation: any}>{
+export class SavedRecordings extends Component<{routeObject: any, navigation: any}>{
     render(){
         return (
-            <PlayVideos routeObject={this.props.route.params} stackScreen={'playVideo'} navigation={this.props.navigation}/>
+            <PlayVideos routeObject={this.props.routeObject.params} stackScreen={'Saved Recordings'} navigation={this.props.navigation}/>
         );
     }
 }
