@@ -107,7 +107,7 @@ export default class Login extends Component<{navigation: any}>{
                     <Animated.View style={[styles.inputContainer, this.AnimatedInput]}>
                         <Text style={{fontSize: 20, fontWeight: "bold", textAlign: "center"}}>SIGN IN</Text>
                         <View style={{marginTop: 30, marginBottom: 10}}>
-                            <TextInput onBlur={() => this.reverseAnimateInput()} onFocus={() => this.AnimateInput()} placeholder="username" style={styles.input} onChangeText={(value) => this.setState({username: value})} />
+                            <TextInput onBlur={() => this.reverseAnimateInput()} onFocus={() => this.AnimateInput()} placeholder="email" style={styles.input} onChangeText={(value) => this.setState({username: value})} />
                             <TextInput onBlur={() => this.reverseAnimateInput()} onFocus={() => this.AnimateInput()} secureTextEntry={true} placeholder="password" style={styles.input} onChangeText={(value) => this.setState({password: value})} />
                         </View>
                         <View>
