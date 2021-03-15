@@ -116,7 +116,7 @@ export default class Recording extends Component<{route: any, navigation: any}, 
         
         if(this.state.recordingResponseText !== 'Recording Starting.'){
             axios.post(url).then((response) => {
-                alert("Recording");
+                // alert("Recording");
                 this.setState({recordingResponseText: response.data})
                 Toast.show({
                     type: 'error',
@@ -151,7 +151,7 @@ export default class Recording extends Component<{route: any, navigation: any}, 
 
         if(this.state.recordingResponseText !== 'Recording Stopping.'){
             axios.post(url, collection).then((response) => {
-                alert("Stopping Recording");
+                // alert("Stopping Recording");
                 this.setState({recordingResponseText: response.data})
                 Toast.show({
                     type: 'error',
