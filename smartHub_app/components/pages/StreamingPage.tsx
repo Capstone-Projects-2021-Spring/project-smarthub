@@ -109,7 +109,7 @@ export default class Streaming extends Component<{route: any, navigation: any}, 
             <View>
                 <TouchableOpacity
                     onPress={()=>{this.stopStream(); this.props.navigation.navigate('Live Streaming Devices')}}>
-                <Text style={{paddingLeft: 20, paddingBottom: 10, fontSize:15, fontWeight: 'bold'}}>Back</Text>
+                <Text style={{paddingLeft: 20, paddingRight: 20, paddingBottom: 10, fontSize:15, fontWeight: 'bold'}}>Back</Text>
                 </TouchableOpacity>
             </View>
         })

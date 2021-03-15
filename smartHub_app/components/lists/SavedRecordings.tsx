@@ -7,18 +7,6 @@ import { List } from 'native-base';
 import { getAddressString } from '../../utils/utilities';
 // import * as VideoThumbnails from 'expo-video-thumbnails';
 
-const Videos = [
-{
-    Videourl: 'https://www.youtube.com/watch?v=2LqzF5WauAw&ab_channel=InterstellarMovie',
-},
-{
-    Videourl: 'https://www.youtube.com/watch?v=_9L3j-lVLwk&ab_channel=YoungThug',
-},
-{
-    Videourl: 'https://www.youtube.com/watch?v=nopWOC4SRm4&ab_channel=ComedyCentral',
-},
-];
-
 
 export class PlayVideos extends Component<{navigation: any, stackScreen: string, route: any}, {retrievedVideo: any, recordingsList: any}>{
 
@@ -91,6 +79,7 @@ export class PlayVideos extends Component<{navigation: any, stackScreen: string,
                     volume={1.0}
                     isMuted={false}
                     resizeMode="cover"
+                    useNativeControls={true}
                     shouldPlay
                     isLooping
                     style={styles.video}
@@ -109,8 +98,8 @@ const styles = StyleSheet.create({
     },
     video: {
       alignSelf: 'center',
-      width: 320,
-      height: 200,
+      width: 400,
+      height: 600,
     },
     buttons: {
       flexDirection: 'row',

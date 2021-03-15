@@ -34,6 +34,7 @@ class SavedRecordingItem extends Component<PropVariables,StateVariables>{
             activeRowKey: null,
         });
     }
+
     render(){
         // let routeObject = {
         //     device_name: this.props.item.device_name,
@@ -154,7 +155,6 @@ export class SavedRecordingsList extends Component<{navigation: any, stackScreen
         //         </TouchableOpacity>  
         //       )
         // })
-        console.log("HELLO");
         this.getRecordingsFromProfile()
     }
 
@@ -169,11 +169,25 @@ export class SavedRecordingsList extends Component<{navigation: any, stackScreen
             console.log("made it inside post");
             // console.log(response.data);
             this.setState({deviceList: response.data.keyList});
+            this.trimRecordingsList();
             console.log(this.state.deviceList);
         }, (error) => {
             console.log("made it inside post error");
             console.log(error);
         })
+    }
+
+    //Function to trim key names of files to get a short name (video date/time) to display on video button
+    trimRecordingsList = () => {
+        // console.log("TrimmingRecordingsNames");
+        // console.log(this.state.deviceList);
+        for(let i = 0; i < this.state.deviceList.length; i++)
+        {
+            // console.log(this.state.deviceList[i]);
+            this.state.deviceList[i].key = this.state.deviceList[i].key.substring(this.state.deviceList[i].key.lastIndexOf("/") + 1);
+            this.state.deviceList[i].key = this.state.deviceList[i].key.substring(0, this.state.deviceList[i].key.lastIndexOf("_GMT"));
+        }
+        // console.log(this.state.deviceList);
     }
 
     render(){
