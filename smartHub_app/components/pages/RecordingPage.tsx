@@ -106,6 +106,22 @@ export default class Recording extends Component<{route: any, navigation: any}, 
         }
     }
 
+    stopStreamOnBackClick = () => {
+        var url = 'http://' + this.state.deviceIP + ':4000/video/stop_stream';
+        if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
+            return;
+        }
+        if(this.state.responseText !== 'Stream Closing.'){
+            axios.post(url).then((response) => {
+                this.setState({responseText: response.data})
+                console.log(response.data)
+            }, (error) => {
+                console.log(error);
+            })
+        }
+    }
+
+
     startRecord = () => {
 
         var url = 'http://' + this.state.deviceIP + ':4000/start_recording';
@@ -178,7 +194,7 @@ export default class Recording extends Component<{route: any, navigation: any}, 
             headerLeft: () => 
             <View>
                 <TouchableOpacity
-                    onPress={()=>{this.stopStream(); this.props.navigation.navigate('Live Recording Devices')}}>
+                    onPress={()=>{this.stopStreamOnBackClick(); this.props.navigation.navigate('Live Recording Devices')}}>
                 <Text style={{paddingLeft: 20, paddingBottom: 10, fontSize:15, fontWeight: 'bold'}}>Back</Text>
                 </TouchableOpacity>
             </View>

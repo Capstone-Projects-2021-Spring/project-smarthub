@@ -102,13 +102,29 @@ export default class Streaming extends Component<{route: any, navigation: any}, 
         }
     }
 
+    stopStreamOnBackClick = () => {
+        var url = 'http://' + this.state.deviceIP + ':4000/video/stop_stream';
+        if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
+            return;
+        }
+        if(this.state.responseText !== 'Stream Closing.'){
+            axios.post(url).then((response) => {
+                this.setState({responseText: response.data})
+                console.log(response.data)
+            }, (error) => {
+                console.log(error);
+            })
+        }
+    }
+
+
     componentDidMount = () => {
         this.props.navigation.setOptions({
             headerTitle: this.props.route.params.device_name,
             headerLeft: () => 
             <View>
                 <TouchableOpacity
-                    onPress={()=>{this.stopStream(); this.props.navigation.navigate('Live Streaming Devices')}}>
+                    onPress={()=>{this.stopStreamOnBackClick(); this.props.navigation.navigate('Live Streaming Devices')}}>
                 <Text style={{paddingLeft: 20, paddingRight: 20, paddingBottom: 10, fontSize:15, fontWeight: 'bold'}}>Back</Text>
                 </TouchableOpacity>
             </View>
