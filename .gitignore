@@ -2,3 +2,5 @@ smarthub-login-api/.env
 smarthub-login-api/node_modules
 smartHub_app/node_modules
 smartHub_app/package-lock.json
+smarthub-server/node_modules
+smarthub-server/.env
