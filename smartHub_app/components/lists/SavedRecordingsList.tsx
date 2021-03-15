@@ -201,15 +201,6 @@ export class SavedRecordingsList extends Component<{navigation: any, stackScreen
                             <SavedRecordingItem item={item} index={index} parentFlatList={this} stackScreen={this.props.stackScreen} navigation={this.props.navigation} routeObject={this.props.routeObject} deviceList={this.state.deviceList} />
                         );
                     }}
-                    ListEmptyComponent={() => {
-                        return(
-                            <View style={{marginTop: 60, flex: 1, alignItems: 'center', height: height/2, justifyContent: 'center'}}>
-                                <Text style={{paddingTop: 18, fontSize: 19, color: "#fff", fontWeight: 'bold'}}>Looks like you haven't added any devices.</Text>
-                                <Text style={{paddingTop: 18, fontSize: 17, color: "#fff", fontWeight: 'bold', paddingBottom: 30}}>Click the "+" on the top right to add a new device.</Text>
-                                <Image style={styles.ImageStyle} source={{uri: 'https://www.pngkit.com/png/full/118-1180951_image-transparent-icons-free-color-desktops-and-gadgets.png'}}/>
-                            </View>
-                        )
-                    }}
                 />
                 {/* <DeviceModal ref={'deviceModal'} stackScreen={this.props.stackScreen} routeObject={this.props.routeObject} parentFlatList={this} deviceList={this.state.deviceList} /> */}
             </View>
