@@ -53,7 +53,7 @@ class ProfileListItem extends Component<PropVariables,StateVariables>{
                         const rowToDelete = this.state.activeRowKey;
                         Alert.alert(
                             'Alert',
-                            'Are you sure you want to delete this profile?',
+                            'Are you sure you want to delete ' + this.props.item.profileName + '?',
                             [
                                 {text: 'No', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
                                 {text: 'Yes', onPress: () => {

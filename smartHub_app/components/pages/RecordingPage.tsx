@@ -59,7 +59,7 @@ export default class Recording extends Component<{route: any, navigation: any}, 
                         Toast.show({
                             type: 'success',
                             text1: 'The Stream Is Live!',
-                            text2: 'Press the play button to begin.',
+                            text2: 'Enjoy!.',
                             visibilityTime: 2000
                         })
                     }
