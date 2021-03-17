@@ -3,15 +3,16 @@ import { DrawerActions, getFocusedRouteNameFromRoute, NavigationContainer } from
 import {createStackNavigator, StackHeaderLeftButtonProps} from '@react-navigation/stack';
 import { StyleSheet, TouchableOpacity} from 'react-native';
 import ProfilePage from './components/pages/ProfilePage';
-import { LiveStreamingDevices, LiveRecordingDevices, SavedRecordings, SavedImages } from './components/VideoComponent';
+import {LiveRecordingDevices, SavedRecordings, SavedImages } from './components/VideoComponent';
 import HomePage from './components/pages/HomePage';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import {Icon} from 'native-base'
 import Login from './components/pages/loginPage';
 import SignUp from './components/pages/signUpPage';
-import Streaming from './components/pages/StreamingPage';
 import Recording from './components/pages/RecordingPage';
 import { PlayVideos } from './components/lists/SavedRecordings';
+import { SmartLightDevices } from './components/LightComponent';
+import SmartLight from './components/pages/SmartLightsPage';
 
 //App.tsx handles the navigation of the application
 
@@ -150,7 +151,7 @@ export default function App(){
         }}
       /> 
 
-      <Stack.Screen 
+      {/* <Stack.Screen 
         options={{
           headerStyle: {
           backgroundColor: '#FF9900'
@@ -166,7 +167,7 @@ export default function App(){
         }}} 
         name="Streaming Devices" 
         component= {Streaming} 
-      />
+      /> */}
 
       <Stack.Screen 
         options={{
@@ -193,6 +194,24 @@ export default function App(){
         }}} 
         name="Recorded Video Screen" 
         component= {PlayVideos} 
+      />
+
+      <Stack.Screen 
+        options={{
+          headerStyle: {
+          backgroundColor: '#FF9900'
+        }}} 
+        name="Smart Light Devices" 
+        component={SmartLightDevices} 
+      />
+
+      <Stack.Screen 
+        options={{
+          headerStyle: {
+          backgroundColor: '#FF9900'
+        }}} 
+        name="Smart Lights" 
+        component={SmartLight} 
       />
 
     </Stack.Navigator>
