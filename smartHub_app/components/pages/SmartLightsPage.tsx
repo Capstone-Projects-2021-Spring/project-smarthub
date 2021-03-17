@@ -4,13 +4,12 @@ import { ColorPicker } from 'react-native-color-picker'
 import hexRgb from 'hex-rgb'
 import axios from 'axios';
 
-
 export default class SmartLight extends Component{
 
     changeLightSingleColor(obj: any){
         obj.brightness = 250;
         obj.randomize = false;
-        console.log(obj);
+        //console.log(obj);
         axios.post("http://johnnyspi.ddns.net:8000/lights", obj) .then((response) => {
             console.log(response.data)
         }, (error) => {
@@ -18,15 +17,14 @@ export default class SmartLight extends Component{
         })
     }
 
-
     render(){
         return(
             <View style={{flex:1, justifyContent: 'center', alignItems: 'center'}}>
-            <ColorPicker
-            onColorSelected={(color:any) => (this.changeLightSingleColor(hexRgb(color)))}
-            hideSliders={false}
-            style={{width: "90%", height: "50%"}}
-          />
+                <ColorPicker
+                    onColorSelected={(color:any) => (this.changeLightSingleColor(hexRgb(color)))}
+                    hideSliders={false}
+                    style={{width: "90%", height: "50%"}}
+                />
           </View>
         )
     }
