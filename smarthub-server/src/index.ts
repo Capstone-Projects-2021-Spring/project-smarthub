@@ -7,14 +7,11 @@ import puppeteer from 'puppeteer-core';
 import { VideoController } from './controllers/VideoController';
 const { routes: videoRoutes } = require('./video/video_routes');
 const { routes: profileRoutes } = require('./profiles/profile_routes');
+const { routes: deviceRoutes } = require('./devices/device_routes');
 const createFolder = require('./aws/amazon_s3').createFolder;
 const uploadFile = require('./aws/amazon_s3').uploadFile;
 const getKeyList = require('./aws/amazon_s3').getKeyList;
 const getFile = require('./aws/amazon_s3').getFile;
-
-// Tests on S3 functions.
-// getKeyList("test2", "sampleProfile");
-// getFile("test2/sampleProfile/vid_Fri_Mar_12_2021_17:25:44_GMT-0500_(Eastern_Standard_Time)");
 
 const OSplatform = process.platform;
 const localStoragePath = path.resolve(__dirname, "./output/output.webm");
@@ -48,6 +45,8 @@ const videoController = new VideoController(httpServer);
 
 //Telling express to use the routes found in /video/video_routes.ts (Access these routes by http using /video/startStream, /video/startRecord etc...)
 app.use('/video', videoRoutes);
+app.use('/profiles', profileRoutes);
+app.use('/devices', deviceRoutes);
 
 app.post('/start_recording', (req : any, res : any) => {
 
@@ -106,8 +105,6 @@ app.post('/get_key_list', async (req : any, res : any) => {
 
   return res.status(200).json({ keyList: response });
 });
-
-app.use('/profiles', profileRoutes);
 
 httpServer.listen(PORT, () => {
   console.log('Server running on http://localhost:' + PORT);
