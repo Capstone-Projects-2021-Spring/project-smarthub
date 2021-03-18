@@ -34,7 +34,7 @@ routes.post('/login', async (req, res) => {
             User.getPassword(req.body.email).then(password => {
                 bcrypt.compare(req.body.password, password, function(err, result) {
                     if(result){  
-                        return res.status(200).json({message: "Login Successful!"});
+                        return res.status(200).json({message: "Login Successful!", user_id: user.user_id});
                     }
                     else{
                         return res.status(500).json({message: "Incorrect password!"});
