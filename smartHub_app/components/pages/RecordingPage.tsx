@@ -21,8 +21,7 @@ export default class Recording extends Component<{route: any, navigation: any}, 
     }
 
     getDeviceIP = async () => {
-        console.log("AQUI")
-        console.log(this.props.route);
+        //console.log(this.props.route);
         let collection: any = {}
         collection.device_id = this.props.route.params.device_id;
         await axios.post(getAddressString() + '/devices/getDeviceAddress', collection).then((response) => {
