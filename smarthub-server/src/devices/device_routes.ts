@@ -8,7 +8,7 @@ const routes = express.Router({
 
 /*
     Use: Adds a device
-    Params: device address, device name, device type, user email, profile name
+    Params: device address, device name, device type, profile_id
 */
 routes.post("/addDevice", async (req, res) => {
     Devices.addDevice(req.body.device_address, req.body.device_name, req.body.device_type, req.body.profile_id).then((device: any) => {
@@ -69,8 +69,6 @@ routes.post("/getDeviceAddress", async (req, res) => {
         return res.status(500).json({message: err});
     });;
 });
-
-
 
 module.exports = {
 	routes
