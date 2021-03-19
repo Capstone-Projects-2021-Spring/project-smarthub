@@ -4,22 +4,22 @@ const knex = require('./connection');
 
 /*
     Use: Adds a new profile.
-    Params: users email, profile name.
+    Params: user_id, profile_name.
 */
-function addProfile(userEmail: string, profileName: string) {
+function addProfile(userId: number, profileName: string) {
 
     return knex("profiles").insert({
-            user_email: userEmail,
+            user_id: userId,
             profile_name: profileName,
         }).returning("*").then((rows: any) => { return rows[0]; });
 }
 
 /*
     Use: Returns all profiles belonging to a user.
-    Params: users email
+    Params: user_id
 */
-function getProfiles(userEmail: string) {
-    return knex("profiles").select("profile_id", "user_email", "profile_name").where("user_email", userEmail).then((rows: any) => {
+function getProfiles(userId: number) {
+    return knex("profiles").select("profile_id", "user_id", "profile_name").where("user_id", userId).then((rows: any) => {
         return rows;
     });
 }
@@ -27,18 +27,19 @@ function getProfiles(userEmail: string) {
 /*
     Use: Returns a profile id belonging to a profile.
     Params: users email, profile name
+    --below is not needed for profiles
 */
-function getProfileID(userEmail: string, profileName: string) {
-    return knex("profiles").select("profile_id").where(function(this:any) {
-        this.where("user_email", userEmail).andWhere("profile_name", profileName);
-    }).then((row: any) => {
-        return row[0];
-    });
-}
+// function getProfileID(userEmail: string, profileName: string) {
+//     return knex("profiles").select("profile_id").where(function(this:any) {
+//         this.where("user_email", userEmail).andWhere("profile_name", profileName);
+//     }).then((row: any) => {
+//         return row[0];
+//     });
+// }
 
 /*
     Use: Deletes a profile.
-    Params: users email, profile name
+    Params: profile_id
 */
 function deleteProfile(profileId: number) {
 
@@ -50,6 +51,5 @@ function deleteProfile(profileId: number) {
 module.exports = {
     addProfile,
     getProfiles,
-    getProfileID,
     deleteProfile
 }

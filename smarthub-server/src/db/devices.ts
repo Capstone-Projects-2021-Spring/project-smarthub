@@ -6,7 +6,7 @@ const knex = require('./connection');
     Use: Adds a device
     Params: device address, device name, device type, user email, profile name
 */
-function addDevice(deviceAddress: string, deviceName: string, deviceType: string, profileId: string) {
+function addDevice(deviceAddress: string, deviceName: string, deviceType: string, profileId: number) {
 
     return knex("devices").insert({
             device_address: deviceAddress,
