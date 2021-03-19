@@ -56,8 +56,8 @@ routes.post("/getDevices", async (req, res) => {
     });;
 });
 
-routes.post("/getDeviceAddress", async (req, res) => {
-	Devices.getDeviceAddress(req.body.device_id).then((device:any) => {
+routes.post("/getDeviceInfo", async (req, res) => {
+	Devices.getDeviceInfo(req.body.device_id).then((device:any) => {
         if(device) {
             res.status(200).json({device});
         }

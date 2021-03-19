@@ -8,10 +8,15 @@ const knex = require('./connection');
 */
 function addProfile(userId: number, profileName: string) {
 
-    return knex("profiles").insert({
-            user_id: userId,
-            profile_name: profileName,
-        }).returning("*").then((rows: any) => { return rows[0]; });
+    return knex("profiles")
+    .insert({
+        user_id: userId,
+        profile_name: profileName,
+    })
+    .returning("*")
+    .then((rows: any) => {
+        return rows[0];
+    });
 }
 
 /*
@@ -19,9 +24,12 @@ function addProfile(userId: number, profileName: string) {
     Params: user_id
 */
 function getProfiles(userId: number) {
-    return knex("profiles").select("profile_id", "user_id", "profile_name").where("user_id", userId).then((rows: any) => {
-        return rows;
-    });
+    return knex("profiles")
+        .select("profile_id", "user_id", "profile_name")
+        .where("user_id", userId)
+        .then((rows: any) => {
+            return rows;
+        });
 }
 
 /*
@@ -43,9 +51,12 @@ function getProfiles(userId: number) {
 */
 function deleteProfile(profileId: number) {
 
-    return knex("profiles").where("profile_id", profileId).del().then((rows: any) => {
-        return rows;
-    });
+    return knex("profiles")
+        .where("profile_id", profileId)
+        .del()
+        .then((rows: any) => {
+            return rows;
+        });
 }
 
 module.exports = {
