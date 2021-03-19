@@ -71,6 +71,15 @@ class SelectedProfileNavigation extends Component<{route: any, navigation: any}>
         name="Saved Images" 
         component= {SavedImages} 
       />
+
+      <Drawer.Screen 
+        options={{
+        drawerIcon:({color, size}) => (
+          <Icon name="exit" style={{fontSize: size, color: color}} />
+        ), }}
+        name="Sign Out" 
+        component= { () => <Login navigation={this.props.navigation}/>} 
+      />
     </Drawer.Navigator>
     );
   }
