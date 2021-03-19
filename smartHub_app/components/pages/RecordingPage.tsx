@@ -21,32 +21,25 @@ export default class Recording extends Component<{route: any, navigation: any}, 
     }
 
     getDeviceIP = async () => {
+        console.log("AQUI")
+        console.log(this.props.route);
         let collection: any = {}
-        collection.user_email = this.props.route.params.userEmail;
-        collection.profile_name = this.props.route.params.profileName;
-        collection.device_name = this.props.route.params.device_name;
-        collection.device_type = this.props.route.params.device_type;
-
-        await axios.post(getAddressString() + '/profiles/getProfileAddress', collection).then((response) => {
-            //return response.data.profiles
-            this.setState({deviceIP: response.data.profile.device_address})
-            console.log(this.state.deviceIP)
-            console.log(response.status)
+        collection.device_id = this.props.route.params.device_id;
+        await axios.post(getAddressString() + '/devices/getDeviceAddress', collection).then((response) => {
+            this.setState({deviceIP: response.data.device.device_address})
         }, (error) => {
             console.log(error);
         })
     }
 
     beginStream = () => {
-        console.log(this.state.deviceIP);
         var url = 'http://' + this.state.deviceIP + ':4000/video/start_stream';
-        //console.log(url);
         if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
             alert(this.props.route.params.device_name + ' not compatible for live streaming.')
             return;
         }
         if(this.state.responseText!== 'Stream Starting.'){
-            console.log(this.state.deviceIP)
+            //console.log(this.state.deviceIP)
             axios.post(url).then((response) => {
                 console.log(response.status)
                 Toast.show({
@@ -121,12 +114,10 @@ export default class Recording extends Component<{route: any, navigation: any}, 
         }
     }
 
-
     startRecord = () => {
-
         var url = 'http://' + this.state.deviceIP + ':4000/start_recording';
         if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
-            alert(this.props.route.params.device_name + ' not compatible for live streaming.')
+            alert(this.props.route.params.device_name + ' not compatible for recording.')
             return;
         }
         
@@ -154,10 +145,9 @@ export default class Recording extends Component<{route: any, navigation: any}, 
     }
 
     stopRecord = () => {
-
         var url = 'http://' + this.state.deviceIP + ':4000/stop_recording';
         if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
-            alert(this.props.route.params.device_name + ' not compatible for live streaming.')
+            alert(this.props.route.params.device_name + ' not compatible for recording.')
             return;
         }
         console.log(url);

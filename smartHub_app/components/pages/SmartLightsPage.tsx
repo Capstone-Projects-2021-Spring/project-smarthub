@@ -4,13 +4,25 @@ import { ColorPicker } from 'react-native-color-picker'
 import hexRgb from 'hex-rgb';
 import Toast, {BaseToast} from 'react-native-toast-message';
 import axios from 'axios';
+import {getAddressString} from '../../utils/utilities';
 
 var width : number = Dimensions.get('window').width;
 var height : number = Dimensions.get('window').height;
 
-export default class SmartLight extends Component{
+export default class SmartLight extends Component<{navigation: any, route: any},{deviceIP: string}>{
+
+    constructor(props: any){
+        super(props);
+        this.state = ({
+            deviceIP: ""
+        })
+    }
 
     singleColor(obj: any){
+        if(this.state.deviceIP !== "johnnyspi.ddns.net"){
+            alert(this.props.route.params.device_name + ' not compatible as a smart light device.')
+            return;
+        }
         obj.randomize = false;
         obj.red = obj.red || 0;
         obj.green = obj.green || 0;
@@ -21,7 +33,7 @@ export default class SmartLight extends Component{
             text1: 'Processing Please Wait...',
             visibilityTime: 5000
         })
-        axios.post("http://johnnyspi.ddns.net:8000/lights", obj) .then((response) => {
+        axios.post("http://"+ this.state.deviceIP + ":8000/lights", obj) .then((response) => {
             console.log(response.data)
             Toast.show({
                 type: 'success',
@@ -39,6 +51,10 @@ export default class SmartLight extends Component{
     }
 
     randomize(){
+        if(this.state.deviceIP !== "johnnyspi.ddns.net"){
+            alert(this.props.route.params.device_name + ' not compatible as a smart light device.')
+            return;
+        }
         let obj : any = {}
         obj.randomize = true;
         obj.red = Math.floor(Math.random()*256)
@@ -50,7 +66,7 @@ export default class SmartLight extends Component{
             text1: 'Processing Please Wait...',
             visibilityTime: 5000
         })
-        axios.post("http://johnnyspi.ddns.net:8000/lights", obj) .then((response) => {
+        axios.post("http://"+ this.state.deviceIP + ":8000/lights", obj) .then((response) => {
             console.log(response.data)
             //setTimeout(() => {
             Toast.show({
@@ -69,6 +85,10 @@ export default class SmartLight extends Component{
     }
 
     preset(themeType: string){
+        if(this.state.deviceIP !== "johnnyspi.ddns.net"){
+            alert(this.props.route.params.device_name + ' not compatible as a smart light device.')
+            return;
+        }
         let obj : any = {}
         obj.themeType = themeType;
         //console.log(obj);
@@ -77,7 +97,7 @@ export default class SmartLight extends Component{
             text1: 'Processing Please Wait...',
             visibilityTime: 2000
         })
-        axios.post("http://johnnyspi.ddns.net:8000/lights", obj) .then((response) => {
+        axios.post("http://"+ this.state.deviceIP + ":8000/lights", obj) .then((response) => {
             console.log(response.data)
             Toast.show({
                 type: 'success',
@@ -92,6 +112,30 @@ export default class SmartLight extends Component{
                 visibilityTime: 2000
             })
         })
+    }
+
+    getDeviceIP = async () => {
+        let collection: any = {}
+        collection.device_id = this.props.route.params.device_id;
+        await axios.post(getAddressString() + '/devices/getDeviceAddress', collection).then((response) => {
+            this.setState({deviceIP: response.data.device.device_address})
+        }, (error) => {
+            console.log(error);
+        })
+    }
+
+    componentDidMount = () => {
+        this.props.navigation.setOptions({
+            headerTitle: this.props.route.params.device_name,
+            headerLeft: () => 
+            <View>
+                <TouchableOpacity
+                    onPress={()=>{this.props.navigation.navigate('Smart Light Devices')}}>
+                <Text style={{paddingLeft: 20, paddingBottom: 10, fontSize:15, fontWeight: 'bold'}}>Back</Text>
+                </TouchableOpacity>
+            </View>
+        })
+        this.getDeviceIP();
     }
 
     render(){
