@@ -1,6 +1,7 @@
 import * as socketio from "socket.io";
 import fs from "fs";
 import path from 'path';
+// Fetch the socket.io Server class.
 const io = require("socket.io");
 
 /*
@@ -13,15 +14,20 @@ const io = require("socket.io");
 
 class VideoController {
 
-  socketServer: SocketIO.Server;
+  private namespace: SocketIO.Namespace | null;
+  // The socket id of the socket at which the audio channel is first opened.
   private broadcaster: string;
 
-  constructor(httpServer: any){
-    // Initialize the socket.io server.
-    this.socketServer = io(httpServer);
+  constructor(){
+    this.namespace = null;
     this.broadcaster = "";
+  }
+
+  // Attach an http server to the socket.io server.
+  public setNameSpace(server: SocketIO.Server){
+    this.namespace = server.of('/video');
     // Setup server side socket events and bind this instance to the function for access in socket namespace.
-    this.socketServer.sockets.on("connection", this.handleEvents.bind(this));
+    this.namespace.on("connection", this.handleEvents.bind(this));
   }
 
   // Handler for all socket events. Calls their appropriate methods.
@@ -88,14 +94,18 @@ class VideoController {
   // Start the recording.
   public startRecording() {
 
-    this.socketServer.to(this.broadcaster).emit("start_recording");
+    if(this.namespace !== null){
+      this.namespace.to(this.broadcaster).emit("start_recording");
+    }
 
   }
 
   // Stop the recording.
   public stopRecording() {
 
-    this.socketServer.to(this.broadcaster).emit("stop_recording");
+    if(this.namespace !== null){
+      this.namespace.to(this.broadcaster).emit("stop_recording");
+    }
 
   }
 }
