@@ -27,8 +27,9 @@ class SelectedProfileNavigation extends Component<{route: any, navigation: any}>
   //after the comp renders this will make sure the header changes to the page that was clicked 
   //and it creates the drawer menu in each of the pages
   componentDidMount = () => {
+    console.log(this.props.route.params)
     this.props.navigation.setOptions({
-        headerTitle: this.props.route.params.item.profileName,
+        headerTitle: this.props.route.params.item.profile_name,
         headerRight: () => (
           <TouchableOpacity
           style={{marginRight: 10}}

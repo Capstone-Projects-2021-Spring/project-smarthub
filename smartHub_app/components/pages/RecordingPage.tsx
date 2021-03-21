@@ -5,15 +5,18 @@ import axios from 'axios'
 import Toast, {BaseToast} from 'react-native-toast-message'
 import { getAddressString } from '../../utils/utilities';
 
-export default class Recording extends Component<{route: any, navigation: any}, {responseText: String, deviceIP: String, recordingResponseText: any}>{
+export default class Recording extends Component<{route: any, navigation: any}, {responseText: String, deviceIP: String, recordingResponseText: any, userEmail: String, profileName: String}>{
 
     constructor(props: any){
         super(props);
         this.state= ({
             responseText: "",
             recordingResponseText: "",
-            deviceIP: ""
+            deviceIP: "",
+            userEmail: "",
+            profileName: ""
         })
+
         this.beginStream = this.beginStream.bind(this);
         this.stopStream = this.stopStream.bind(this);    
         this.startRecord = this.startRecord.bind(this);
@@ -24,8 +27,10 @@ export default class Recording extends Component<{route: any, navigation: any}, 
         //console.log(this.props.route);
         let collection: any = {}
         collection.device_id = this.props.route.params.device_id;
-        await axios.post(getAddressString() + '/devices/getDeviceAddress', collection).then((response) => {
-            this.setState({deviceIP: response.data.device.device_address})
+        await axios.post(getAddressString() + '/devices/getDeviceInfo', collection).then((response) => {
+            this.setState({deviceIP: response.data.device[0].device_address})
+            this.setState({userEmail: response.data.device[0].user_email})
+            this.setState({profileName: response.data.device[0].profile_name})
         }, (error) => {
             console.log(error);
         })
@@ -33,6 +38,7 @@ export default class Recording extends Component<{route: any, navigation: any}, 
 
     beginStream = () => {
         var url = 'http://' + this.state.deviceIP + ':4000/video/start_stream';
+        console.log(url)
         if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
             alert(this.props.route.params.device_name + ' not compatible for live streaming.')
             return;
@@ -51,7 +57,7 @@ export default class Recording extends Component<{route: any, navigation: any}, 
                         Toast.show({
                             type: 'success',
                             text1: 'The Stream Is Live!',
-                            text2: 'Enjoy!.',
+                            text2: 'Enjoy!',
                             visibilityTime: 2000
                         })
                     }
@@ -114,7 +120,7 @@ export default class Recording extends Component<{route: any, navigation: any}, 
     }
 
     startRecord = () => {
-        var url = 'http://' + this.state.deviceIP + ':4000/start_recording';
+        var url = 'http://' + this.state.deviceIP + ':4000/video/start_recording';
         if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
             alert(this.props.route.params.device_name + ' not compatible for recording.')
             return;
@@ -144,15 +150,15 @@ export default class Recording extends Component<{route: any, navigation: any}, 
     }
 
     stopRecord = () => {
-        var url = 'http://' + this.state.deviceIP + ':4000/stop_recording';
+        var url = 'http://' + this.state.deviceIP + ':4000/video/stop_recording';
         if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
             alert(this.props.route.params.device_name + ' not compatible for recording.')
             return;
         }
         console.log(url);
         let collection: any = {}
-        collection.user_email = this.props.route.params.userEmail;
-        collection.profile_name = this.props.route.params.profileName;
+        collection.user_email = this.state.userEmail;
+        collection.profile_name = this.state.profileName;
 
         if(this.state.recordingResponseText !== 'Recording Stopping.'){
             axios.post(url, collection).then((response) => {
