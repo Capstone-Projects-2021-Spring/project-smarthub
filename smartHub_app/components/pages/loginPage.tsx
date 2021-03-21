@@ -20,7 +20,7 @@ export default class Login extends Component<{navigation: any}>{
         inputAnimation: new Animated.Value(0),
         username: "",
         password: "",
-        user_id: -1
+        user_id: -1,
     };
 
 
@@ -77,6 +77,7 @@ export default class Login extends Component<{navigation: any}>{
         // actions: [NavigationActions.navigate({ routeName: "Home" })],
         // });
         // this.props.navigation.dispatch(resetAction);
+        console.log(this.state.user_id);
         this.props.navigation.navigate("Home", this.state.user_id);
         
     }
@@ -91,8 +92,10 @@ export default class Login extends Component<{navigation: any}>{
         
         axios.post(url, collection).then((response) => {
             this.state.user_id = response.data.user_id;
+            
             this.signInPressHandler();
         }, ({error, response}) => {
+            console.log(error);
             alert(response.data.message);
         })
     }

@@ -88,6 +88,7 @@ export default class SignUp extends Component<{navigation: any}>{
             console.log(this.state.user_id);
             this.signUpPressHandler();
         }, ({error, response}) => {
+            console.log(error);
             alert(response.data.message);
         })
     }

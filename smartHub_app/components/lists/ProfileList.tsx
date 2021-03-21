@@ -69,6 +69,7 @@ class ProfileListItem extends Component<PropVariables,StateVariables>{
                                          this.props.profileList.splice(this.props.index, 1);
                                          this.props.parentFlatList.refreshListDelete(rowToDelete);
                                      }, ({error, response}) => {
+                                        console.log("ERROR IN DELETING A PROFILE");
                                          console.log(response.data.message);
                                      })
                                     
@@ -97,7 +98,7 @@ class ProfileListItem extends Component<PropVariables,StateVariables>{
 }
 
 //Creates the list of profiles that are present on the home page
-export default class ProfileList extends Component<{navigation: any, user_id: string}, {deletedRowKey: any, insertedRowKey: any, profileList: any}>{
+export default class ProfileList extends Component<{navigation: any, user_id: number}, {deletedRowKey: any, insertedRowKey: any, profileList: any}>{
 
     constructor(props : any){
         super(props);
@@ -110,7 +111,7 @@ export default class ProfileList extends Component<{navigation: any, user_id: st
         this.getProfiles = this.getProfiles.bind(this);
     }
 
-    refreshListInsert = (insertedKey : any) => {
+    refreshListInsert = (insertedKey : number) => {
         this.setState(() => {
             return {
                 insertedRowKey: insertedKey
@@ -119,7 +120,7 @@ export default class ProfileList extends Component<{navigation: any, user_id: st
         this.getProfiles();
    }
 
-   refreshListDelete = (deletedKey : any) => {
+   refreshListDelete = (deletedKey : number) => {
         this.setState(() => {
             return {
                 deletedRowKey: deletedKey
@@ -131,10 +132,12 @@ export default class ProfileList extends Component<{navigation: any, user_id: st
     getProfiles = async() => {
         let collection: any = {}
         collection.user_id = this.props.user_id;
+        console.log(collection);
         await axios.post(getAddressString() + '/profiles/getProfiles', collection).then((response) => {
             //console.log(response.data)
             this.setState({profileList: response.data.profiles})
         }, (error) => {
+            console.log("ERROR IN GETTING A PROFILE");
             console.log(error);
         })
     }

@@ -12,7 +12,7 @@ var screen = Dimensions.get('window');
 interface PropVariables{
     parentFlatList: any,
     profileList: any,
-    user_id: string
+    user_id: number
 }
 
 interface StateVariables{
@@ -84,6 +84,7 @@ export default class ProfileModal extends Component<PropVariables, StateVariable
                             //Reset the state afterwards
                             this.setState({newProfileName : ""});
                         }, (error) => {
+                            console.log("ERROR IN ADDING A PROFILE");
                             console.log(error);
                         })
 
