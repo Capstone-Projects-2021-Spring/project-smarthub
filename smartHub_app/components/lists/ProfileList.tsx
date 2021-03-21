@@ -63,6 +63,7 @@ class ProfileListItem extends Component<PropVariables,StateVariables>{
                                      // console.warn(collection);
                                      
                                     axios.post(getAddressString() + '/profiles/deleteProfile', collection).then((response) => {
+                                        console.log("DELETING A PROFILE SUCCESS");
                                          console.log(response.status)
                                          //splice the item to the list and then refresh the list
                                          //which would rerender the component

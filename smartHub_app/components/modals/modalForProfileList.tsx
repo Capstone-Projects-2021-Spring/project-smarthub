@@ -59,7 +59,7 @@ export default class ProfileModal extends Component<PropVariables, StateVariable
                             alert("You must enter a Profile Name first.");
                             return;
                         }
-                        console.log(this.props.profileList)
+                        // console.log(this.props.profileList)
                         //handles duplicate profile name
                         if(this.props.profileList.some((item : any) => item.profile_name === this.state.newProfileName)){
                             alert(this.state.newProfileName + ' already exists.')
