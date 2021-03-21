@@ -41,8 +41,6 @@ photoButton.addEventListener('click', function(e){
 function takepicture() {
   //create canvas
   const context = canvas.getContext('2d');
-  //const videoIsPlaying = videoElement.onplay;
-  //if(videoIsPlaying && width && height){
     //set canvas props
     canvas.width = width;
     canvas.height = height;
@@ -56,9 +54,7 @@ function takepicture() {
    img.setAttribute('src', imgURL);
    //add img to photos
     photos.appendChild(img);
-  //} else{
-    //clearPhoto();
-  //}
+
 }
 
 
@@ -201,7 +197,7 @@ function stopRecording() {
   mediaRecorder.stop();
 }
 
-function clearPhoto() {
+/*function clearPhoto() {
   var context = canvas.getContext('2d');
   context.fillStyle = "#AAA";
   context.fillRect(0, 0, canvas.width, canvas.height);
@@ -209,5 +205,5 @@ function clearPhoto() {
   var data = canvas.toDataURL('image/png');
   photo.setAttribute('src', data);
 }
-
+*/
 getStream();
