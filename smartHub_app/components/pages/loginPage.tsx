@@ -20,6 +20,7 @@ export default class Login extends Component<{navigation: any}>{
         inputAnimation: new Animated.Value(0),
         username: "",
         password: "",
+        user_id: -1
     };
 
 
@@ -76,7 +77,7 @@ export default class Login extends Component<{navigation: any}>{
         // actions: [NavigationActions.navigate({ routeName: "Home" })],
         // });
         // this.props.navigation.dispatch(resetAction);
-        this.props.navigation.navigate("Home", this.state.username);
+        this.props.navigation.navigate("Home", this.state.user_id);
         
     }
 
@@ -89,6 +90,7 @@ export default class Login extends Component<{navigation: any}>{
         var url = "https://b2bgr96nbc.execute-api.us-east-1.amazonaws.com/dev/user/login"
         
         axios.post(url, collection).then((response) => {
+            this.state.user_id = response.data.user_id;
             this.signInPressHandler();
         }, ({error, response}) => {
             alert(response.data.message);
