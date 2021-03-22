@@ -28,13 +28,15 @@ function CustomDrawerContent(props : any) {
   return (
     <DrawerContentScrollView {...props}>
       <DrawerItemList {...props} />
-      <DrawerItem label="Sign Out" onPress={() => props.navigation.navigate('Sign In')}
-      icon={({color, size}) => (
-          <Icon name="exit" style={{fontSize: size, color: color}} />)}
+      <DrawerItem label="Sign Out" 
+        onPress={() => props.navigation.navigate('Sign In')}
+        icon={({color, size}) => (
+        <Icon name="exit" style={{fontSize: size, color: color}} />)}
       />
     </DrawerContentScrollView>
   );
 }
+
 //Below creates the drawer effect inside of the Profile Page
 class SelectedProfileNavigation extends Component<{route: any, navigation: any}>{
 
