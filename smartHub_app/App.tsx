@@ -5,7 +5,7 @@ import { StyleSheet, TouchableOpacity} from 'react-native';
 import ProfilePage from './components/pages/ProfilePage';
 import {LiveRecordingDevices, SavedRecordings, SavedImages } from './components/VideoComponent';
 import HomePage from './components/pages/HomePage';
-import { createDrawerNavigator } from '@react-navigation/drawer';
+import { createDrawerNavigator, DrawerContentScrollView, DrawerItem, DrawerItemList } from '@react-navigation/drawer';
 import {Icon} from 'native-base'
 import Login from './components/pages/loginPage';
 import SignUp from './components/pages/signUpPage';
@@ -22,6 +22,19 @@ const Stack = createStackNavigator();
 //Drawer creates a side menu
 const Drawer = createDrawerNavigator();
 
+//The custom drawer content holds logout drawerItem (enables the onPress)
+//That gets attached to the drawer navigator
+function CustomDrawerContent(props : any) {
+  return (
+    <DrawerContentScrollView {...props}>
+      <DrawerItemList {...props} />
+      <DrawerItem label="Sign Out" onPress={() => props.navigation.navigate('Sign In')}
+      icon={({color, size}) => (
+          <Icon name="exit" style={{fontSize: size, color: color}} />)}
+      />
+    </DrawerContentScrollView>
+  );
+}
 //Below creates the drawer effect inside of the Profile Page
 class SelectedProfileNavigation extends Component<{route: any, navigation: any}>{
 
@@ -45,7 +58,7 @@ class SelectedProfileNavigation extends Component<{route: any, navigation: any}>
 
   render(){
     return(
-    <Drawer.Navigator>
+      <Drawer.Navigator drawerContent={props => <CustomDrawerContent {...props} />}>
       <Drawer.Screen
         options={{
           drawerIcon:({color, size}) => (
@@ -73,16 +86,6 @@ class SelectedProfileNavigation extends Component<{route: any, navigation: any}>
         name="Saved Images" 
         component= {SavedImages} 
       />
-
-      <Drawer.Screen 
-        options={{
-        drawerIcon:({color, size}) => (
-          <Icon name="exit" style={{fontSize: size, color: color}} />
-        ), }}
-        name="Sign Out" 
-        component= {() => {
-          this.props.navigation.navigate("Sign In"); return null;}
-        }/>
     </Drawer.Navigator>
     );
   }
