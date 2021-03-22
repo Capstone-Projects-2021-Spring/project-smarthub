@@ -28,7 +28,7 @@ function CustomDrawerContent(props : any) {
   return (
     <DrawerContentScrollView {...props}>
       <DrawerItemList {...props} />
-      <DrawerItem label="Sign Out" 
+      <DrawerItem label="Sign Out"  
         onPress={() => props.navigation.navigate('Sign In')}
         icon={({color, size}) => (
         <Icon name="exit" style={{fontSize: size, color: color}} />)}
