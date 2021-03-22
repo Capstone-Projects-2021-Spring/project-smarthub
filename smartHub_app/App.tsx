@@ -13,6 +13,7 @@ import Recording from './components/pages/RecordingPage';
 import { PlayVideos } from './components/lists/SavedRecordings';
 import { SmartLightDevices } from './components/LightComponent';
 import SmartLight from './components/pages/SmartLightsPage';
+import { NavigationActions } from 'react-navigation';
 
 //App.tsx handles the navigation of the application
 
@@ -79,8 +80,9 @@ class SelectedProfileNavigation extends Component<{route: any, navigation: any}>
           <Icon name="exit" style={{fontSize: size, color: color}} />
         ), }}
         name="Sign Out" 
-        component= { () => <Login navigation={this.props.navigation}/>} 
-      />
+        component= {() => {
+          this.props.navigation.navigate("Sign In"); return null;}
+        }/>
     </Drawer.Navigator>
     );
   }
@@ -95,9 +97,7 @@ export default function App(){
       
       <Stack.Screen 
         options={{
-          headerStyle: {
-          backgroundColor: '#FF9900'
-          },
+          headerShown: false
         }}
         name="Sign In" 
         component= {Login}

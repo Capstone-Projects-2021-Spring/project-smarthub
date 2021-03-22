@@ -127,15 +127,15 @@ export default class ProfileList extends Component<{navigation: any, user_id: nu
                 deletedRowKey: deletedKey
             }
         });
-        this.getProfiles();
+     //   this.getProfiles();
     }
 
     getProfiles = async() => {
         let collection: any = {}
         collection.user_id = this.props.user_id;
-        console.log(collection);
+        //console.log(collection);
         await axios.post(getAddressString() + '/profiles/getProfiles', collection).then((response) => {
-            //console.log(response.data)
+            console.log(response.data)
             this.setState({profileList: response.data.profiles})
         }, (error) => {
             console.log("ERROR IN GETTING A PROFILE");

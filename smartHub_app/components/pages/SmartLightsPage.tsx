@@ -14,7 +14,7 @@ export default class SmartLight extends Component<{navigation: any, route: any},
     constructor(props: any){
         super(props);
         this.state = ({
-            deviceIP: ""
+            deviceIP: "",
         })
     }
 
@@ -117,8 +117,9 @@ export default class SmartLight extends Component<{navigation: any, route: any},
     getDeviceIP = async () => {
         let collection: any = {}
         collection.device_id = this.props.route.params.device_id;
-        await axios.post(getAddressString() + '/devices/getDeviceAddress', collection).then((response) => {
-            this.setState({deviceIP: response.data.device.device_address})
+        await axios.post(getAddressString() + '/devices/getDeviceInfo', collection).then((response) => {
+            console.log(response.data);
+            this.setState({deviceIP: response.data.device[0].device_address})
         }, (error) => {
             console.log(error);
         })

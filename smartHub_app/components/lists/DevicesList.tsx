@@ -129,7 +129,7 @@ export class DevicesList extends Component<{navigation: any, stackScreen: string
             deletedRowKey: deletedKey
         }
     });
-    this.getDevices()
+    //this.getDevices()
     }
 
     launchModal = () => {
