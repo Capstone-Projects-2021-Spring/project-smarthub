@@ -4,13 +4,13 @@ import { DevicesList } from './lists/DevicesList';
 import { PlayVideos } from './lists/SavedRecordings';
 import { SavedRecordingsList } from './lists/SavedRecordingsList';
 
-export class LiveStreamingDevices extends Component<{route: any, navigation: any}>{
-    render(){
-        return (
-            <DevicesList routeObject={this.props.route.params} stackScreen={'Streaming Devices'} navigation={this.props.navigation}/>
-        )
-    }
-}
+// export class LiveStreamingDevices extends Component<{route: any, navigation: any}>{
+//     render(){
+//         return (
+//             <DevicesList routeObject={this.props.route.params} stackScreen={'Streaming Devices'} navigation={this.props.navigation}/>
+//         )
+//     }
+// }
 
 export class LiveRecordingDevices extends Component<{route: any, navigation: any}>{
     render(){

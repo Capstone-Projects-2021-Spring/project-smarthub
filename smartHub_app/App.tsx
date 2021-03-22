@@ -3,15 +3,17 @@ import { DrawerActions, getFocusedRouteNameFromRoute, NavigationContainer } from
 import {createStackNavigator, StackHeaderLeftButtonProps} from '@react-navigation/stack';
 import { StyleSheet, TouchableOpacity} from 'react-native';
 import ProfilePage from './components/pages/ProfilePage';
-import { LiveStreamingDevices, LiveRecordingDevices, SavedRecordings, SavedImages } from './components/VideoComponent';
+import {LiveRecordingDevices, SavedRecordings, SavedImages } from './components/VideoComponent';
 import HomePage from './components/pages/HomePage';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import {Icon} from 'native-base'
 import Login from './components/pages/loginPage';
 import SignUp from './components/pages/signUpPage';
-import Streaming from './components/pages/StreamingPage';
 import Recording from './components/pages/RecordingPage';
 import { PlayVideos } from './components/lists/SavedRecordings';
+import { SmartLightDevices } from './components/LightComponent';
+import SmartLight from './components/pages/SmartLightsPage';
+import { NavigationActions } from 'react-navigation';
 
 //App.tsx handles the navigation of the application
 
@@ -26,8 +28,9 @@ class SelectedProfileNavigation extends Component<{route: any, navigation: any}>
   //after the comp renders this will make sure the header changes to the page that was clicked 
   //and it creates the drawer menu in each of the pages
   componentDidMount = () => {
+    console.log(this.props.route.params)
     this.props.navigation.setOptions({
-        headerTitle: this.props.route.params.item.profileName,
+        headerTitle: this.props.route.params.item.profile_name,
         headerRight: () => (
           <TouchableOpacity
           style={{marginRight: 10}}
@@ -70,6 +73,16 @@ class SelectedProfileNavigation extends Component<{route: any, navigation: any}>
         name="Saved Images" 
         component= {SavedImages} 
       />
+
+      <Drawer.Screen 
+        options={{
+        drawerIcon:({color, size}) => (
+          <Icon name="exit" style={{fontSize: size, color: color}} />
+        ), }}
+        name="Sign Out" 
+        component= {() => {
+          this.props.navigation.navigate("Sign In"); return null;}
+        }/>
     </Drawer.Navigator>
     );
   }
@@ -84,9 +97,7 @@ export default function App(){
       
       <Stack.Screen 
         options={{
-          headerStyle: {
-          backgroundColor: '#FF9900'
-          },
+          headerShown: false
         }}
         name="Sign In" 
         component= {Login}
@@ -150,7 +161,7 @@ export default function App(){
         }}
       /> 
 
-      <Stack.Screen 
+      {/* <Stack.Screen 
         options={{
           headerStyle: {
           backgroundColor: '#FF9900'
@@ -166,7 +177,7 @@ export default function App(){
         }}} 
         name="Streaming Devices" 
         component= {Streaming} 
-      />
+      /> */}
 
       <Stack.Screen 
         options={{
@@ -193,6 +204,24 @@ export default function App(){
         }}} 
         name="Recorded Video Screen" 
         component= {PlayVideos} 
+      />
+
+      <Stack.Screen 
+        options={{
+          headerStyle: {
+          backgroundColor: '#FF9900'
+        }}} 
+        name="Smart Light Devices" 
+        component={SmartLightDevices} 
+      />
+
+      <Stack.Screen 
+        options={{
+          headerStyle: {
+          backgroundColor: '#FF9900'
+        }}} 
+        name="Smart Lights" 
+        component={SmartLight} 
       />
 
     </Stack.Navigator>
