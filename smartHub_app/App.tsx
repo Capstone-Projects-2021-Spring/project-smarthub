@@ -43,7 +43,7 @@ class SelectedProfileNavigation extends Component<{route: any, navigation: any}>
   //after the comp renders this will make sure the header changes to the page that was clicked 
   //and it creates the drawer menu in each of the pages
   componentDidMount = () => {
-    console.log(this.props.route.params)
+    //console.log(this.props.route.params)
     this.props.navigation.setOptions({
         headerTitle: this.props.route.params.item.profile_name,
         headerRight: () => (
@@ -59,6 +59,13 @@ class SelectedProfileNavigation extends Component<{route: any, navigation: any}>
   }
 
   render(){
+    const profilePage = () => {
+      return(
+      <ProfilePage navigation={this.props.navigation} routeObject={this.props.route}/>
+      )}
+      const savedRecordings = () => {
+        return(
+<SavedRecordings navigation={this.props.navigation} routeObject={this.props.route}/>        )}
     return(
       <Drawer.Navigator drawerContent={props => <CustomDrawerContent {...props} />}>
       <Drawer.Screen
@@ -68,7 +75,7 @@ class SelectedProfileNavigation extends Component<{route: any, navigation: any}>
           ),
         }}
         name = "Profile Page" 
-        component={ () => <ProfilePage navigation={this.props.navigation} routeObject={this.props.route}/>}
+        component={profilePage}
       />
 
       <Drawer.Screen 
@@ -77,7 +84,7 @@ class SelectedProfileNavigation extends Component<{route: any, navigation: any}>
             <Icon name="film" style={{fontSize: size, color: color}} />
           ), }}
         name="Saved Recordings" 
-        component={ () => <SavedRecordings navigation={this.props.navigation} routeObject={this.props.route}/>}
+        component={savedRecordings}
       />
 
       <Drawer.Screen 
@@ -94,9 +101,8 @@ class SelectedProfileNavigation extends Component<{route: any, navigation: any}>
 }
 
 export default function App(){
-  
+  console.warn = () => {}
   return (  
-
   <NavigationContainer>
     <Stack.Navigator initialRouteName="Login">
       

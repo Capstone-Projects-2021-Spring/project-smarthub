@@ -68,11 +68,11 @@ class ListItem extends Component<PropVariables,StateVariables>{
                                      // console.warn(collection);
                                      
                                     axios.post(getAddressString() + '/devices/deleteDevice', collection).then((response) => {
-                                         console.log(response.status)
                                          //splice the item to the list and then refresh the list
                                          //which would rerender the component
+                                         console.log("Device " + this.props.item.device_name + " successfully deleted.");
                                          this.props.deviceList.splice(this.props.index, 1);
-                                         this.props.parentFlatList.refreshListDelete(rowToDelete);
+                                         this.props.parentFlatList.getDevices();
                                      }, ({error, response}) => {
                                          console.log(response.data.message);
                                      })
@@ -101,35 +101,17 @@ class ListItem extends Component<PropVariables,StateVariables>{
     }
 }
 
-export class DevicesList extends Component<{navigation: any, stackScreen: string, routeObject: any}, {deletedRowKey: any, insertedRowKey: any, deviceList: any}>{
+export class DevicesList extends Component<{navigation: any, stackScreen: string, routeObject: any}, {deviceList: any, checkData: boolean}>{
 
     constructor(props: any){
         super(props);
         this.state = ({
-            deletedRowKey: null,
-            insertedRowKey: null,
-            deviceList: []
+            deviceList: [],
+            checkData: false
+
         });
         this.launchModal = this.launchModal.bind(this);
         this.getDevices = this.getDevices.bind(this);
-    }
-
-    refreshListInsert = (insertedKey : any) => {
-        this.setState(() => {
-            return {
-                insertedRowKey: insertedKey
-            }
-        });
-        this.getDevices()
-   }
-
-   refreshListDelete = (deletedKey : any) => {
-    this.setState(() => {
-        return {
-            deletedRowKey: deletedKey
-        }
-    });
-    //this.getDevices()
     }
 
     launchModal = () => {
@@ -157,9 +139,14 @@ export class DevicesList extends Component<{navigation: any, stackScreen: string
        
         await axios.post(getAddressString() + '/devices/getDevices', collection).then((response) => {
             //return response.data.profiles
-            this.setState({deviceList: response.data.devices})
+            if(response.data.devices.length === 0){
+                this.setState({checkData: true});
+            }else{
+                this.setState({checkData: false, deviceList: response.data.devices});
+            }
         }, (error) => {
-            console.log(error);
+            console.log("ERROR GETTING DEVICES")
+            console.log(error)
         })
 
     }
@@ -173,14 +160,18 @@ export class DevicesList extends Component<{navigation: any, stackScreen: string
                             <ListItem item={item} index={index} parentFlatList={this} stackScreen={this.props.stackScreen} navigation={this.props.navigation} deviceList={this.state.deviceList} />
                         );
                     }}
+                    keyExtractor={item => item.device_id.toString()}
                     ListEmptyComponent={() => {
-                        return(
-                            <View style={{marginTop: 60, flex: 1, alignItems: 'center', height: height/2, justifyContent: 'center'}}>
-                                <Text style={{paddingTop: 18, fontSize: 19, color: "#fff", fontWeight: 'bold'}}>Looks like you haven't added any devices.</Text>
-                                <Text style={{paddingTop: 18, fontSize: 17, color: "#fff", fontWeight: 'bold', paddingBottom: 30}}>Click the "+" on the top right to add a new device.</Text>
-                                <Image style={styles.ImageStyle} source={{uri: 'https://www.pngkit.com/png/full/118-1180951_image-transparent-icons-free-color-desktops-and-gadgets.png'}}/>
-                            </View>
-                        )
+                        if(this.state.checkData){
+                            return(
+                                <View style={{marginTop: height/12, flex: 1, alignItems: 'center', height: height/2, justifyContent: 'center'}}>
+                                    <Text style={{paddingTop: 18, fontSize: 19, color: "#fff", fontWeight: 'bold'}}>Looks like you haven't added any Devices.</Text>
+                                    <Text style={{paddingTop: 18, fontSize: 16, color: "#fff", fontWeight: 'bold', paddingBottom: 20}}>Click the "+" on the top right to add a new Device.</Text>
+                                    <Image style={styles.ImageStyle} source={{uri: 'https://www.pngkit.com/png/full/118-1180951_image-transparent-icons-free-color-desktops-and-gadgets.png'}}/>
+                                </View>
+                        )}else{
+                            return null;
+                        }
                     }}
                 />
                 <DeviceModal ref={'deviceModal'} stackScreen={this.props.stackScreen} routeObject={this.props.routeObject} parentFlatList={this} deviceList={this.state.deviceList} />

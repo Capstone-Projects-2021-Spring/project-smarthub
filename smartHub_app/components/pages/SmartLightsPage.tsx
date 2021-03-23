@@ -34,7 +34,7 @@ export default class SmartLight extends Component<{navigation: any, route: any},
             visibilityTime: 5000
         })
         axios.post("http://"+ this.state.deviceIP + ":8000/lights", obj) .then((response) => {
-            console.log(response.data)
+            //console.log(response.data)
             Toast.show({
                 type: 'success',
                 text1: response.data,
@@ -67,7 +67,7 @@ export default class SmartLight extends Component<{navigation: any, route: any},
             visibilityTime: 5000
         })
         axios.post("http://"+ this.state.deviceIP + ":8000/lights", obj) .then((response) => {
-            console.log(response.data)
+            //console.log(response.data)
             //setTimeout(() => {
             Toast.show({
                 type: 'success',
@@ -98,7 +98,7 @@ export default class SmartLight extends Component<{navigation: any, route: any},
             visibilityTime: 2000
         })
         axios.post("http://"+ this.state.deviceIP + ":8000/lights", obj) .then((response) => {
-            console.log(response.data)
+            //console.log(response.data)
             Toast.show({
                 type: 'success',
                 text1: response.data,
@@ -118,7 +118,7 @@ export default class SmartLight extends Component<{navigation: any, route: any},
         let collection: any = {}
         collection.device_id = this.props.route.params.device_id;
         await axios.post(getAddressString() + '/devices/getDeviceInfo', collection).then((response) => {
-            console.log(response.data);
+            //console.log(response.data);
             this.setState({deviceIP: response.data.device[0].device_address})
         }, (error) => {
             console.log(error);

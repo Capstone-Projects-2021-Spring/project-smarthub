@@ -7,6 +7,7 @@ import { BackHandler } from 'react-native';
 import axios from 'axios';
 import {getAddressString} from '../../utils/utilities';
 
+
 var width : number = Dimensions.get('window').width;
 var height : number = Dimensions.get('window').height;
 
@@ -63,12 +64,11 @@ class ProfileListItem extends Component<PropVariables,StateVariables>{
                                      // console.warn(collection);
                                      
                                     axios.post(getAddressString() + '/profiles/deleteProfile', collection).then((response) => {
-                                        console.log("DELETING A PROFILE SUCCESS");
-                                         console.log(response.status)
+                                        console.log("Profile " + item.profile_name + " successfully deleted.");
                                          //splice the item to the list and then refresh the list
                                          //which would rerender the component
                                          this.props.profileList.splice(this.props.index, 1);
-                                         this.props.parentFlatList.refreshListDelete(rowToDelete);
+                                         this.props.parentFlatList.getProfiles();
                                      }, ({error, response}) => {
                                         console.log("ERROR IN DELETING A PROFILE");
                                          console.log(response.data.message);
@@ -99,35 +99,16 @@ class ProfileListItem extends Component<PropVariables,StateVariables>{
 }
 
 //Creates the list of profiles that are present on the home page
-export default class ProfileList extends Component<{navigation: any, user_id: number}, {deletedRowKey: any, insertedRowKey: any, profileList: any}>{
+export default class ProfileList extends Component<{navigation: any, user_id: number}, {profileList: any, checkData: boolean}>{
 
     constructor(props : any){
         super(props);
         this.state = ({
-            deletedRowKey: null,
-            insertedRowKey: null,
-            profileList: []
+            profileList: [],
+            checkData: false
         });
         this.launchModal = this.launchModal.bind(this);
         this.getProfiles = this.getProfiles.bind(this);
-    }
-
-    refreshListInsert = (insertedKey : number) => {
-        this.setState(() => {
-            return {
-                insertedRowKey: insertedKey
-            }
-        });
-        this.getProfiles();
-   }
-
-   refreshListDelete = (deletedKey : number) => {
-        this.setState(() => {
-            return {
-                deletedRowKey: deletedKey
-            }
-        });
-     //   this.getProfiles();
     }
 
     getProfiles = async() => {
@@ -135,11 +116,10 @@ export default class ProfileList extends Component<{navigation: any, user_id: nu
         collection.user_id = this.props.user_id;
         //console.log(collection);
         await axios.post(getAddressString() + '/profiles/getProfiles', collection).then((response) => {
-            console.log(response.data)
-            this.setState({profileList: response.data.profiles})
+            //console.log(response.data.profiles.length)
+            this.setState({checkData: false, profileList: response.data.profiles});
         }, (error) => {
-            console.log("ERROR IN GETTING A PROFILE");
-            console.log(error);
+            this.setState({checkData: true});
         })
     }
 
@@ -147,7 +127,7 @@ export default class ProfileList extends Component<{navigation: any, user_id: nu
         this.refs.profileModal.showModal();
     }
 
-    componentDidMount = () => {
+    componentDidMount = async () => {
         this.props.navigation.setOptions({
             headerRight: () => (
                 <TouchableOpacity
@@ -183,14 +163,20 @@ export default class ProfileList extends Component<{navigation: any, user_id: nu
                             <ProfileListItem item={item} index={index} parentFlatList={this} profileList={this.state.profileList} navigation={this.props.navigation}></ProfileListItem>
                         );
                     }}
+                    keyExtractor={item => item.profile_id.toString()}
                     ListEmptyComponent={() => {
-                        return(
-                            <View style={{marginTop: height/7, flex: 1, alignItems: 'center', height: height/2, justifyContent: 'center'}}>
-                                <Text style={{paddingTop: 18, fontSize: 18, color: "#fff", fontWeight: 'bold'}}>Looks like you haven't added any Profiles.</Text>
-                                <Text style={{paddingTop: 18, fontSize: 15, color: "#fff", fontWeight: 'bold', paddingBottom: 20}}>Click the "+" on the top right to add a new Profile.</Text>
-                                <Image style={styles.ImageStyle} source={{uri: 'https://image.flaticon.com/icons/png/512/122/122935.png'}}/>
-                            </View>
-                        )
+                        if(this.state.checkData){
+                            return(
+                                <View style={{marginTop: height/7, flex: 1, alignItems: 'center', height: height/2, justifyContent: 'center'}}>
+                                    <Text style={{paddingTop: 18, fontSize: 18, color: "#fff", fontWeight: 'bold'}}>Looks like you haven't added any Profiles.</Text>
+                                    <Text style={{paddingTop: 18, fontSize: 15, color: "#fff", fontWeight: 'bold', paddingBottom: 20}}>Click the "+" on the top right to add a new Profile.</Text>
+                                    <Image style={styles.ImageStyle} source={{uri: 'https://image.flaticon.com/icons/png/512/122/122935.png'}}/>
+                                </View>
+                            )
+                        }else{
+                            return null;
+                        }
+                        
                     }}
                 />
                 <ProfileModal ref={'profileModal'} parentFlatList={this} user_id={this.props.user_id} profileList={this.state.profileList} />
