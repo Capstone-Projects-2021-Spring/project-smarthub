@@ -6,6 +6,7 @@ import bodyParser from 'body-parser';
 import puppeteer from 'puppeteer-core';
 import { VideoController } from './controllers/VideoController';
 const { routes: videoRoutes } = require('./video/video_routes');
+const { routes: lockRoutes } = require('./lock/lock_routes');
 const { routes: profileRoutes } = require('./profiles/profile_routes');
 const { routes: deviceRoutes } = require('./devices/device_routes');
 const createFolder = require('./aws/amazon_s3').createFolder;
@@ -47,6 +48,7 @@ const videoController = new VideoController(httpServer);
 app.use('/video', videoRoutes);
 app.use('/profiles', profileRoutes);
 app.use('/devices', deviceRoutes);
+app.use('/lock', lockRoutes);
 
 app.post('/start_recording', (req : any, res : any) => {
 
