@@ -46,7 +46,8 @@ export default class SmartLight extends Component<{navigation: any, route: any},
             Toast.show({
                 type: 'error',
                 text1: 'Could not configure light settings.',
-                visibilityTime: 2000
+                text2: 'Ensure your Pi is on and connected to the Smart Light Device.',
+                visibilityTime: 2500
             })
         })
     }
@@ -80,7 +81,8 @@ export default class SmartLight extends Component<{navigation: any, route: any},
             Toast.show({
                 type: 'error',
                 text1: 'Could not configure light settings.',
-                visibilityTime: 2000
+                text2: 'Ensure your Pi is on and connected to the Smart Light Device.',
+                visibilityTime: 2500
             })
         })
     }
@@ -110,7 +112,8 @@ export default class SmartLight extends Component<{navigation: any, route: any},
             Toast.show({
                 type: 'error',
                 text1: 'Could not configure light settings.',
-                visibilityTime: 2000
+                text2: 'Ensure your Pi is on and connected to the Smart Light Device.',
+                visibilityTime: 2500
             })
         })
     }
