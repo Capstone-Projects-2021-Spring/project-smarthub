@@ -10,6 +10,7 @@ var screen = Dimensions.get('window');
 //Need to create the interfaces to define the types for props and state variables
 interface PropVariables{
     device_id: number
+    lockTime: any
 }
 
 interface StateVariables{
@@ -37,7 +38,7 @@ export default class LockModal extends Component<PropVariables, StateVariables>{
         super(props);
         this.state = ({
             timerConfig: 0,
-            selectedSeconds: 10,
+            selectedSeconds: 0,
         })
     }
 
@@ -46,7 +47,6 @@ export default class LockModal extends Component<PropVariables, StateVariables>{
     }
 
     
-
     render(){
         return(
             <Modal
@@ -61,7 +61,8 @@ export default class LockModal extends Component<PropVariables, StateVariables>{
                 return <Item 
                     onPress={()=>{
                         this.setState({selectedSeconds : (item)});
-                        this.refs.profileModal.close();
+                        this.props.lockTime.getLockTime(this.state.selectedSeconds);
+                        this.refs.LockModal.close();
                     }}
                     text={item} 
                     key={item} 

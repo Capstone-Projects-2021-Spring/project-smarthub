@@ -10,13 +10,14 @@ import LockModal from '../modals/modalForLockTimerConfiguration';
 var width : number = Dimensions.get('window').width;
 var height : number = Dimensions.get('window').height;
 
-export default class SmartLock extends Component<{navigation: any, route: any},{deviceIP: string, device_id: number}>{
+export default class SmartLock extends Component<{navigation: any, route: any},{deviceIP: string, device_id: number, selectedSeconds: number}>{
 
     constructor(props: any){
         super(props);
         this.state = ({
             deviceIP: "",
             device_id: this.props.route.params.device_id,
+            selectedSeconds: 0
         });
         this.launchModal = this.launchModal.bind(this);
 
@@ -27,18 +28,39 @@ export default class SmartLock extends Component<{navigation: any, route: any},{
         this.refs.LockModal.showModal();
     }
 
+    getLockTime = (seconds: any) => {
+        this.setState({selectedSeconds: seconds});
+     }
+  
+
+
     lock = () => {
-        if(this.state.deviceIP !== "johnnyspi.ddns.net"){
+        if(this.state.deviceIP !== "lukessmarthub.ddns.net"){
             alert(this.props.route.params.device_name + ' not compatible as a smart light device.')
             return;
         }
+
+        axios.post('http://' + this.state.deviceIP + ':4000/lock/lock').then((response) => {
+            console.log(response.data);
+        }, (error) => {
+            console.log(error);
+        })
     }
 
     unlock = () => {
-        if(this.state.deviceIP !== "johnnyspi.ddns.net"){
+        if(this.state.deviceIP !== "lukessmarthub.ddns.net"){
             alert(this.props.route.params.device_name + ' not compatible as a smart light device.')
             return;
         }
+
+        let collection: any = {}
+        collection.lockTimeout = this.state.selectedSeconds;
+        console.log(collection);
+        axios.post('http://' + this.state.deviceIP + ':4000/lock/unlock', collection).then((response) => {
+            console.log(response.data);
+        }, (error) => {
+            console.log(error);
+        })
     }
 
     getDeviceIP = async () => {
@@ -85,7 +107,7 @@ export default class SmartLock extends Component<{navigation: any, route: any},{
                     onPress={this.launchModal}>
                     <Text style={styles.text}>Configure Time</Text>
                 </TouchableOpacity>
-                <LockModal ref={'LockModal'} device_id={this.state.device_id}/>
+                <LockModal ref={'LockModal'} lockTime={this} device_id={this.state.device_id}/>
           </View>
         )
     }
