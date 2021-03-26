@@ -4,18 +4,19 @@
 // Object for holding RTCPeerConnection objects. Stored as key:value pairs.
 // Key is the socket id, value is the RTCPeerConnection object.
 const peerConnections = {};
-const socket = io.connect(window.location.origin);
+const socket = io.connect(window.location.origin + "/video");
 const videoElement = document.getElementById("videoSource");
 
 let mediaRecorder;
 
 let width = 320;
-let height = 0;
+let height = 320;
 let streaming = false;
 
 
 const canvas = document.getElementById("canvas");
 const photos = document.getElementById("photos");
+const photoButton = document.getElementById("photo-button");
 //get media stream
 navigator.mediaDevices.getUserMedia({videoElement:true, audio: false})
 .then(function(stream){
@@ -27,26 +28,19 @@ navigator.mediaDevices.getUserMedia({videoElement:true, audio: false})
 .catch(function(err){
   console.log('Error: $(err)');
 });
-//play when ready
-videoElement.addEventListener('canplay', function(e){
-  if(!streaming){
-height = videoElement.videoElementHeight / (videoElement.videoElementWidth / width);
-videoElement.setAttribute('width' , width);
-videoElement.setAttribute('height' , height);
-canvas.setAttribute('width' , width);
-canvas.setAttribute('height' , height);
-streaming = true;
 
-  }
-}, false);
+photoButton.addEventListener('click', function(e){
+  takepicture();
+  e.preventDefault();
+  
+} , false);
+
 
 
 //take picture from canvas
 function takepicture() {
   //create canvas
   const context = canvas.getContext('2d');
-  const videoIsPlaying = videoElement.onplay;
-  if(videoIsPlaying && width && height){
     //set canvas props
     canvas.width = width;
     canvas.height = height;
@@ -60,9 +54,7 @@ function takepicture() {
    img.setAttribute('src', imgURL);
    //add img to photos
     photos.appendChild(img);
-  } else{
-    clearPhoto();
-  }
+
 }
 
 
@@ -116,6 +108,9 @@ socket.on("start_recording", id => {
 socket.on("stop_recording", id => {
   stopRecording();
 });
+socket.on("take_picture", id =>{
+  takepicture();
+})
 
 socket.on("disconnectPeer", id => {
   peerConnections[id].close();
@@ -135,7 +130,10 @@ function getStream() {
     });
   }
   const constraints = {
-    video: true,
+    video: {
+      width: 320,
+      height: 320
+    }
   };
   return navigator.mediaDevices
     .getUserMedia(constraints)
@@ -199,7 +197,7 @@ function stopRecording() {
   mediaRecorder.stop();
 }
 
-function clearPhoto() {
+/*function clearPhoto() {
   var context = canvas.getContext('2d');
   context.fillStyle = "#AAA";
   context.fillRect(0, 0, canvas.width, canvas.height);
@@ -207,5 +205,5 @@ function clearPhoto() {
   var data = canvas.toDataURL('image/png');
   photo.setAttribute('src', data);
 }
-
+*/
 getStream();

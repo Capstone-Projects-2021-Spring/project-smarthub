@@ -3,15 +3,17 @@ import { DrawerActions, getFocusedRouteNameFromRoute, NavigationContainer } from
 import {createStackNavigator, StackHeaderLeftButtonProps} from '@react-navigation/stack';
 import { StyleSheet, TouchableOpacity} from 'react-native';
 import ProfilePage from './components/pages/ProfilePage';
-import { LiveStreamingDevices, LiveRecordingDevices, SavedRecordings, SavedImages } from './components/VideoComponent';
+import {LiveRecordingDevices, SavedRecordings, SavedImages } from './components/VideoComponent';
 import HomePage from './components/pages/HomePage';
-import { createDrawerNavigator } from '@react-navigation/drawer';
+import { createDrawerNavigator, DrawerContentScrollView, DrawerItem, DrawerItemList } from '@react-navigation/drawer';
 import {Icon} from 'native-base'
 import Login from './components/pages/loginPage';
 import SignUp from './components/pages/signUpPage';
-import Streaming from './components/pages/StreamingPage';
 import Recording from './components/pages/RecordingPage';
 import { PlayVideos } from './components/lists/SavedRecordings';
+import { SmartLightDevices } from './components/LightComponent';
+import SmartLight from './components/pages/SmartLightsPage';
+import { NavigationActions } from 'react-navigation';
 
 //App.tsx handles the navigation of the application
 
@@ -20,14 +22,30 @@ const Stack = createStackNavigator();
 //Drawer creates a side menu
 const Drawer = createDrawerNavigator();
 
+//The custom drawer content holds logout drawerItem (enables the onPress)
+//That gets attached to the drawer navigator
+function CustomDrawerContent(props : any) {
+  return (
+    <DrawerContentScrollView {...props}>
+      <DrawerItemList {...props} />
+      <DrawerItem label="Sign Out"  
+        onPress={() => props.navigation.navigate('Sign In')}
+        icon={({color, size}) => (
+        <Icon name="exit" style={{fontSize: size, color: color}} />)}
+      />
+    </DrawerContentScrollView>
+  );
+}
+
 //Below creates the drawer effect inside of the Profile Page
 class SelectedProfileNavigation extends Component<{route: any, navigation: any}>{
 
   //after the comp renders this will make sure the header changes to the page that was clicked 
   //and it creates the drawer menu in each of the pages
   componentDidMount = () => {
+    //console.log(this.props.route.params)
     this.props.navigation.setOptions({
-        headerTitle: this.props.route.params.item.profileName,
+        headerTitle: this.props.route.params.item.profile_name,
         headerRight: () => (
           <TouchableOpacity
           style={{marginRight: 10}}
@@ -41,52 +59,62 @@ class SelectedProfileNavigation extends Component<{route: any, navigation: any}>
   }
 
   render(){
+
+    const profilePage = () => {
+      return(
+        <ProfilePage navigation={this.props.navigation} routeObject={this.props.route}/>
+      )
+    }
+
+    const savedRecordings = () => {
+      return(
+        <SavedRecordings navigation={this.props.navigation} routeObject={this.props.route}/>        
+      )
+    }
+    
     return(
-    <Drawer.Navigator>
-      <Drawer.Screen
-        options={{
-          drawerIcon:({color, size}) => (
-            <Icon name="home" style={{fontSize: size, color: color}} />
-          ),
-        }}
-        name = "Profile Page" 
-        component={ () => <ProfilePage navigation={this.props.navigation} routeObject={this.props.route}/>}
-      />
+      <Drawer.Navigator drawerContent={props => <CustomDrawerContent {...props} />}>
+        <Drawer.Screen
+          options={{
+            drawerIcon:({color, size}) => (
+              <Icon name="home" style={{fontSize: size, color: color}} />
+            ),
+          }}
+          name = "Profile Page" 
+          component={profilePage}
+        />
 
-      <Drawer.Screen 
-        options={{
+        <Drawer.Screen 
+          options={{
+            drawerIcon:({color, size}) => (
+              <Icon name="film" style={{fontSize: size, color: color}} />
+            ), }}
+          name="Saved Recordings" 
+          component={savedRecordings}
+        />
+
+        <Drawer.Screen 
+          options={{
           drawerIcon:({color, size}) => (
-            <Icon name="film" style={{fontSize: size, color: color}} />
+            <Icon name="camera" style={{fontSize: size, color: color}} />
           ), }}
-        name="Saved Recordings" 
-        component={ () => <SavedRecordings navigation={this.props.navigation} routeObject={this.props.route}/>}
-      />
-
-      <Drawer.Screen 
-        options={{
-        drawerIcon:({color, size}) => (
-          <Icon name="camera" style={{fontSize: size, color: color}} />
-        ), }}
-        name="Saved Images" 
-        component= {SavedImages} 
-      />
-    </Drawer.Navigator>
+          name="Saved Images" 
+          component= {SavedImages} 
+        />
+      </Drawer.Navigator>
     );
   }
 }
 
 export default function App(){
-  
+  console.warn = () => {}
   return (  
-
   <NavigationContainer>
     <Stack.Navigator initialRouteName="Login">
       
       <Stack.Screen 
         options={{
-          headerStyle: {
-          backgroundColor: '#FF9900'
-          },
+          headerShown: false
         }}
         name="Sign In" 
         component= {Login}
@@ -150,7 +178,7 @@ export default function App(){
         }}
       /> 
 
-      <Stack.Screen 
+      {/* <Stack.Screen 
         options={{
           headerStyle: {
           backgroundColor: '#FF9900'
@@ -166,7 +194,7 @@ export default function App(){
         }}} 
         name="Streaming Devices" 
         component= {Streaming} 
-      />
+      /> */}
 
       <Stack.Screen 
         options={{
@@ -193,6 +221,24 @@ export default function App(){
         }}} 
         name="Recorded Video Screen" 
         component= {PlayVideos} 
+      />
+
+      <Stack.Screen 
+        options={{
+          headerStyle: {
+          backgroundColor: '#FF9900'
+        }}} 
+        name="Smart Light Devices" 
+        component={SmartLightDevices} 
+      />
+
+      <Stack.Screen 
+        options={{
+          headerStyle: {
+          backgroundColor: '#FF9900'
+        }}} 
+        name="Smart Lights" 
+        component={SmartLight} 
       />
 
     </Stack.Navigator>
