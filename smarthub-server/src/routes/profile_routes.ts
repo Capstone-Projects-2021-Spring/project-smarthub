@@ -1,20 +1,17 @@
 import express from 'express' ;
 const Profiles = require('../db/profiles');
 
-//Setting up environment variables.
-// require("dotenv").config();
-// const envVars = process.env;
-// const { USER, HOST, DATABASE, PASSWORD, PORT} = envVars;
-
-
 const routes = express.Router({
 	mergeParams: true
 });
 
-// Could incorporate puppeteer into VideoController. Or if puppeteer has compability issues, we use commands.
+/*
+    Use: Adds a profile.
+    Params: users email, profile name
+*/
 routes.post("/addProfile", async (req, res) => {
-
-    Profiles.addProfile(req.body.user_email, req.body.profile_name, req.body.device_address, req.body.device_name, req.body.device_type).then((profile: any) => {
+    
+    Profiles.addProfile(req.body.user_id, req.body.profile_name).then((profile: any) => {
         //If the insertion was a success, respond with the profile data that was inserted.
         if(profile) {
             return res.status(200).json(profile);
@@ -29,9 +26,51 @@ routes.post("/addProfile", async (req, res) => {
 
 });
 
+/*
+    Use: Returns all profiles belonging to a user.
+    Params: users email
+*/
+routes.post("/getProfiles", async (req, res) => {
+	Profiles.getProfiles(req.body.user_id).then((profiles:any) => {
+        if(profiles.length != 0) {
+            res.status(200).json({profiles});
+        }
+        else {
+            return res.status(500).json({message: "No profiles found."});
+        }
+    }).catch((err: any) => {
+        console.log(err);
+        return res.status(500).json({message: err});
+    });;
+});
+
+/*
+    Use: Returns a profile id belonging to a profile.
+    Params: users email, profile name
+    --below is not needed for profiles
+*/
+// routes.post("/getProfileID", async (req, res) => {
+// 	Profiles.getProfileID(req.body.user_email, req.body.profile_name).then((profile:any) => {
+//         console.log(profile)
+//         if(profile) {
+//             res.status(200).json({profile});
+//         }
+//         else {
+//             return res.status(500).json({message: "No profile found."});
+//         }
+//     }).catch((err: any) => {
+//         console.log(err);
+//         return res.status(500).json({message: err});
+//     });;
+// });
+
+/*
+    Use: Deletes a profile.
+    Params: profile_id
+*/
 routes.post("/deleteProfile", async (req, res) => {
 
-    Profiles.deleteProfile(req.body.user_email, req.body.profile_name, req.body.device_address, req.body.device_name, req.body.device_type).then((profile: any) => {
+    Profiles.deleteProfile(req.body.profile_id).then((profile: any) => {
         //If the insertion was a success, respond with the profile data that was inserted.
         if(profile) {
             return res.status(200).json({message: "Profile deleted."});
@@ -45,36 +84,6 @@ routes.post("/deleteProfile", async (req, res) => {
     });
 
 });
-
-routes.post("/getProfiles", async (req, res) => {
-	Profiles.getProfiles(req.body.user_email, req.body.profile_name, req.body.device_type).then((profiles:any) => {
-        if(profiles) {
-            res.status(200).json({profiles});
-        }
-        else {
-            return res.status(500).json({message: "Unable to get profile."});
-        }
-    }).catch((err: any) => {
-        console.log(err);
-        return res.status(500).json({message: err});
-    });;
-});
-
-routes.post("/getProfileAddress", async (req, res) => {
-	Profiles.getProfileAddress(req.body.user_email, req.body.profile_name, req.body.device_name, req.body.device_type).then((profile:any) => {
-        if(profile) {
-            res.status(200).json({profile});
-        }
-        else {
-            return res.status(500).json({message: "Unable to get profile."});
-        }
-    }).catch((err: any) => {
-        console.log(err);
-        return res.status(500).json({message: err});
-    });;
-});
-
-
 
 module.exports = {
 	routes

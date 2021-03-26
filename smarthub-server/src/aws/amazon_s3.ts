@@ -1,14 +1,17 @@
 import fs from 'fs';
 var AWS = require('aws-sdk');
-var config = require('./config.json');
-
+require('dotenv').config();
+import * as dotenv from 'dotenv'
+const path:string = './.env';
+dotenv.config({path});
+const envVars = process.env;
 //credential validation
 try{
     AWS.config.setPromisesDependency();
     AWS.config.update({
-        accessKeyId: config.accessKeyId,
-        secretAccessKey: config.secretAccessKey,
-        region: 'us-east-2'
+        accessKeyId: envVars.AWS_ACCESS_KEY_ID,
+        secretAccessKey: envVars.AWS_SECRET_ACCESS_KEY,
+        region: envVars.AWS_DEFAULT_REGION
     });
 }catch(e){
     console.log('Error: ' + e);
@@ -17,11 +20,11 @@ try{
 //s3 object to interact with physical s3 on aws
 const s3 = new AWS.S3({signatureVersion: 'v4'});
 
-//userEmail is a folder and profileName is a subFolder in userEmail, the last param is the file
-module.exports.createFolder = async function (accountName : String, profileName: String){
+//userEmail is a folder and profileName is a subFolder in userEmail, the last param is either the images or video folder
+module.exports.createFolder = async function (accountName : String, profileName: String, folderName: String){
     const response = await s3.putObject({
-        Bucket: 'sh-video-storage',
-        Key: (accountName + "/" + profileName + "/").replace(/\s/g, "_"),
+        Bucket: envVars.S3_BUCKET,
+        Key: (accountName + "/" + profileName + "/" + folderName + "/").replace(/\s/g, "_"),
     }).promise();
     console.log("Folder creation was successful");
     return response;
@@ -32,7 +35,7 @@ module.exports.uploadFile = async function (accountName : String, profileName : 
   const fileContent = fs.readFileSync(filePath);
 
   const params = {
-    Bucket: 'sh-video-storage',
+    Bucket: envVars.S3_BUCKET,
     Key: (accountName + "/" + profileName + "/" + "vid_" + new Date()).replace(/\s/g, "_"),
     Body: fileContent,
     ContentType: "video/webm"
@@ -52,7 +55,7 @@ async function getFile (key: String) {
   const signedUrlExpireSeconds: any = 60 * 10080;
 
   const params = {
-    Bucket: 'sh-video-storage',
+    Bucket: envVars.S3_BUCKET,
     Key: key,
     Expires: signedUrlExpireSeconds
   };
@@ -67,7 +70,7 @@ module.exports.getKeyList = async function (accountName : String, profileName : 
   const key: string = (accountName + "/" + profileName + "/").replace(/\s/g, "_");
 
   const params = {
-    Bucket: 'sh-video-storage',
+    Bucket: envVars.S3_BUCKET,
     Prefix: key,
     ContinuationToken: null
   };

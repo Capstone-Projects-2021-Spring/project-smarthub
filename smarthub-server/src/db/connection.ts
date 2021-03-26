@@ -12,11 +12,11 @@ const dbConfig: {
 } = {
     client: 'pg',
     connection: {
-        user: envVars.USER,
-        host: envVars.HOST,
-        database: envVars.DATABASE,
-        password: envVars.PASSWORD,
-        port: envVars.PORT,
+        user: envVars.PGUSER,
+        host: envVars.PGHOST,
+        database: envVars.PGDATABASE,
+        password: envVars.PGPASSWORD,
+        port: envVars.PGPORT,
     },
 };
 

@@ -1,3 +1,4 @@
+  
 import * as socketio from "socket.io";
 import fs from "fs";
 import path from 'path';
@@ -5,11 +6,9 @@ import path from 'path';
 const io = require("socket.io");
 
 /*
-
   The videoController class will contain a socket server that handles events from the client side.
   The client side is a web browser that hosts the video stream.
   Communication is established between this class and the client.
-
 */
 
 class VideoController {

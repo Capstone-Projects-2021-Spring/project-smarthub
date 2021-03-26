@@ -6,6 +6,7 @@ import * as socketio from "socket.io";
 const { routes: videoRoutes, controller: videoController } = require('./routes/video_routes');
 const { routes: audioRoutes, controller: audioController } = require('./routes/audio_routes');
 const { routes: profileRoutes } = require('./routes/profile_routes');
+const { routes: deviceRoutes } = require('./routes/device_routes');
 const { routes: awsRoutes } = require('./routes/aws_routes');
 
 const app = express();
@@ -42,6 +43,8 @@ app.use('/video', videoRoutes);
 app.use('/aws', awsRoutes);
 
 app.use('/profiles', profileRoutes);
+
+app.use('/devices', deviceRoutes);
 
 httpServer.listen(PORT, () => {
   console.log('Server running on http://localhost:' + PORT);
