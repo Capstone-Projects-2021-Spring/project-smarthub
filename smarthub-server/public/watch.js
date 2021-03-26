@@ -1,5 +1,5 @@
 
-const socket = io.connect(window.location.origin);
+const socket = io.connect(window.location.origin + "/video");
 const video = document.getElementById("videoSource");
 
 let peerConnection;

@@ -4,7 +4,7 @@
 // Object for holding RTCPeerConnection objects. Stored as key:value pairs.
 // Key is the socket id, value is the RTCPeerConnection object.
 const peerConnections = {};
-const socket = io.connect(window.location.origin);
+const socket = io.connect(window.location.origin + "/video");
 const videoElement = document.getElementById("videoSource");
 
 let mediaRecorder;

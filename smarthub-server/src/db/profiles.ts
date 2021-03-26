@@ -1,49 +1,66 @@
+export {};
+
 const knex = require('./connection');
 
-function addProfile(userEmail: string, profileName: string, deviceAddress: string, deviceName: string, deviceType: string) {
+/*
+    Use: Adds a new profile.
+    Params: user_id, profile_name.
+*/
+function addProfile(userId: number, profileName: string) {
 
-    return knex("profiles").insert({
-            user_email: userEmail,
-            profile_name: profileName,
-            device_address: deviceAddress,
-            device_name: deviceName,
-            device_type: deviceType
-        }).returning("*").then((rows: any) => { return rows[0]; });
-}
-
-function deleteProfile(userEmail: string, profileName: string, deviceAddress: string, deviceName: string, deviceType: string) {
-
-    return knex("profiles").where(function(this:any) {
-        this.where("user_email", userEmail).andWhere("profile_name", profileName).andWhere("device_type", deviceType).andWhere("device_address", deviceAddress).andWhere("device_name", deviceName);
-    }).del().then((rows: any) => {
-        return rows;
-    });
-}
-
-function getProfiles(userEmail: string, profileName: string, deviceType: string) {
-
-    return knex("profiles").select("device_name", "device_type", "device_address").where(function(this:any) {
-        this.where("user_email", userEmail).andWhere("profile_name", profileName).andWhere("device_type", deviceType);
-    }).then((rows: any) => {
-        return rows;
-    });
-
-}
-
-function getProfileAddress(userEmail: string, profileName: string, deviceName: string, deviceType: string) {
-
-    return knex("profiles").select("device_address").where(function(this:any) {
-        this.where("user_email", userEmail).andWhere("profile_name", profileName).andWhere("device_name", deviceName).andWhere("device_type", deviceType);
-    }).then((rows: any) => {
+    return knex("profiles")
+    .insert({
+        user_id: userId,
+        profile_name: profileName,
+    })
+    .returning("*")
+    .then((rows: any) => {
         return rows[0];
     });
-
 }
 
+/*
+    Use: Returns all profiles belonging to a user.
+    Params: user_id
+*/
+function getProfiles(userId: number) {
+    return knex("profiles")
+        .select("profile_id", "user_id", "profile_name")
+        .where("user_id", userId)
+        .then((rows: any) => {
+            return rows;
+        });
+}
+
+/*
+    Use: Returns a profile id belonging to a profile.
+    Params: users email, profile name
+    --below is not needed for profiles
+*/
+// function getProfileID(userEmail: string, profileName: string) {
+//     return knex("profiles").select("profile_id").where(function(this:any) {
+//         this.where("user_email", userEmail).andWhere("profile_name", profileName);
+//     }).then((row: any) => {
+//         return row[0];
+//     });
+// }
+
+/*
+    Use: Deletes a profile.
+    Params: profile_id
+*/
+function deleteProfile(profileId: number) {
+
+    return knex("profiles")
+        .where("profile_id", profileId)
+        .del()
+        .then((rows: any) => {
+            return rows;
+        });
+}
 
 module.exports = {
     addProfile,
     getProfiles,
-    getProfileAddress,
     deleteProfile
 }

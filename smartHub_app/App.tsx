@@ -61,43 +61,49 @@ class SelectedProfileNavigation extends Component<{route: any, navigation: any}>
   }
 
   render(){
+
     const profilePage = () => {
       return(
-      <ProfilePage navigation={this.props.navigation} routeObject={this.props.route}/>
-      )}
-      const savedRecordings = () => {
-        return(
-<SavedRecordings navigation={this.props.navigation} routeObject={this.props.route}/>        )}
+        <ProfilePage navigation={this.props.navigation} routeObject={this.props.route}/>
+      )
+    }
+
+    const savedRecordings = () => {
+      return(
+        <SavedRecordings navigation={this.props.navigation} routeObject={this.props.route}/>        
+      )
+    }
+    
     return(
       <Drawer.Navigator drawerContent={props => <CustomDrawerContent {...props} />}>
-      <Drawer.Screen
-        options={{
-          drawerIcon:({color, size}) => (
-            <Icon name="home" style={{fontSize: size, color: color}} />
-          ),
-        }}
-        name = "Profile Page" 
-        component={profilePage}
-      />
+        <Drawer.Screen
+          options={{
+            drawerIcon:({color, size}) => (
+              <Icon name="home" style={{fontSize: size, color: color}} />
+            ),
+          }}
+          name = "Profile Page" 
+          component={profilePage}
+        />
 
-      <Drawer.Screen 
-        options={{
+        <Drawer.Screen 
+          options={{
+            drawerIcon:({color, size}) => (
+              <Icon name="film" style={{fontSize: size, color: color}} />
+            ), }}
+          name="Saved Recordings" 
+          component={savedRecordings}
+        />
+
+        <Drawer.Screen 
+          options={{
           drawerIcon:({color, size}) => (
-            <Icon name="film" style={{fontSize: size, color: color}} />
+            <Icon name="camera" style={{fontSize: size, color: color}} />
           ), }}
-        name="Saved Recordings" 
-        component={savedRecordings}
-      />
-
-      <Drawer.Screen 
-        options={{
-        drawerIcon:({color, size}) => (
-          <Icon name="camera" style={{fontSize: size, color: color}} />
-        ), }}
-        name="Saved Images" 
-        component= {SavedImages} 
-      />
-    </Drawer.Navigator>
+          name="Saved Images" 
+          component= {SavedImages} 
+        />
+      </Drawer.Navigator>
     );
   }
 }
