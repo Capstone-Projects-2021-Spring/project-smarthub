@@ -13,6 +13,8 @@ import Recording from './components/pages/RecordingPage';
 import { PlayVideos } from './components/lists/SavedRecordings';
 import { SmartLightDevices } from './components/LightComponent';
 import SmartLight from './components/pages/SmartLightsPage';
+import { SmartLockDevices } from './components/LockComponent';
+import SmartLock from './components/pages/SmartLockPage';
 import { NavigationActions } from 'react-navigation';
 
 //App.tsx handles the navigation of the application
@@ -233,6 +235,24 @@ export default function App(){
         }}} 
         name="Smart Lights" 
         component={SmartLight} 
+      />
+
+      <Stack.Screen 
+        options={{
+          headerStyle: {
+          backgroundColor: '#FF9900'
+        }}} 
+        name="Smart Lock Devices" 
+        component={SmartLockDevices} 
+      />
+
+      <Stack.Screen 
+        options={{
+          headerStyle: {
+          backgroundColor: '#FF9900'
+        }}} 
+        name="Smart Lock" 
+        component={SmartLock} 
       />
 
     </Stack.Navigator>
