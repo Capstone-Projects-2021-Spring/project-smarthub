@@ -46,10 +46,6 @@ routes.post("/start_stream", (req, res) => {
 
 
 
-routes.post("/images", (req, res) => {
-    console.log("images route: taking picture...");
-    return res.status(200).json({ message: "images route: Images saved." });
-});
 
 
 //-----------------------------------------s3---------------------------------------

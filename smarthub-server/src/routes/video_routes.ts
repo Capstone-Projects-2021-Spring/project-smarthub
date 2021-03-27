@@ -85,7 +85,7 @@ routes.post('/stop_recording', async (req : any, res : any) => {
 });
 
 
-routes.post('/images', async (req : any, res : any) => {
+routes.post('/take_image', async (req : any, res : any) => {
 
 	const accountName = req.body.user_email;
 	const profileName = req.body.profile_name;
@@ -93,15 +93,15 @@ routes.post('/images', async (req : any, res : any) => {
   
   //   videoController.takingPicture();
   
-	console.log("images route: Creating folder...");
+	//console.log("take_image_route: Creating folder...");
   
-	await createFolder(accountName, profileName, folderName);
+	//await createFolder(accountName, profileName, folderName);
   
-	console.log("images route: Starting upload to " + localStoragePath);
+	/*console.log("take_image_route: Starting upload to " + localStoragePath);
   
 	await uploadFile(accountName, profileName, localStoragePath);
   
-	console.log("images route: taking picture...");
+	console.log("take_image_route: taking picture...");
   
 	if (OSplatform === 'win32') {
 	  exec('del ' + localStoragePath);
@@ -110,8 +110,8 @@ routes.post('/images', async (req : any, res : any) => {
 	  exec('rm ' + localStoragePath);
 	}
   
-	console.log("images route: cleaned local storage.");
-  
+	console.log("take_image_route: cleaned local storage.");
+  */
 	return res.status(200).send("Images saved.");
   });
 

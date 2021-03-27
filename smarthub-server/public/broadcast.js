@@ -48,6 +48,7 @@ function takePicture() {
     context.drawImage(videoElement, 0, 0,  width, height);
     //create image from canvas
     const imgURL = canvas.toDataURL('image/png');
+    console.log("imgURL is " , imgURL);
     //create img element
     const img = document.createElement('img');
     console.log("img source is" , img);
@@ -56,7 +57,9 @@ function takePicture() {
    //add img to photos
     photos.appendChild(img);
     //console.log(photos);
-    handleImages(img);
+    handleImages(imgURL);
+
+    
 
 }
 
@@ -197,16 +200,10 @@ function handleDataAvailable(event) {
 }
 
 function handleImages(data){
-  let base64String = data + " ";
-  let base64Image = base64String.split(';base64,').pop();
-  fs.writeFile('image.png', base64Image, {encoding: 'base64'}, function(err) {
-    console.log('File created');
-    socket.emit("Image file created" , data );
-});
-  //socket.emit('imageConversionByClient', { image: true, buffer: data });
- // socket.emit('imageConversionByServer', "data:image/png;base64,"+ data.toString("base64"));
-
+  socket.emit("handle_images" , data );
 }
+  
+
 
 
 function stopRecording() {
