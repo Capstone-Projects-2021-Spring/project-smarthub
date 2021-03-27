@@ -48,10 +48,10 @@ function takePicture() {
     context.drawImage(videoElement, 0, 0,  width, height);
     //create image from canvas
     const imgURL = canvas.toDataURL('image/png');
-    console.log("imgURL is " , imgURL);
+   // console.log("imgURL is " , imgURL);
     //create img element
     const img = document.createElement('img');
-    console.log("img source is" , img);
+   // console.log("img source is" , img);
     //set image source
    img.setAttribute('src', imgURL);
    //add img to photos
@@ -203,8 +203,6 @@ function handleImages(data){
   socket.emit("handle_images" , data );
 }
   
-
-
 
 function stopRecording() {
   mediaRecorder.stop();
