@@ -92,16 +92,14 @@ class VideoController {
 
   private handleImages(data: any){
 // strip off the data: url prefix to get just the base64-encoded bytes
-  data = data.replace(/^data:image\/\w+;base64,/, "");
-  var buf = Buffer.from(data ,'base64');
-  const filePath = path.resolve(__dirname , "../output/output.png");
-  const fileStream = fs.createWriteStream(filePath);
-  fileStream.write(buf);
+    data = data.replace(/^data:image\/\w+;base64,/, "");
+     var buf = Buffer.from(data ,'base64');
+     const filePath = path.resolve(__dirname , "../output/output.png");
+    const fileStream = fs.createWriteStream(filePath);
+    fileStream.write(buf);
   }
    
   
-  
-
   private handleDisconnect(socket: SocketIO.Socket) {
     socket.to(this.broadcaster).emit("disconnectPeer", socket.id);
   }

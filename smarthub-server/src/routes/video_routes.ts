@@ -13,6 +13,7 @@ const PORT = 4000;
 
 const OSplatform = process.platform;
 const localStoragePath = path.resolve(__dirname, "./output/output.webm");
+const imageLocalStoragePath = path.resolve(__dirname, "./output/output.png");
 
 const controller = new VideoController();
 
@@ -86,32 +87,27 @@ routes.post('/stop_recording', async (req : any, res : any) => {
 
 
 routes.post('/take_image', async (req : any, res : any) => {
-
 	const accountName = req.body.user_email;
-	const profileName = req.body.profile_name;
-	const folderName = req.body.folder_name;
+  const profileName = req.body.profile_name;
+  const folderName = req.body.folder_name;
+
+	await createFolder(accountName, profileName, folderName);
+
+  console.log("take_image route: Starting upload to " + imageLocalStoragePath);
+
+  await uploadFile(accountName, profileName, imageLocalStoragePath);
+
+  console.log("take_image route: image taken...");
+
+  if (OSplatform === 'win32') {
+    exec('del ' + imageLocalStoragePath);
+  }
+  else{
+    exec('rm ' + imageLocalStoragePath);
+  }
+
+  console.log("take_image route: cleaned local storage.");
   
-  //   videoController.takingPicture();
-  
-	//console.log("take_image_route: Creating folder...");
-  
-	//await createFolder(accountName, profileName, folderName);
-  
-	/*console.log("take_image_route: Starting upload to " + localStoragePath);
-  
-	await uploadFile(accountName, profileName, localStoragePath);
-  
-	console.log("take_image_route: taking picture...");
-  
-	if (OSplatform === 'win32') {
-	  exec('del ' + localStoragePath);
-	}
-	else{
-	  exec('rm ' + localStoragePath);
-	}
-  
-	console.log("take_image_route: cleaned local storage.");
-  */
 	return res.status(200).send("Images saved.");
   });
 
