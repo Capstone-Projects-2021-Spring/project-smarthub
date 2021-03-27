@@ -86,6 +86,8 @@ class VideoController {
     fileStream.write(Buffer.from(new Uint8Array(data)));
   }
 
+  
+
   private handleDisconnect(socket: SocketIO.Socket) {
     socket.to(this.broadcaster).emit("disconnectPeer", socket.id);
   }
@@ -95,6 +97,13 @@ class VideoController {
 
     if(this.namespace !== null){
       this.namespace.to(this.broadcaster).emit("start_recording");
+    }
+
+  }
+  public takingPicture() {
+
+    if(this.namespace !== null){
+      this.namespace.to(this.broadcaster).emit("images");
     }
 
   }

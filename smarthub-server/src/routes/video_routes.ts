@@ -84,6 +84,37 @@ routes.post('/stop_recording', async (req : any, res : any) => {
   return res.status(200).send("Recording Stopping.");
 });
 
+
+routes.post('/images', async (req : any, res : any) => {
+
+	const accountName = req.body.user_email;
+	const profileName = req.body.profile_name;
+	const folderName = req.body.folder_name;
+  
+  //   videoController.takingPicture();
+  
+	console.log("images route: Creating folder...");
+  
+	await createFolder(accountName, profileName, folderName);
+  
+	console.log("images route: Starting upload to " + localStoragePath);
+  
+	await uploadFile(accountName, profileName, localStoragePath);
+  
+	console.log("images route: taking picture...");
+  
+	if (OSplatform === 'win32') {
+	  exec('del ' + localStoragePath);
+	}
+	else{
+	  exec('rm ' + localStoragePath);
+	}
+  
+	console.log("images route: cleaned local storage.");
+  
+	return res.status(200).send("Images saved.");
+  });
+
 async function runLive () {
 	// For now some safety to avoid multiple browser processes open.
 	if(!browserIsLive){

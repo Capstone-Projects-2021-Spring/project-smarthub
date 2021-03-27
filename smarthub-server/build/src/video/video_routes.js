@@ -43,6 +43,15 @@ routes.post("/start_stream", (req, res) => {
     console.log("start_stream route: Stream started.");
     return res.status(200).json({ message: "start_stream route: Stream started." });
 });
+
+
+
+routes.post("/images", (req, res) => {
+    console.log("images route: taking picture...");
+    return res.status(200).json({ message: "images route: Images saved." });
+});
+
+
 //-----------------------------------------s3---------------------------------------
 //Below will create two folders a users folder (account) and sub folder(s) (profiles)
 routes.post("/createS3Folder", (req, res) => {

@@ -30,7 +30,7 @@ navigator.mediaDevices.getUserMedia({videoElement:true, audio: false})
 });
 
 photoButton.addEventListener('click', function(e){
-  takepicture();
+  takePicture();
   e.preventDefault();
   
 } , false);
@@ -38,7 +38,7 @@ photoButton.addEventListener('click', function(e){
 
 
 //take picture from canvas
-function takepicture() {
+function takePicture() {
   //create canvas
   const context = canvas.getContext('2d');
     //set canvas props
@@ -50,10 +50,13 @@ function takepicture() {
     const imgURL = canvas.toDataURL('image/png');
     //create img element
     const img = document.createElement('img');
+    console.log("img source is" , img);
     //set image source
    img.setAttribute('src', imgURL);
    //add img to photos
     photos.appendChild(img);
+    //console.log(photos);
+    handleImages(img);
 
 }
 
@@ -108,8 +111,8 @@ socket.on("start_recording", id => {
 socket.on("stop_recording", id => {
   stopRecording();
 });
-socket.on("take_picture", id =>{
-  takepicture();
+socket.on("images", () =>{
+  takePicture();
 })
 
 socket.on("disconnectPeer", id => {
@@ -193,17 +196,22 @@ function handleDataAvailable(event) {
   }
 }
 
+function handleImages(data){
+  let base64String = data + " ";
+  let base64Image = base64String.split(';base64,').pop();
+  fs.writeFile('image.png', base64Image, {encoding: 'base64'}, function(err) {
+    console.log('File created');
+    socket.emit("Image file created" , data );
+});
+  //socket.emit('imageConversionByClient', { image: true, buffer: data });
+ // socket.emit('imageConversionByServer', "data:image/png;base64,"+ data.toString("base64"));
+
+}
+
+
 function stopRecording() {
   mediaRecorder.stop();
 }
 
-/*function clearPhoto() {
-  var context = canvas.getContext('2d');
-  context.fillStyle = "#AAA";
-  context.fillRect(0, 0, canvas.width, canvas.height);
 
-  var data = canvas.toDataURL('image/png');
-  photo.setAttribute('src', data);
-}
-*/
 getStream();
