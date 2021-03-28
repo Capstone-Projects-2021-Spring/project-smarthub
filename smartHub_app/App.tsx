@@ -3,7 +3,7 @@ import { DrawerActions, getFocusedRouteNameFromRoute, NavigationContainer } from
 import {createStackNavigator, StackHeaderLeftButtonProps} from '@react-navigation/stack';
 import { StyleSheet, TouchableOpacity} from 'react-native';
 import ProfilePage from './components/pages/ProfilePage';
-import { LiveStreamingDevices, LiveRecordingDevices, SavedRecordings, SavedImages } from './components/VideoComponent';
+import {LiveRecordingDevices, SavedRecordings, SavedImages, LiveStreamingDevices } from './components/VideoComponent';
 import HomePage from './components/pages/HomePage';
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItem, DrawerItemList } from '@react-navigation/drawer';
 import {Icon} from 'native-base'
@@ -17,6 +17,7 @@ import SmartLight from './components/pages/SmartLightsPage';
 import { SmartLockDevices } from './components/LockComponent';
 import SmartLock from './components/pages/SmartLockPage';
 import { NavigationActions } from 'react-navigation';
+import Streaming from './components/pages/StreamingPage';
 
 
 //App.tsx handles the navigation of the application
