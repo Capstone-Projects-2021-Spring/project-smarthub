@@ -105,7 +105,7 @@ export default class SmartLock extends Component<{navigation: any, route: any},{
                 <TouchableOpacity
                     style={styles.button}
                     onPress={this.launchModal}>
-                    <Text style={styles.text}>Configure Time</Text>
+                    <Text style={styles.text}>Set Time</Text>
                 </TouchableOpacity>
                 <LockModal ref={'LockModal'} lockTime={this} device_id={this.state.device_id}/>
           </View>
