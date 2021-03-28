@@ -183,6 +183,48 @@ export default class Recording extends Component<{route: any, navigation: any}, 
         }
     }
 
+
+
+
+
+    takePhoto = () => {
+        var url = 'http://' + this.state.deviceIP + ':4000/video/take_image';
+        if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
+            alert(this.props.route.params.device_name + ' not compatible for recording.')
+            return;
+        }
+        console.log(url);
+        let collection: any = {}
+        collection.user_email = this.state.userEmail;
+        collection.profile_name = this.state.profileName;
+
+        if(this.state.responseText !== 'Taking Picture'){
+            axios.post(url, collection).then((response) => {
+                // alert("Stopping Recording");
+                this.setState({responseText: response.data})
+                Toast.show({
+                    type: 'error',
+                    text1: 'Take Photo Clicked!',
+                    text2: 'Images Saved',
+                    visibilityTime: 2000
+                });
+            }, (error) => {
+                alert("Error Taking Picture");
+                console.log(error);
+            })
+        }else{
+            Toast.show({
+                type: 'success',
+                text1: 'Images have been saved!',
+                visibilityTime: 2000
+            })
+        }
+    }
+
+
+
+
+
     componentDidMount = () => {
         this.props.navigation.setOptions({
             headerTitle: this.props.route.params.device_name,
@@ -270,6 +312,11 @@ export default class Recording extends Component<{route: any, navigation: any}, 
                 style={styles.pillButton}
                 onPress={this.stopRecord}>
                 <Text style={{fontSize: 20}}>Stop Recording</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+                style={styles.pillButton}
+                onPress={this.takePhoto}>
+                <Text style={{fontSize: 20}}>Take Photo</Text>
             </TouchableOpacity>
             </View>
         </View>
