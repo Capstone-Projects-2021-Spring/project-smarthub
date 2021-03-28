@@ -227,32 +227,6 @@ export default class Streaming extends Component<{route: any, navigation: any}, 
 			this.setState({remoteStream: {toURL: () => null}});
 
 			// Code to stop audio.
-
-				var url = 'http://' + this.state.deviceIP + ':4000/video/stop_stream';
-				// if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
-				//     alert(this.props.route.params.device_name + ' not compatible for live streaming.')
-				//     return;
-				// }
-				// if(this.state.responseText !== 'Stream Closing.'){
-				//     axios.post(url).then((response) => {
-				//         this.setState({responseText: response.data})
-				//         Toast.show({
-				//             type: 'error',
-				//             text1: 'Stop Stream Clicked!',
-				//             text2: 'The stream is no longer live.',
-				//             visibilityTime: 2000
-				//         });
-				//         console.log(response.data)
-				//     }, (error) => {
-				//         console.log(error);
-				//     })
-				// }else{
-				//     Toast.show({
-				//         type: 'success',
-				//         text1: 'The Stream has already stopped!',
-				//         visibilityTime: 2000
-				//     })
-				// }
 		}
 
 		stopStreamOnBackClick = () => {

@@ -5,6 +5,20 @@ import axios from 'axios'
 import Toast, {BaseToast} from 'react-native-toast-message'
 import { getAddressString } from '../../utils/utilities';
 
+import {
+	RTCPeerConnection,
+	RTCIceCandidate,
+	RTCSessionDescription,
+	RTCView,
+	MediaStream,
+	MediaStreamTrack,
+	mediaDevices,
+	registerGlobals,
+} from 'react-native-webrtc';
+
+import * as socketio from "socket.io-client";
+const io = require("socket.io-client");
+
 export default class Recording extends Component<{route: any, navigation: any}, {responseText: String, deviceIP: String, recordingResponseText: any, userEmail: String, profileName: String}>{
 
     constructor(props: any){
@@ -14,13 +28,36 @@ export default class Recording extends Component<{route: any, navigation: any}, 
             recordingResponseText: "",
             deviceIP: "",
             userEmail: "",
-            profileName: ""
+            profileName: "",
+            remoteStream: {toURL: () => null},
+            socket: null,
+            peerConnection: new RTCPeerConnection({
+                iceServers: [
+                    {
+                        urls: 'stun:stun.l.google.com:19302',
+                    },
+                    {
+                        urls: 'stun:stun1.l.google.com:19302',
+                    },
+                    {
+                        urls: 'stun:stun2.l.google.com:19302',
+                    },
+                ]
+            })
         })
 
         this.beginStream = this.beginStream.bind(this);
         this.stopStream = this.stopStream.bind(this);    
         this.startRecord = this.startRecord.bind(this);
-        this.stopRecord = this.stopRecord.bind(this);        
+        this.stopRecord = this.stopRecord.bind(this);
+        
+        this.beginAudio = this.beginAudio.bind(this);
+        this.stopAudio = this.stopAudio.bind(this);
+
+        this.handleOffer = this.handleOffer.bind(this);
+        this.handleCandidate = this.handleCandidate.bind(this);
+        this.handleOrigin = this.handleOrigin.bind(this);
+        this.setRemoteStream = this.setRemoteStream.bind(this);
     }
 
     getDeviceIP = async () => {
@@ -36,7 +73,170 @@ export default class Recording extends Component<{route: any, navigation: any}, 
         })
     }
 
+    // ---------------------------------------- Audio Socket Handling Functions ----------------------------------------
+    async handleOffer (id: any, description: any) {
+
+        console.log("Handling offer from audio origin.");
+
+        try {
+
+            this.state.peerConnection.onaddstream = event => this.setRemoteStream(event.stream);
+
+            this.state.peerConnection.onicecandidate = event => {
+                if (event.candidate) {
+                    this.state.socket.emit("candidate", id, event.candidate);
+                }
+            };
+
+            await this.state.peerConnection.setRemoteDescription(new RTCSessionDescription(description));
+
+            const answer: any = await this.state.peerConnection.createAnswer();
+
+            await this.state.peerConnection.setLocalDescription(answer);
+
+            this.state.socket.emit("answer", id, this.state.peerConnection.localDescription);
+
+            // this.setState({peerConnection: this.state.peerConnection});
+
+        } catch (err) {
+
+            console.log("Offer went wrong, Error: " + err);
+
+        }
+
+    }
+
+    // Add new ICE candidate, which is the agreed upon method to connect.
+    async handleCandidate (id: any, candidate: any) {
+
+        console.log("Handling candidate from audio origin.");
+
+        try{
+
+            await this.state.peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+
+        } catch (err) {
+
+            console.log("IceCandidate addition went wrong, Error: " + err);
+        }
+
+    }
+
+    async handleOrigin () {
+        this.state.socket.emit("audio_join");
+    }
+
+    // ---------------------------------------- Socket Handling Functions ----------------------------------------
+
+    // Sets the stream.
+    setRemoteStream (stream: any) {
+        console.log("Setting Stream!");
+        this.setState({remoteStream: stream});
+    }
+
+    beginAudio = async () => {
+        // New url for audio. Set to socket namespace called audio.
+        var url = 'http://' + this.state.deviceIP + ':4000/audio/start_intercom';
+
+        await axios.post(url).then((response) => {
+            this.setState({responseText: response.data})
+            Toast.show({
+                type: 'error',
+                text1: 'Start Audio Clicked!',
+                text2: 'The Audio is live.',
+                visibilityTime: 2000
+            });
+            console.log(response.data);
+        }, (error) => {
+            console.log(error);
+        })
+
+        console.log(this.state.deviceIP);
+
+        // if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
+        //     alert(this.props.route.params.device_name + ' not compatible for live streaming.')
+        //     return;
+        // }
+
+        url = 'http://' + this.state.deviceIP + ':4000/audio'
+
+        const socket = io.connect(url);
+
+        socket.on("offer", (id: any, description: any) => this.handleOffer(id, description));
+        socket.on("candidate", (id: any, description: any) => this.handleCandidate(id, description));
+        socket.on("audio_origin", () => this.handleOrigin());
+
+        this.setState({socket: socket});
+                                
+        const constraints: any = { audio : true };
+
+        try{
+
+            let stream = await mediaDevices.getUserMedia(constraints);
+
+            this.state.peerConnection.addStream(stream);
+
+            console.log("Start intercom success");
+
+            this.state.socket.emit("audio_join");
+
+        } catch (err) {
+            console.log("Start intercom error");
+            console.log(err);
+        }
+    }
+
+    stopAudio = () => {
+
+        var url = 'http://' + this.state.deviceIP + ':4000/audio/stop_intercom';
+
+        axios.post(url).then((response) => {
+            this.setState({responseText: response.data})
+            Toast.show({
+                type: 'error',
+                text1: 'Stop Audio Clicked!',
+                text2: 'The Audio is no longer live.',
+                visibilityTime: 2000
+            });
+            console.log(response.data);
+        }, (error) => {
+            console.log(error);
+        })
+
+        // Code to stop audio.
+
+        if(this.state.socket !== null) {
+            this.state.socket.disconnect();
+        }
+
+        this.setState({socket: null});
+
+        this.state.peerConnection.close();
+        console.log("Stop intercom success");
+
+        this.setState({peerConnection:
+            new RTCPeerConnection({
+                iceServers: [
+                    {
+                        urls: 'stun:stun.l.google.com:19302',
+                    },
+                    {
+                        urls: 'stun:stun1.l.google.com:19302',
+                    },
+                    {
+                        urls: 'stun:stun2.l.google.com:19302',
+                    },
+                ]
+            })
+        });
+
+        this.setState({remoteStream: {toURL: () => null}});
+
+        // Code to stop audio.
+    }
+
     beginStream = () => {
+        console.log("HERE");
         var url = 'http://' + this.state.deviceIP + ':4000/video/start_stream';
         console.log(url)
         if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
@@ -63,6 +263,7 @@ export default class Recording extends Component<{route: any, navigation: any}, 
                     }
                 ,
                 5000);
+                this.beginAudio();
             }, (error) => {
              console.log(error);
          })
@@ -91,7 +292,8 @@ export default class Recording extends Component<{route: any, navigation: any}, 
                     text2: 'The stream is no longer live.',
                     visibilityTime: 2000
                 });
-                console.log(response.data)
+                this.stopAudio();
+                console.log(response.data);
             }, (error) => {
                 console.log(error);
             })
@@ -105,6 +307,7 @@ export default class Recording extends Component<{route: any, navigation: any}, 
     }
 
     stopStreamOnBackClick = () => {
+        this.stopAudio();
         var url = 'http://' + this.state.deviceIP + ':4000/video/stop_stream';
         if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
             return;
@@ -247,15 +450,24 @@ export default class Recording extends Component<{route: any, navigation: any}, 
                 source={{html: '<iframe style="box-sizing: border-box; width: 100%; height: 100%; border: 15px solid #FF9900; background-color: #222222"; src="http://' + this.state.deviceIP + ':4000/watch.html" frameborder="0" allow="autoplay encrypted-media" allowfullscreen></iframe>'}} 
                 mediaPlaybackRequiresUserAction={false}
                 />
+                <RTCView streamURL={this.state.remoteStream.toURL()} />
             <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', padding: 50, paddingBottom: 80}}>
             <TouchableOpacity
                 style={styles.pillButton}
-                onPress={this.beginStream}>
+                onPress= {
+                    // console.log("streaming and intercom starting");
+                    this.beginStream
+                    // this.beginAudio
+                }>
                 <Text style={{fontSize: 20}}>Begin Stream</Text>
             </TouchableOpacity>
             <TouchableOpacity
                 style={styles.pillButton}
-                onPress={this.stopStream}>
+                onPress={
+                    // console.log("streaming and intercom stoping");
+                    this.stopStream
+                    // this.stopAudio
+                }>
                 <Text style={{fontSize: 20}}>Stop Stream</Text>
             </TouchableOpacity>
             </View>
