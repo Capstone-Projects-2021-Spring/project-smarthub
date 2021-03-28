@@ -2,11 +2,6 @@
 import React, { Component } from 'react';
 import { SafeAreaView, View, FlatList, StyleSheet, Text, Button } from 'react-native';
 import { Video, AVPlaybackStatus } from 'expo-av';
-import axios from 'axios';
-import { List } from 'native-base';
-import { getAddressString } from '../../utils/utilities';
-// import * as VideoThumbnails from 'expo-video-thumbnails';
-
 
 export class PlayVideos extends Component<{navigation: any, stackScreen: string, route: any}, {retrievedVideo: any, recordingsList: any}>{
 
@@ -18,50 +13,6 @@ export class PlayVideos extends Component<{navigation: any, stackScreen: string,
             
         });
     }
-
-    // getRecordingsFromProfile = () => {
-    //     let collection: any = {}
-    //     collection.user_email = this.props.routeObject.userEmail;
-    //     console.log(collection.user_email)
-    //     collection.profile_name = this.props.routeObject.item.profileName;
-    //     console.log(collection.profile_name)
-    
-    //     axios.post(getAddressString() + '/get_key_list', collection).then((response) => {
-    //         this.setState({recordingsList: response.data.keyList});
-            
-    //         this.getFileFromProfile();
-    //         // this.trimRecordingsList();
-    //     }, (error) => {
-    //         console.log(error);
-    //     })
-    // }
-
-    // getFileFromProfile = () => {
-    //     let collection: any = {}
-    //     console.log(this.state.recordingsList[1]);
-    //     collection.key = this.state.recordingsList[1];
-    //     console.log(collection.key);
-    
-    //     axios.post(getAddressString() + '/get_file', collection).then((response) => {
-    //         // this.setState({recordingsList: response.data.keyList});
-    //         this.setState({retrievedVideo: response.data.video.Body})
-    //         console.log(this.state.retrievedVideo);
-    //     }, (error) => {
-    //         console.log(error);
-    //     })
-    // }
-
-    // trimRecordingsList = () => {
-    //     for(let i = 0; i < this.state.recordingsList.length; i++)
-    //     {
-    //         this.state.recordingsList[i] = this.state.recordingsList[i].substring(this.state.recordingsList[i].lastIndexOf("/") + 1);
-    //     }
-    //     console.log(this.state.recordingsList);
-    // }
-
-    // componentDidMount = () => {
-    //     this.getFileFromProfile();
-    // }
     
     render(){
         console.log(this.props.route);
@@ -107,13 +58,3 @@ const styles = StyleSheet.create({
       alignItems: 'center',
     },
 });
-
-// function getRecordings() {
-//     var path: "";
-    
-//     axios.post(path).then((response) => {
-//     }, ({error, response}) => {
-//         alert(response.data.message);
-//     })
-//     throw new Error('Function not implemented.');
-// }
