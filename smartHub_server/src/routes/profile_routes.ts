@@ -68,6 +68,20 @@ routes.post("/getProfiles", async (req, res) => {
     Use: Deletes a profile.
     Params: profile_id
 */
+
+routes.post("/getUserInfo" , async (req, res) => {
+    Profiles.getUserInfo(req.body.user_id).then((profiles:any) => {
+        if(profiles.length != 0) {
+            res.status(200).json({profiles});
+        }
+        else {
+            return res.status(500).json({message: "No profiles found."});
+        }
+    }).catch((err: any) => {
+        console.log(err);
+        return res.status(500).json({message: err});
+    });;
+})
 routes.post("/deleteProfile", async (req, res) => {
 
     Profiles.deleteProfile(req.body.profile_id).then((profile: any) => {
