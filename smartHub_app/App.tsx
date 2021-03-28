@@ -16,6 +16,7 @@ import SmartLight from './components/pages/SmartLightsPage';
 import { SmartLockDevices } from './components/LockComponent';
 import SmartLock from './components/pages/SmartLockPage';
 import { NavigationActions } from 'react-navigation';
+import { showImage } from './components/pages/SavedImagePage';
 
 //App.tsx handles the navigation of the application
 
@@ -74,6 +75,12 @@ class SelectedProfileNavigation extends Component<{route: any, navigation: any}>
       )
     }
     
+    const savedImages = () => {
+      return(
+        <SavedImages navigation={this.props.navigation} routeObject={this.props.route}/>        
+      )
+    }
+    
     return(
       <Drawer.Navigator drawerContent={props => <CustomDrawerContent {...props} />}>
         <Drawer.Screen
@@ -101,7 +108,7 @@ class SelectedProfileNavigation extends Component<{route: any, navigation: any}>
             <Icon name="camera" style={{fontSize: size, color: color}} />
           ), }}
           name="Saved Images" 
-          component= {SavedImages} 
+          component= {savedImages} 
         />
       </Drawer.Navigator>
     );
@@ -223,6 +230,15 @@ export default function App(){
         }}} 
         name="Recorded Video Screen" 
         component= {PlayVideos} 
+      />
+
+      <Stack.Screen 
+        options={{
+          headerStyle: {
+          backgroundColor: '#FF9900'
+        }}} 
+        name="Image Screen" 
+        component= {showImage} 
       />
 
       <Stack.Screen 
