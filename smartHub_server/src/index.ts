@@ -6,6 +6,7 @@ import * as socketio from "socket.io";
 const { routes: videoRoutes, controller: videoController } = require('./routes/video_routes');
 const { routes: audioRoutes, controller: audioController } = require('./routes/audio_routes');
 //const { routes: lockRoutes } = require('./routes/lock_routes');
+//const { routes: lightRoutes } = require('./routes/light_routes');
 const { routes: profileRoutes } = require('./routes/profile_routes');
 const { routes: deviceRoutes } = require('./routes/device_routes');
 const { routes: awsRoutes } = require('./routes/aws_routes');
@@ -43,6 +44,7 @@ app.use('/video', videoRoutes);
 app.use('/profiles', profileRoutes);
 app.use('/devices', deviceRoutes);
 //app.use('/lock', lockRoutes);
+//app.use('/light', lightRoutes);
 app.use('/aws', awsRoutes);
 
 httpServer.listen(PORT, () => {
