@@ -31,21 +31,21 @@ export default class Recording extends Component<{route: any, navigation: any}, 
             deviceIP: "",
             userEmail: "",
             profileName: "",
-            //remoteStream: {toURL: () => null},
-            // socket: null,
-            // peerConnection: new RTCPeerConnection({
-            //     iceServers: [
-            //         {
-            //             urls: 'stun:stun.l.google.com:19302',
-            //         },
-            //         {
-            //             urls: 'stun:stun1.l.google.com:19302',
-            //         },
-            //         {
-            //             urls: 'stun:stun2.l.google.com:19302',
-            //         },
-            //     ]
-            // })
+            remoteStream: {toURL: () => null},
+            socket: null,
+            peerConnection: new RTCPeerConnection({
+                iceServers: [
+                    {
+                        urls: 'stun:stun.l.google.com:19302',
+                    },
+                    {
+                        urls: 'stun:stun1.l.google.com:19302',
+                    },
+                    {
+                        urls: 'stun:stun2.l.google.com:19302',
+                    },
+                ]
+            })
         })
 
         this.beginStream = this.beginStream.bind(this);
@@ -53,13 +53,13 @@ export default class Recording extends Component<{route: any, navigation: any}, 
         this.startRecord = this.startRecord.bind(this);
         this.stopRecord = this.stopRecord.bind(this);
         
-        // this.beginAudio = this.beginAudio.bind(this);
-        // this.stopAudio = this.stopAudio.bind(this);
+        this.beginAudio = this.beginAudio.bind(this);
+        this.stopAudio = this.stopAudio.bind(this);
 
-        // this.handleOffer = this.handleOffer.bind(this);
-        // this.handleCandidate = this.handleCandidate.bind(this);
-        // this.handleOrigin = this.handleOrigin.bind(this);
-        // this.setRemoteStream = this.setRemoteStream.bind(this);
+        this.handleOffer = this.handleOffer.bind(this);
+        this.handleCandidate = this.handleCandidate.bind(this);
+        this.handleOrigin = this.handleOrigin.bind(this);
+        this.setRemoteStream = this.setRemoteStream.bind(this);
     }
 
     getDeviceIP = async () => {
@@ -97,8 +97,6 @@ export default class Recording extends Component<{route: any, navigation: any}, 
             await this.state.peerConnection.setLocalDescription(answer);
 
             this.state.socket.emit("answer", id, this.state.peerConnection.localDescription);
-
-            // this.setState({peerConnection: this.state.peerConnection});
 
         } catch (err) {
 
@@ -142,12 +140,12 @@ export default class Recording extends Component<{route: any, navigation: any}, 
 
         await axios.post(url).then((response) => {
             this.setState({responseText: response.data})
-            Toast.show({
-                type: 'error',
-                text1: 'Start Audio Clicked!',
-                text2: 'The Audio is live.',
-                visibilityTime: 2000
-            });
+            // Toast.show({
+            //     type: 'error',
+            //     text1: 'Start Audio Clicked!',
+            //     text2: 'The Audio is live.',
+            //     visibilityTime: 2000
+            // });
             //console.log(response.data);
         }, (error) => {
             console.log(error);
@@ -194,12 +192,12 @@ export default class Recording extends Component<{route: any, navigation: any}, 
 
         axios.post(url).then((response) => {
             this.setState({responseText: response.data})
-            Toast.show({
-                type: 'error',
-                text1: 'Stop Audio Clicked!',
-                text2: 'The Audio is no longer live.',
-                visibilityTime: 2000
-            });
+            // Toast.show({
+            //     type: 'error',
+            //     text1: 'Stop Audio Clicked!',
+            //     text2: 'The Audio is no longer live.',
+            //     visibilityTime: 2000
+            // });
             console.log(response.data);
         }, (error) => {
             console.log(error);
@@ -306,8 +304,8 @@ export default class Recording extends Component<{route: any, navigation: any}, 
         }
     }
 
-    stopStreamOnBackClick = async () => {
-        await this.stopAudio();
+    stopStreamOnBackClick = () => {
+        this.stopAudio();
         var url = 'http://' + this.state.deviceIP + ':4000/video/stop_stream';
         if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
             return;
@@ -483,7 +481,7 @@ export default class Recording extends Component<{route: any, navigation: any}, 
                     source={{html: '<iframe style="box-sizing: border-box; width: 100%; height: 100%; border: 15px solid #FF9900; background-color: #222222"; src="http://' + this.state.deviceIP + ':4000/watch.html" frameborder="0" allow="autoplay encrypted-media" allowfullscreen></iframe>'}} 
                     mediaPlaybackRequiresUserAction={false}
                 />
-                {/* <RTCView streamURL={this.state.remoteStream.toURL()} /> */}
+                <RTCView streamURL={this.state.remoteStream.toURL()} />
                 <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', padding: 50, paddingBottom: 30}}>
                     <TouchableOpacity
                         style={styles.pillButton}

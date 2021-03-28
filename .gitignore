@@ -4,3 +4,4 @@ smartHub_app/node_modules
 smartHub_app/.env
 smarthub_login-api/node_modules
 smarthub_login-api/.env
+smartHub_app/android/app/build
