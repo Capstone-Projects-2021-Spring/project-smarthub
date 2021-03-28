@@ -32,6 +32,16 @@ function getProfiles(userId: number) {
         });
 }
 
+function getUserInfo(userId: number) {
+    return knex({p: "profiles"})
+        .select("profile_name", "user_email")
+        .join({u: "users"}, "p.user_id", "=", "u.user_id")
+        .where("u.user_id", userId)
+        .then((rows: any) => {
+            return rows;
+        });
+}
+
 /*
     Use: Returns a profile id belonging to a profile.
     Params: users email, profile name
@@ -50,7 +60,6 @@ function getProfiles(userId: number) {
     Params: profile_id
 */
 function deleteProfile(profileId: number) {
-
     return knex("profiles")
         .where("profile_id", profileId)
         .del()
@@ -62,5 +71,6 @@ function deleteProfile(profileId: number) {
 module.exports = {
     addProfile,
     getProfiles,
+    getUserInfo,
     deleteProfile
 }
