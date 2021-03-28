@@ -1,9 +1,6 @@
 import React, {Component} from 'react';
 import {StyleSheet, View, Text, TouchableOpacity, Dimensions, FlatList, Alert, Image} from 'react-native';
-import Swipeout from 'react-native-swipeout';
-import {Icon} from 'native-base';
 import axios from 'axios';
-import DeviceModal from '../modals/modalForAddingDevice';
 import {getAddressString} from '../../utils/utilities';
 
 var width : number = Dimensions.get('window').width;
@@ -19,7 +16,6 @@ interface PropVariables{
 class SavedImageItem extends Component<PropVariables>{
 
     render(){
-        console.log("heherheh")
         console.log(this.props.item)
         return(
             <View style={{backgroundColor:"#222222"}}>
@@ -66,11 +62,11 @@ export class SavedImagesList extends Component<{navigation: any, routeObject: an
         collection.component_name = "Images";
         console.log(collection);
         
-        await axios.post(getAddressString() + '/aws/get_key_list', collection).then((response) => {
+        await axios.post(getAddressString() + '/aws/get_key_list', collection).then(async (response) => {
             console.log("made it inside post");
             console.log(response.data);
             this.setState({imageList: response.data.keyList});
-            this.trimRecordingsList();
+            await this.trimRecordingsList();
             //console.log(this.state.imageList);
         }, (error) => {
             console.log("made it inside post error -- Image List");
