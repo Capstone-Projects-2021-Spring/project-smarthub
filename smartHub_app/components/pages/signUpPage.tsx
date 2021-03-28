@@ -19,6 +19,7 @@ export default class SignUp extends Component<{navigation: any}>{
         email: "",
         password: "",
         passwordConfirmation: "",
+        user_id: -1,
     };
 
     AnimateContainer = () => {
@@ -67,7 +68,7 @@ export default class SignUp extends Component<{navigation: any}>{
     }
 
     signUpPressHandler(){
-        this.props.navigation.navigate("Home", this.state.email);
+        this.props.navigation.navigate("Home", this.state.user_id);
     }
 
     userSignUp(){
@@ -82,8 +83,12 @@ export default class SignUp extends Component<{navigation: any}>{
         var url = "https://b2bgr96nbc.execute-api.us-east-1.amazonaws.com/dev/user/register"
         
         axios.post(url, collection).then((response) => {
+            this.state.user_id = response.data.user_id;
+            console.log(response.data);
+            console.log(this.state.user_id);
             this.signUpPressHandler();
         }, ({error, response}) => {
+            console.log(error);
             alert(response.data.message);
         })
     }

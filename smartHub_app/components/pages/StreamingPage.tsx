@@ -338,4 +338,3 @@ const styles = StyleSheet.create ({
 		},
 
 })
-
