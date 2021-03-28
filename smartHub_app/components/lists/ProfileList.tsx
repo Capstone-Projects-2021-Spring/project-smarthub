@@ -4,11 +4,12 @@ import Swipeout from 'react-native-swipeout';
 import {Icon} from 'native-base'
 import ProfileModal from '../modals/modalForProfileList';
 import { BackHandler } from 'react-native';
-import axios from 'axios';
-import {getAddressString} from '../../utils/utilities';
 
 var width : number = Dimensions.get('window').width;
 var height : number = Dimensions.get('window').height;
+
+//Sample data
+var sampleList: any = [{profileName: '123 Sample Street'}];
 
 //Need to create the interfaces to define the types for props and state variables
 
@@ -17,7 +18,7 @@ interface PropVariables{
     index: any,
     parentFlatList: any,
     navigation: any,
-    profileList: any
+    userEmail: string
 }
 
 interface StateVariables{
@@ -34,6 +35,7 @@ class ProfileListItem extends Component<PropVariables,StateVariables>{
     }
     render(){
         let item = this.props.item;
+        let userEmail = this.props.userEmail;
         let {itemStyle} = styles;
         const swipeSettings = {
             autoClose: true,
@@ -51,32 +53,15 @@ class ProfileListItem extends Component<PropVariables,StateVariables>{
                         const rowToDelete = this.state.activeRowKey;
                         Alert.alert(
                             'Alert',
-                            'Are you sure you want to delete ' + item.profile_name + '?',
+                            'Are you sure you want to delete this profile?',
                             [
                                 {text: 'No', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
                                 {text: 'Yes', onPress: () => {
-                                    // this.props.deviceList.splice(this.props.index, 1);
-                                     //Refresh list
-                                     
-                                     let collection: any = {}
-                                     collection.profile_id = item.profile_id;
-                                     // console.warn(collection);
-                                     
-                                    axios.post(getAddressString() + '/profiles/deleteProfile', collection).then((response) => {
-                                        console.log("DELETING A PROFILE SUCCESS");
-                                         console.log(response.status)
-                                         //splice the item to the list and then refresh the list
-                                         //which would rerender the component
-                                         this.props.profileList.splice(this.props.index, 1);
-                                         this.props.parentFlatList.refreshListDelete(rowToDelete);
-                                     }, ({error, response}) => {
-                                        console.log("ERROR IN DELETING A PROFILE");
-                                         console.log(response.data.message);
-                                     })
-                                    
-                                    
-                                 }},
-                             ],
+                                    sampleList.splice(this.props.index, 1);
+                                    //Refresh list
+                                    this.props.parentFlatList.refreshList(rowToDelete);
+                                }},
+                            ],
                             {cancelable: true}
                         )
                     },
@@ -90,8 +75,9 @@ class ProfileListItem extends Component<PropVariables,StateVariables>{
             <Swipeout {...swipeSettings} style={{backgroundColor:"#222222"}} >
             <TouchableOpacity
             style={itemStyle}
-            onPress={() => this.props.navigation.navigate('Profile', {item})}>
-            <Text style={{paddingLeft: 5, paddingTop: 5, fontWeight: 'bold', fontSize: 20, color: '#fff'}}>{item.profile_name}</Text>
+            onPress={() => this.props.navigation.navigate('Profile', {item, userEmail})}>
+            <Text style={{paddingLeft: 5, paddingTop: 5, fontWeight: 'bold', fontSize: 20, color: '#fff'}}>{this.props.item.profileName}</Text>
+            <Image style={{flex:1, height: 10, width: 20}} source={{uri: this.props.item.image}}/>
             </TouchableOpacity>
             </Swipeout>
         );
@@ -99,48 +85,22 @@ class ProfileListItem extends Component<PropVariables,StateVariables>{
 }
 
 //Creates the list of profiles that are present on the home page
-export default class ProfileList extends Component<{navigation: any, user_id: number}, {deletedRowKey: any, insertedRowKey: any, profileList: any}>{
+export default class ProfileList extends Component<{navigation: any, userEmail: string}>{
 
     constructor(props : any){
         super(props);
         this.state = ({
-            deletedRowKey: null,
-            insertedRowKey: null,
-            profileList: []
+            deletedRowKey: null
         });
         this.launchModal = this.launchModal.bind(this);
-        this.getProfiles = this.getProfiles.bind(this);
     }
 
-    refreshListInsert = (insertedKey : number) => {
-        this.setState(() => {
-            return {
-                insertedRowKey: insertedKey
-            }
-        });
-        this.getProfiles();
-   }
-
-   refreshListDelete = (deletedKey : number) => {
-        this.setState(() => {
-            return {
-                deletedRowKey: deletedKey
-            }
-        });
-     //   this.getProfiles();
-    }
-
-    getProfiles = async() => {
-        let collection: any = {}
-        collection.user_id = this.props.user_id;
-        //console.log(collection);
-        await axios.post(getAddressString() + '/profiles/getProfiles', collection).then((response) => {
-            console.log(response.data)
-            this.setState({profileList: response.data.profiles})
-        }, (error) => {
-            console.log("ERROR IN GETTING A PROFILE");
-            console.log(error);
-        })
+    refreshList = (deletedKey : any) => {
+         this.setState(() => {
+             return {
+                 deletedRowKey: deletedKey
+             }
+         });
     }
 
     launchModal = () => {
@@ -157,7 +117,6 @@ export default class ProfileList extends Component<{navigation: any, user_id: nu
                 </TouchableOpacity>  
                 )
         })
-        this.getProfiles();
     }
 
     componentWillMount() {
@@ -177,10 +136,10 @@ export default class ProfileList extends Component<{navigation: any, user_id: nu
             <View style={styles.container}>
                 <FlatList
                     style={{flex:1}}
-                    data={this.state.profileList}
+                    data={sampleList}
                     renderItem={({item, index} : any)=>{
                         return(
-                            <ProfileListItem item={item} index={index} parentFlatList={this} profileList={this.state.profileList} navigation={this.props.navigation}></ProfileListItem>
+                            <ProfileListItem item={item} index={index} userEmail={this.props.userEmail} parentFlatList={this} navigation={this.props.navigation}></ProfileListItem>
                         );
                     }}
                     ListEmptyComponent={() => {
@@ -193,7 +152,7 @@ export default class ProfileList extends Component<{navigation: any, user_id: nu
                         )
                     }}
                 />
-                <ProfileModal ref={'profileModal'} parentFlatList={this} user_id={this.props.user_id} profileList={this.state.profileList} />
+                <ProfileModal ref={'profileModal'} parentFlatList={this} sampleList={sampleList} />
             </View>
         );
     }
