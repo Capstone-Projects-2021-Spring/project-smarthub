@@ -5,6 +5,8 @@ import axios from 'axios'
 import Toast, {BaseToast} from 'react-native-toast-message'
 import { getAddressString } from '../../utils/utilities';
 
+var width : number = Dimensions.get('window').width;
+
 export default class Recording extends Component<{route: any, navigation: any}, {responseText: String, deviceIP: String, recordingResponseText: any, userEmail: String, profileName: String}>{
 
     constructor(props: any){
@@ -183,20 +185,17 @@ export default class Recording extends Component<{route: any, navigation: any}, 
         }
     }
 
-
-
-
-
     takePhoto = () => {
         var url = 'http://' + this.state.deviceIP + ':4000/video/take_image';
         if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
-            alert(this.props.route.params.device_name + ' not compatible for recording.')
+            alert(this.props.route.params.device_name + ' not compatible for photo taking.')
             return;
         }
         console.log(url);
         let collection: any = {}
         collection.user_email = this.state.userEmail;
         collection.profile_name = this.state.profileName;
+        collection.component_name = "Images";
 
         if(this.state.responseText !== 'Taking Picture'){
             axios.post(url, collection).then((response) => {
@@ -220,10 +219,6 @@ export default class Recording extends Component<{route: any, navigation: any}, 
             })
         }
     }
-
-
-
-
 
     componentDidMount = () => {
         this.props.navigation.setOptions({
@@ -289,7 +284,7 @@ export default class Recording extends Component<{route: any, navigation: any}, 
                 source={{html: '<iframe style="box-sizing: border-box; width: 100%; height: 100%; border: 15px solid #FF9900; background-color: #222222"; src="http://' + this.state.deviceIP + ':4000/watch.html" frameborder="0" allow="autoplay encrypted-media" allowfullscreen></iframe>'}} 
                 mediaPlaybackRequiresUserAction={false}
                 />
-            <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', padding: 50, paddingBottom: 80}}>
+            <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', padding: 50, paddingBottom: 30}}>
             <TouchableOpacity
                 style={styles.pillButton}
                 onPress={this.beginStream}>
@@ -301,8 +296,14 @@ export default class Recording extends Component<{route: any, navigation: any}, 
                 <Text style={{fontSize: 20}}>Stop Stream</Text>
             </TouchableOpacity>
             </View>
-
-            <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', padding: 50, paddingBottom: 80}}>
+            <View style={{alignItems: 'center'}}>
+            <TouchableOpacity
+                style={styles.photoButton}
+                onPress={this.takePhoto}>
+                <Text style={{fontSize: 20}}>Take Photo</Text>
+            </TouchableOpacity>
+                </View>
+            <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingTop: 30, paddingBottom: 80}}>
             <TouchableOpacity
                 style={styles.pillButton}
                 onPress={this.startRecord}>
@@ -312,11 +313,6 @@ export default class Recording extends Component<{route: any, navigation: any}, 
                 style={styles.pillButton}
                 onPress={this.stopRecord}>
                 <Text style={{fontSize: 20}}>Stop Recording</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-                style={styles.pillButton}
-                onPress={this.takePhoto}>
-                <Text style={{fontSize: 20}}>Take Photo</Text>
             </TouchableOpacity>
             </View>
         </View>
@@ -331,7 +327,22 @@ const styles = StyleSheet.create ({
         justifyContent:'center',
         alignItems:'center',
         margin: 5,
-        width:175,
+        width:width-260,
+        height:50,        
+        borderRadius:20,
+        backgroundColor: '#FF9900',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.5,
+        shadowRadius: 5, 
+    },
+
+    photoButton: {
+        borderWidth:1,
+        justifyContent:'center',
+        alignItems:'center',
+        margin: 5,
+        width:width-75,
         height:50,        
         borderRadius:20,
         backgroundColor: '#FF9900',
