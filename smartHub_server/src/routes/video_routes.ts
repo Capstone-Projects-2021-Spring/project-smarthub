@@ -21,8 +21,10 @@ const routes = express.Router({
 	mergeParams: true
 });
 
-// Could incorporate puppeteer into VideoController. Or if puppeteer has compability issues, we use commands.
-
+/*
+    Use: Stops the video stream on the pi.
+    Params: none
+*/
 routes.post("/stop_stream", async (req: any, res: any) => {
 
 	console.log("stop_stream route: Stream closing...");
@@ -41,6 +43,10 @@ routes.post("/stop_stream", async (req: any, res: any) => {
 	return res.status(200).send("Stream Closing.");
 });
 
+/*
+    Use: Starts the video stream on the pi.
+    Params: none
+*/
 routes.post("/start_stream", (req: any, res: any) => {
 	console.log("start_stream route: Stream starting...");
 	runLive();
@@ -48,6 +54,10 @@ routes.post("/start_stream", (req: any, res: any) => {
 	return res.status(200).send("Stream Starting.");
 });
 
+/*
+    Use: Starts recording on the video stream.
+    Params: none
+*/
 routes.post('/start_recording', (req : any, res : any) => {
 
   controller.startRecording();
@@ -55,6 +65,10 @@ routes.post('/start_recording', (req : any, res : any) => {
   return res.status(200).send("Recording Starting.");
 });
 
+/*
+    Use: Stops recording and upload file to S3.
+    Params: user_email, profile_name, component_name.
+*/
 routes.post('/stop_recording', async (req : any, res : any) => {
 
   const accountName = req.body.user_email;
@@ -85,8 +99,12 @@ routes.post('/stop_recording', async (req : any, res : any) => {
   return res.status(200).send("Recording Stopping.");
 });
 
-
+/*
+    Use: Takes a picture of the current video stream, then saves it to a file.
+    Params: user_email, profile_name, component_name.
+*/
 routes.post('/take_image', async (req : any, res : any) => {
+
   const accountName = req.body.user_email;
   const profileName = req.body.profile_name;
   const componentName = req.body.component_name;
@@ -109,10 +127,14 @@ routes.post('/take_image', async (req : any, res : any) => {
   }
 
   console.log("take_image route: cleaned local storage.");
-  
-	return res.status(200).send("Images saved.");
-  });
 
+	return res.status(200).send("Images saved.");
+});
+
+/*
+    Use: Starts the headless chromium browser to utilize WebRTC.
+    Params: none
+*/
 async function runLive () {
 	// For now some safety to avoid multiple browser processes open.
 	if(!browserIsLive){
@@ -126,7 +148,7 @@ async function runLive () {
 		});
 		// Create a new page in the browser.
 		const page = await live_browser.newPage();
-		//WARNING, THIS IS HARD CODED AND IT SHOULDNT BE!, PUT STUFF LIKE PORT IN AN ENVIRONMENT VARIABLE OR SOMETHING SO IT CAN BE UPDATED EVERYWHERE IF ITS CHANGED.
+		
 		await page.goto("http://localhost:" + PORT + "/broadcast.html");
 
 		console.log("Chromium is live.");
