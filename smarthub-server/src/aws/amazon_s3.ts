@@ -20,11 +20,11 @@ try{
 //s3 object to interact with physical s3 on aws
 const s3 = new AWS.S3({signatureVersion: 'v4'});
 
-//userEmail is a folder and profileName is a subFolder in userEmail, the last param is the file
-module.exports.createFolder = async function (accountName : String, profileName: String){
+//userEmail is a folder and profileName is a subFolder in userEmail, the last param is either the images or video folder
+module.exports.createFolder = async function (accountName : String, profileName: String, folderName: String){
     const response = await s3.putObject({
         Bucket: envVars.S3_BUCKET,
-        Key: (accountName + "/" + profileName + "/").replace(/\s/g, "_"),
+        Key: (accountName + "/" + profileName + "/" + folderName + "/").replace(/\s/g, "_"),
     }).promise();
     console.log("Folder creation was successful");
     return response;

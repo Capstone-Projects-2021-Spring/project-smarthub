@@ -39,6 +39,14 @@ app.post('/stop_recording', (req, res) => {
     console.log("stop_recording route: recording stopping...");
     return res.status(200).json({ message: "stop_recording route: recording stopping..." });
 });
+
+
+app.post('/images', (req, res) => {
+    videoController.takingPicture();
+    console.log("images route: taking picture...");
+    return res.status(200).json({ message: "images route: taking picture..."});
+});
+
 httpServer.listen(PORT, () => {
     console.log('Server running on http://localhost:' + PORT);
 });

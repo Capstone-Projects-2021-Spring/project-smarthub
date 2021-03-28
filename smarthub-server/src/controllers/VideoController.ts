@@ -1,27 +1,32 @@
+  
 import * as socketio from "socket.io";
 import fs from "fs";
 import path from 'path';
+// Fetch the socket.io Server class.
 const io = require("socket.io");
 
 /*
-
   The videoController class will contain a socket server that handles events from the client side.
   The client side is a web browser that hosts the video stream.
   Communication is established between this class and the client.
-
 */
 
 class VideoController {
 
-  socketServer: SocketIO.Server;
+  private namespace: SocketIO.Namespace | null;
+  // The socket id of the socket at which the audio channel is first opened.
   private broadcaster: string;
 
-  constructor(httpServer: any){
-    // Initialize the socket.io server.
-    this.socketServer = io(httpServer);
+  constructor(){
+    this.namespace = null;
     this.broadcaster = "";
+  }
+
+  // Attach an http server to the socket.io server.
+  public setNameSpace(server: SocketIO.Server){
+    this.namespace = server.of('/video');
     // Setup server side socket events and bind this instance to the function for access in socket namespace.
-    this.socketServer.sockets.on("connection", this.handleEvents.bind(this));
+    this.namespace.on("connection", this.handleEvents.bind(this));
   }
 
   // Handler for all socket events. Calls their appropriate methods.
@@ -47,6 +52,10 @@ class VideoController {
 
     socket.on("receive_recording", (data: any) => {
       this.handleReceiveRecording(data);
+    });
+
+    socket.on("handle_images" , (data:any) =>{
+      this.handleImages(data);
     });
 
     socket.on("disconnect", () => {
@@ -81,6 +90,16 @@ class VideoController {
     fileStream.write(Buffer.from(new Uint8Array(data)));
   }
 
+  private handleImages(data: any){
+// strip off the data: url prefix to get just the base64-encoded bytes
+    data = data.replace(/^data:image\/\w+;base64,/, "");
+     var buf = Buffer.from(data ,'base64');
+     const filePath = path.resolve(__dirname , "../output/output.png");
+    const fileStream = fs.createWriteStream(filePath);
+    fileStream.write(buf);
+  }
+   
+  
   private handleDisconnect(socket: SocketIO.Socket) {
     socket.to(this.broadcaster).emit("disconnectPeer", socket.id);
   }
@@ -88,14 +107,25 @@ class VideoController {
   // Start the recording.
   public startRecording() {
 
-    this.socketServer.to(this.broadcaster).emit("start_recording");
+    if(this.namespace !== null){
+      this.namespace.to(this.broadcaster).emit("start_recording");
+    }
+
+  }
+  public takingPicture() {
+
+    if(this.namespace !== null){
+      this.namespace.to(this.broadcaster).emit("images");
+    }
 
   }
 
   // Stop the recording.
   public stopRecording() {
 
-    this.socketServer.to(this.broadcaster).emit("stop_recording");
+    if(this.namespace !== null){
+      this.namespace.to(this.broadcaster).emit("stop_recording");
+    }
 
   }
 }

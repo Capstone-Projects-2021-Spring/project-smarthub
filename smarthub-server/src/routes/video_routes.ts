@@ -1,11 +1,21 @@
 import express from 'express';
 import {spawn} from 'child_process';
 import * as socketio from 'socket.io';
+import {exec} from 'child_process';
+import path from 'path';
 import puppeteer from 'puppeteer-core';
+import { VideoController } from '../controllers/VideoController';
+const { createFolder, uploadFile } = require('../aws/amazon_s3');
 
 let live_browser: any;
 let browserIsLive: boolean = false;
 const PORT = 4000;
+
+const OSplatform = process.platform;
+const localStoragePath = path.resolve(__dirname, "./output/output.webm");
+const imageLocalStoragePath = path.resolve(__dirname, "./output/output.png");
+
+const controller = new VideoController();
 
 const routes = express.Router({
 	mergeParams: true
@@ -38,13 +48,68 @@ routes.post("/start_stream", (req: any, res: any) => {
 	return res.status(200).send("Stream Starting.");
 });
 
-//-----------------------------------------s3---------------------------------------
+routes.post('/start_recording', (req : any, res : any) => {
 
-//Below will create two folders a users folder (account) and sub folder(s) (profiles)
-// routes.post("/createS3Folder", (req : any, res : any) => {
-// 	createFolder(req.body.userName, req.body.profileName);
-// })
+  videoController.startRecording();
+  console.log("start_recording route: recording starting...");
+  return res.status(200).send("Recording Starting.");
+});
 
+routes.post('/stop_recording', async (req : any, res : any) => {
+
+  const accountName = req.body.user_email;
+  const profileName = req.body.profile_name;
+  const folderName = req.body.folder_name;
+
+  videoController.stopRecording();
+
+  console.log("stop_recording route: Creating folder...");
+
+  await createFolder(accountName, profileName, folderName);
+
+  console.log("stop_recording route: Starting upload to " + localStoragePath);
+
+  await uploadFile(accountName, profileName, localStoragePath);
+
+  console.log("stop_recording route: recording stopping...");
+
+  if (OSplatform === 'win32') {
+    exec('del ' + localStoragePath);
+  }
+  else{
+    exec('rm ' + localStoragePath);
+  }
+
+  console.log("stop_recording_route: cleaned local storage.");
+
+  return res.status(200).send("Recording Stopping.");
+});
+
+
+routes.post('/take_image', async (req : any, res : any) => {
+	const accountName = req.body.user_email;
+  const profileName = req.body.profile_name;
+  const folderName = req.body.folder_name;
+
+	await createFolder(accountName, profileName, folderName);
+
+  console.log("take_image route: Starting upload to " + imageLocalStoragePath);
+
+  await uploadFile(accountName, profileName, imageLocalStoragePath);
+
+  console.log("take_image route: image taken...");
+
+  if (OSplatform === 'win32') {
+    exec('del ' + imageLocalStoragePath);
+  }
+  else{
+    exec('rm ' + imageLocalStoragePath);
+  }
+
+  console.log("take_image route: cleaned local storage.");
+  
+	return res.status(200).send("Images saved.");
+  });
 
 async function runLive () {
 	// For now some safety to avoid multiple browser processes open.
@@ -72,5 +137,6 @@ async function runLive () {
 }
 
 module.exports = {
-	routes
+	routes,
+	controller
 };

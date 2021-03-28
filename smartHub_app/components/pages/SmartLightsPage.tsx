@@ -33,8 +33,9 @@ export default class SmartLight extends Component<{navigation: any, route: any},
             text1: 'Processing Please Wait...',
             visibilityTime: 5000
         })
-        axios.post("http://"+ this.state.deviceIP + ":8000/lights", obj) .then((response) => {
-            console.log(response.data)
+        //console.log("http://"+ this.state.deviceIP + ":4000/lights")
+        axios.post("http://"+ this.state.deviceIP + ":4000/lights", obj) .then((response) => {
+            //console.log(response.data)
             Toast.show({
                 type: 'success',
                 text1: response.data,
@@ -45,7 +46,8 @@ export default class SmartLight extends Component<{navigation: any, route: any},
             Toast.show({
                 type: 'error',
                 text1: 'Could not configure light settings.',
-                visibilityTime: 2000
+                text2: 'Ensure your Pi is on and connected to the Smart Light Device.',
+                visibilityTime: 2500
             })
         })
     }
@@ -66,8 +68,8 @@ export default class SmartLight extends Component<{navigation: any, route: any},
             text1: 'Processing Please Wait...',
             visibilityTime: 5000
         })
-        axios.post("http://"+ this.state.deviceIP + ":8000/lights", obj) .then((response) => {
-            console.log(response.data)
+        axios.post("http://"+ this.state.deviceIP + ":4000/lights", obj) .then((response) => {
+            //console.log(response.data)
             //setTimeout(() => {
             Toast.show({
                 type: 'success',
@@ -79,7 +81,8 @@ export default class SmartLight extends Component<{navigation: any, route: any},
             Toast.show({
                 type: 'error',
                 text1: 'Could not configure light settings.',
-                visibilityTime: 2000
+                text2: 'Ensure your Pi is on and connected to the Smart Light Device.',
+                visibilityTime: 2500
             })
         })
     }
@@ -97,8 +100,8 @@ export default class SmartLight extends Component<{navigation: any, route: any},
             text1: 'Processing Please Wait...',
             visibilityTime: 2000
         })
-        axios.post("http://"+ this.state.deviceIP + ":8000/lights", obj) .then((response) => {
-            console.log(response.data)
+        axios.post("http://"+ this.state.deviceIP + ":4000/lights", obj) .then((response) => {
+            //console.log(response.data)
             Toast.show({
                 type: 'success',
                 text1: response.data,
@@ -109,7 +112,8 @@ export default class SmartLight extends Component<{navigation: any, route: any},
             Toast.show({
                 type: 'error',
                 text1: 'Could not configure light settings.',
-                visibilityTime: 2000
+                text2: 'Ensure your Pi is on and connected to the Smart Light Device.',
+                visibilityTime: 2500
             })
         })
     }
@@ -118,7 +122,7 @@ export default class SmartLight extends Component<{navigation: any, route: any},
         let collection: any = {}
         collection.device_id = this.props.route.params.device_id;
         await axios.post(getAddressString() + '/devices/getDeviceInfo', collection).then((response) => {
-            console.log(response.data);
+            //console.log(response.data);
             this.setState({deviceIP: response.data.device[0].device_address})
         }, (error) => {
             console.log(error);

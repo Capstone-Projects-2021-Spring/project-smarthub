@@ -79,8 +79,9 @@ export default class ProfileModal extends Component<PropVariables, StateVariable
                             //console.log(response.data)
                             //Push the item to the list and then refresh the list
                             //which would rerender the component
+                            console.log("Profile " + newProfile.profileName + " successfully added.")
                             this.props.profileList.push(newProfile.profileName);
-                            this.props.parentFlatList.refreshListInsert(newProfile.profileName)
+                            this.props.parentFlatList.getProfiles()
                             //Reset the state afterwards
                             this.setState({newProfileName : ""});
                         }, (error) => {

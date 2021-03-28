@@ -93,8 +93,9 @@ export default class DeviceModal extends Component<PropVariables, StateVariables
                             //console.log(response.status)
                             //Push the item to the list and then refresh the list
                             //which would rerender the component
+                            console.log("Device " + newDevice.DeviceName + " successfully added.");
                             this.props.deviceList.push(newDevice.DeviceName);
-                            this.props.parentFlatList.refreshListInsert(this.state.DeviceName)
+                            this.props.parentFlatList.getDevices()
                             //Reset the state afterwards
                             this.setState({DeviceName : "", DeviceIP: ""});
                         }, (error) => {
