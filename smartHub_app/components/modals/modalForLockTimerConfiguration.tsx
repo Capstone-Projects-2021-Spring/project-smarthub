@@ -59,8 +59,8 @@ export default class LockModal extends Component<PropVariables, StateVariables>{
             {
                 seconds.map((item, index)=>{
                 return <Item 
-                    onPress={()=>{
-                        this.setState({selectedSeconds : (item)});
+                    onPress={ async ()=>{
+                        await this.setState({selectedSeconds : item});
                         this.props.lockTime.getLockTime(this.state.selectedSeconds);
                         this.refs.LockModal.close();
                     }}
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
 
     modalStyling: {
         justifyContent: 'center',
-        borderRadius: Platform.OS === 'ios' ? 30 : 0,
+        borderRadius: Platform.OS === 'ios' ? 30 : 30,
         shadowRadius: 10,
         width: screen.width - 80,
         height: 280
@@ -126,11 +126,12 @@ const itemStyles = StyleSheet.create({
     },
     item: {
       padding: 30,
-      backgroundColor: 'grey',
+      backgroundColor: '#474646',
       borderColor: 'white',
       borderWidth: 1,
       justifyContent: 'center',
-      alignItems: 'center'
+      alignItems: 'center',
+      borderRadius: 5
     },
     itemIsSelected: {
       backgroundColor: 'gold'

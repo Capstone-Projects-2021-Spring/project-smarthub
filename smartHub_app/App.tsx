@@ -15,6 +15,8 @@ import { SmartLightDevices } from './components/LightComponent';
 import SmartLight from './components/pages/SmartLightsPage';
 import { NavigationActions } from 'react-navigation';
 import { showImage } from './components/pages/SavedImagePage';
+import { SmartLockDevices } from './components/LockComponent';
+import SmartLock from './components/pages/SmartLockPage';
 
 //App.tsx handles the navigation of the application
 
@@ -185,7 +187,7 @@ export default function App(){
         }}
       /> 
 
-      <Stack.Screen 
+      {/* <Stack.Screen 
         options={{
           headerStyle: {
           backgroundColor: '#FF9900'
@@ -201,7 +203,7 @@ export default function App(){
         }}} 
         name="Streaming Devices" 
         component= {Streaming} 
-      />
+      /> */}
 
       <Stack.Screen 
         options={{
@@ -255,6 +257,24 @@ export default function App(){
         }}} 
         name="Smart Lights" 
         component={SmartLight} 
+      />
+
+      <Stack.Screen 
+        options={{
+          headerStyle: {
+          backgroundColor: '#FF9900'
+        }}} 
+        name="Smart Lock Devices" 
+        component={SmartLockDevices} 
+      />
+
+      <Stack.Screen 
+        options={{
+          headerStyle: {
+          backgroundColor: '#FF9900'
+        }}} 
+        name="Smart Lock" 
+        component={SmartLock} 
       />
 
     </Stack.Navigator>
