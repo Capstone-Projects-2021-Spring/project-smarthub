@@ -3,7 +3,7 @@ import { DrawerActions, getFocusedRouteNameFromRoute, NavigationContainer } from
 import {createStackNavigator, StackHeaderLeftButtonProps} from '@react-navigation/stack';
 import { StyleSheet, TouchableOpacity} from 'react-native';
 import ProfilePage from './components/pages/ProfilePage';
-import {LiveRecordingDevices, SavedRecordings, SavedImages } from './components/VideoComponent';
+import {LiveRecordingDevices, SavedRecordings, SavedImages, LiveStreamingDevices } from './components/VideoComponent';
 import HomePage from './components/pages/HomePage';
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItem, DrawerItemList } from '@react-navigation/drawer';
 import {Icon} from 'native-base'
@@ -13,8 +13,6 @@ import Recording from './components/pages/RecordingPage';
 import { PlayVideos } from './components/lists/SavedRecordings';
 import { SmartLightDevices } from './components/LightComponent';
 import SmartLight from './components/pages/SmartLightsPage';
-import { SmartLockDevices } from './components/LockComponent';
-import SmartLock from './components/pages/SmartLockPage';
 import { NavigationActions } from 'react-navigation';
 import { showImage } from './components/pages/SavedImagePage';
 
@@ -187,7 +185,7 @@ export default function App(){
         }}
       /> 
 
-      {/* <Stack.Screen 
+      <Stack.Screen 
         options={{
           headerStyle: {
           backgroundColor: '#FF9900'
@@ -203,7 +201,7 @@ export default function App(){
         }}} 
         name="Streaming Devices" 
         component= {Streaming} 
-      /> */}
+      />
 
       <Stack.Screen 
         options={{
@@ -257,24 +255,6 @@ export default function App(){
         }}} 
         name="Smart Lights" 
         component={SmartLight} 
-      />
-
-      <Stack.Screen 
-        options={{
-          headerStyle: {
-          backgroundColor: '#FF9900'
-        }}} 
-        name="Smart Lock Devices" 
-        component={SmartLockDevices} 
-      />
-
-      <Stack.Screen 
-        options={{
-          headerStyle: {
-          backgroundColor: '#FF9900'
-        }}} 
-        name="Smart Lock" 
-        component={SmartLock} 
       />
 
     </Stack.Navigator>

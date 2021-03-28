@@ -135,15 +135,7 @@ export default class ProfileList extends Component<{navigation: any, user_id: nu
                 onPress={this.launchModal}>
                 <Icon name="ios-add" />
                 </TouchableOpacity>  
-            ),
-            headerLeft: () => (
-                <TouchableOpacity
-                style={{marginLeft: 18, marginBottom: 1.5, marginTop: 5}}
-                onPress={() => this.props.navigation.navigate('Sign In')}>
-                <Icon name="exit" />
-                </TouchableOpacity>  
-            ),
-                
+                )
         })
         this.getProfiles();
     }
