@@ -5,6 +5,7 @@ import puppeteer from 'puppeteer-core';
 import * as socketio from "socket.io";
 const { routes: videoRoutes, controller: videoController } = require('./routes/video_routes');
 const { routes: audioRoutes, controller: audioController } = require('./routes/audio_routes');
+const { routes: lockRoutes } = require('./routes/lock_routes');
 const { routes: profileRoutes } = require('./routes/profile_routes');
 const { routes: deviceRoutes } = require('./routes/device_routes');
 const { routes: awsRoutes } = require('./routes/aws_routes');
@@ -39,12 +40,10 @@ audioController.setNameSpace(io);
 
 //Telling express to use the routes found in /video/video_routes.ts (Access these routes by http using /video/startStream, /video/startRecord etc...)
 app.use('/video', videoRoutes);
-
-app.use('/aws', awsRoutes);
-
 app.use('/profiles', profileRoutes);
-
 app.use('/devices', deviceRoutes);
+app.use('/lock', lockRoutes);
+app.use('/aws', awsRoutes);
 
 httpServer.listen(PORT, () => {
   console.log('Server running on http://localhost:' + PORT);

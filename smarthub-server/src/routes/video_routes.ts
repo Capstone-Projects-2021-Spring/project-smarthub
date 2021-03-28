@@ -50,7 +50,7 @@ routes.post("/start_stream", (req: any, res: any) => {
 
 routes.post('/start_recording', (req : any, res : any) => {
 
-  // videoController.startRecording();
+  videoController.startRecording();
   console.log("start_recording route: recording starting...");
   return res.status(200).send("Recording Starting.");
 });
@@ -61,7 +61,7 @@ routes.post('/stop_recording', async (req : any, res : any) => {
   const profileName = req.body.profile_name;
   const folderName = req.body.folder_name;
 
-//   videoController.stopRecording();
+  videoController.stopRecording();
 
   console.log("stop_recording route: Creating folder...");
 
