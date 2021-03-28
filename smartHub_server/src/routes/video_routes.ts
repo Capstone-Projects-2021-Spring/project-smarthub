@@ -12,8 +12,8 @@ let browserIsLive: boolean = false;
 const PORT = 4000;
 
 const OSplatform = process.platform;
-const localStoragePath = path.resolve(__dirname, "./output/output.webm");
-const imageLocalStoragePath = path.resolve(__dirname, "./output/output.png");
+const localStoragePath = path.resolve(__dirname, "../output/output.webm");
+const imageLocalStoragePath = path.resolve(__dirname, "../output/output.png");
 
 const controller = new VideoController();
 
