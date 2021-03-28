@@ -3,7 +3,7 @@ import { DrawerActions, getFocusedRouteNameFromRoute, NavigationContainer } from
 import {createStackNavigator, StackHeaderLeftButtonProps} from '@react-navigation/stack';
 import { StyleSheet, TouchableOpacity} from 'react-native';
 import ProfilePage from './components/pages/ProfilePage';
-import {LiveRecordingDevices, SavedRecordings, SavedImages } from './components/VideoComponent';
+import {LiveRecordingDevices, SavedRecordings, SavedImages, LiveStreamingDevices } from './components/VideoComponent';
 import HomePage from './components/pages/HomePage';
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItem, DrawerItemList } from '@react-navigation/drawer';
 import {Icon} from 'native-base'
@@ -14,6 +14,7 @@ import { PlayVideos } from './components/lists/SavedRecordings';
 import { SmartLightDevices } from './components/LightComponent';
 import SmartLight from './components/pages/SmartLightsPage';
 import { NavigationActions } from 'react-navigation';
+import Streaming from './components/pages/StreamingPage';
 
 //App.tsx handles the navigation of the application
 
@@ -178,7 +179,7 @@ export default function App(){
         }}
       /> 
 
-      {/* <Stack.Screen 
+      <Stack.Screen 
         options={{
           headerStyle: {
           backgroundColor: '#FF9900'
@@ -194,7 +195,7 @@ export default function App(){
         }}} 
         name="Streaming Devices" 
         component= {Streaming} 
-      /> */}
+      />
 
       <Stack.Screen 
         options={{
