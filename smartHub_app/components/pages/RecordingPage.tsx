@@ -106,13 +106,6 @@ export default class Recording extends Component<{route: any, navigation: any}, 
         }
     }
 
-    getUserAndProfile = () => {
-        return {
-            userEmail: this.state.userEmail,
-            profileName: this.state.profileName
-        }
-    }
-
     stopStreamOnBackClick = () => {
         var url = 'http://' + this.state.deviceIP + ':4000/video/stop_stream';
         if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
