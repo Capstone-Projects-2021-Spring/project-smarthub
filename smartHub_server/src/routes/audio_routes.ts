@@ -55,12 +55,13 @@ async function runIntercom () {
 		intercom_browser = await puppeteer.launch({
 			executablePath: 'chromium-browser',
 			headless: true,
-			args: ['--use-fake-ui-for-media-intercom', '--mute-audio']
+			args: ['--use-fake-ui-for-media-stream'],
+			ignoreDefaultArgs:['--mute-audio']
 		});
 		// Create a new page in the browser.
 		const page = await intercom_browser.newPage();
 		
-		await page.goto("http://localhost:" + PORT + "/broadcast.html");
+		await page.goto("http://localhost:" + PORT + "/audioOrigin.html");
 
 		console.log("Chromium is intercom.");
 
