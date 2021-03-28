@@ -4,7 +4,6 @@ import {WebView} from 'react-native-webview'
 import axios from 'axios'
 import Toast, {BaseToast} from 'react-native-toast-message'
 import { getAddressString } from '../../utils/utilities';
-
 var width : number = Dimensions.get('window').width;
 
 export default class Recording extends Component<{route: any, navigation: any}, {responseText: String, deviceIP: String, recordingResponseText: any, userEmail: String, profileName: String}>{
@@ -14,11 +13,8 @@ export default class Recording extends Component<{route: any, navigation: any}, 
         this.state= ({
             responseText: "",
             recordingResponseText: "",
-            deviceIP: "",
-            userEmail: "",
-            profileName: ""
+            deviceIP: ""
         })
-
         this.beginStream = this.beginStream.bind(this);
         this.stopStream = this.stopStream.bind(this);    
         this.startRecord = this.startRecord.bind(this);
@@ -26,27 +22,32 @@ export default class Recording extends Component<{route: any, navigation: any}, 
     }
 
     getDeviceIP = async () => {
-        //console.log(this.props.route);
         let collection: any = {}
-        collection.device_id = this.props.route.params.device_id;
-        await axios.post(getAddressString() + '/devices/getDeviceInfo', collection).then((response) => {
-            this.setState({deviceIP: response.data.device[0].device_address})
-            this.setState({userEmail: response.data.device[0].user_email})
-            this.setState({profileName: response.data.device[0].profile_name})
+        collection.user_email = this.props.route.params.userEmail;
+        collection.profile_name = this.props.route.params.profileName;
+        collection.device_name = this.props.route.params.device_name;
+        collection.device_type = this.props.route.params.device_type;
+
+        await axios.post(getAddressString() + '/profiles/getProfileAddress', collection).then((response) => {
+            //return response.data.profiles
+            this.setState({deviceIP: response.data.profile.device_address})
+            console.log(this.state.deviceIP)
+            console.log(response.status)
         }, (error) => {
             console.log(error);
         })
     }
 
     beginStream = () => {
+        console.log(this.state.deviceIP);
         var url = 'http://' + this.state.deviceIP + ':4000/video/start_stream';
-        console.log(url)
+        //console.log(url);
         if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
             alert(this.props.route.params.device_name + ' not compatible for live streaming.')
             return;
         }
         if(this.state.responseText!== 'Stream Starting.'){
-            //console.log(this.state.deviceIP)
+            console.log(this.state.deviceIP)
             axios.post(url).then((response) => {
                 console.log(response.status)
                 Toast.show({
@@ -59,7 +60,7 @@ export default class Recording extends Component<{route: any, navigation: any}, 
                         Toast.show({
                             type: 'success',
                             text1: 'The Stream Is Live!',
-                            text2: 'Enjoy!',
+                            text2: 'Press the play button to begin.',
                             visibilityTime: 2000
                         })
                     }
@@ -121,10 +122,12 @@ export default class Recording extends Component<{route: any, navigation: any}, 
         }
     }
 
+
     startRecord = () => {
-        var url = 'http://' + this.state.deviceIP + ':4000/video/start_recording';
+
+        var url = 'http://' + this.state.deviceIP + ':4000/start_recording';
         if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
-            alert(this.props.route.params.device_name + ' not compatible for recording.')
+            alert(this.props.route.params.device_name + ' not compatible for live streaming.')
             return;
         }
         
@@ -152,15 +155,16 @@ export default class Recording extends Component<{route: any, navigation: any}, 
     }
 
     stopRecord = () => {
-        var url = 'http://' + this.state.deviceIP + ':4000/video/stop_recording';
+
+        var url = 'http://' + this.state.deviceIP + ':4000/stop_recording';
         if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
-            alert(this.props.route.params.device_name + ' not compatible for recording.')
+            alert(this.props.route.params.device_name + ' not compatible for live streaming.')
             return;
         }
         console.log(url);
         let collection: any = {}
-        collection.user_email = this.state.userEmail;
-        collection.profile_name = this.state.profileName;
+        collection.user_email = this.props.route.params.userEmail;
+        collection.profile_name = this.props.route.params.profileName;
 
         if(this.state.recordingResponseText !== 'Recording Stopping.'){
             axios.post(url, collection).then((response) => {
