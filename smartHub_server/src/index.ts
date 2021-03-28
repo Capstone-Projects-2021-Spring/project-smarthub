@@ -41,6 +41,7 @@ audioController.setNameSpace(io);
 
 //Telling express to use the routes found in /video/video_routes.ts (Access these routes by http using /video/startStream, /video/startRecord etc...)
 app.use('/video', videoRoutes);
+app.use('/audio', audioRoutes);
 app.use('/profiles', profileRoutes);
 app.use('/devices', deviceRoutes);
 //app.use('/lock', lockRoutes);
