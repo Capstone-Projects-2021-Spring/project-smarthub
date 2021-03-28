@@ -17,7 +17,7 @@
     "socket.io"
   ],
   "typedocOptions": {
-    "entryPoints": ["index.ts"],
+    "entryPoints": ["src/index.ts"],
     "out": "docs"
   }
 }

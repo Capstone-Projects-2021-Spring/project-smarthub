@@ -1,15 +1,18 @@
+
+const socket = io.connect(window.location.origin + "/video");
+const video = document.getElementById("videoSource");
+
 let peerConnection;
 
 const config = {
   iceServers: [
-      { 
+      {
         "urls": "stun:stun.l.google.com:19302",
       },
   ]
 };
 
-const socket = io.connect(window.location.origin);
-const video = document.getElementById("videoSource");
+//----------------------------------------- Socket Events ---------------------------------------
 
 socket.on("offer", (id, description) => {
   peerConnection = new RTCPeerConnection(config);
@@ -44,6 +47,8 @@ socket.on("connect", () => {
 socket.on("broadcaster", () => {
   socket.emit("watcher");
 });
+
+//----------------------------------------- Socket Events ---------------------------------------
 
 window.onunload = window.onbeforeunload = () => {
   socket.close();
