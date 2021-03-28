@@ -19,6 +19,8 @@ interface PropVariables{
     navigation: any,
     stackScreen: string,
     deviceList : any,
+    routeObject: any
+
 }
 
 interface StateVariables{
@@ -34,10 +36,10 @@ class ListItem extends Component<PropVariables,StateVariables>{
         });
     }
     render(){
-        //console.log(this.props.routeObject)
         let routeObject = {
             device_name: this.props.item.device_name,
-            device_id: this.props.item.device_id,
+            userEmail: this.props.routeObject.params.userEmail,
+            profileName: this.props.routeObject.params.item.profileName,
             device_type: this.props.stackScreen
         }
         const swipeSettings = {
@@ -56,7 +58,7 @@ class ListItem extends Component<PropVariables,StateVariables>{
                         const rowToDelete = this.state.activeRowKey;
                         Alert.alert(
                             'Alert',
-                            'Are you sure you want to delete ' + this.props.item.device_name,
+                            'Are you sure you want to delete this profile?',
                             [
                                 {text: 'No', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
                                 {text: 'Yes', onPress:  () => {
@@ -64,15 +66,20 @@ class ListItem extends Component<PropVariables,StateVariables>{
                                      //Refresh list
                                      
                                      let collection: any = {}
-                                     collection.device_id= routeObject.device_id;
+                                     collection.user_email = this.props.routeObject.params.userEmail;
+                                     collection.profile_name = this.props.routeObject.params.item.profileName;
+                                     collection.device_address = this.props.item.device_address;
+                                     collection.device_name = this.props.item.device_name;
+                                     collection.device_type = this.props.item.device_type;
                                      // console.warn(collection);
+                                     console.log(collection)
                                      
-                                    axios.post(getAddressString() + '/devices/deleteDevice', collection).then((response) => {
+                                    axios.post(getAddressString() + '/profiles/deleteProfile', collection).then((response) => {
+                                         console.log(response.status)
                                          //splice the item to the list and then refresh the list
                                          //which would rerender the component
-                                         console.log("Device " + this.props.item.device_name + " successfully deleted.");
                                          this.props.deviceList.splice(this.props.index, 1);
-                                         this.props.parentFlatList.getDevices();
+                                         this.props.parentFlatList.refreshListDelete(rowToDelete);
                                      }, ({error, response}) => {
                                          console.log(response.data.message);
                                      })
@@ -101,17 +108,35 @@ class ListItem extends Component<PropVariables,StateVariables>{
     }
 }
 
-export class DevicesList extends Component<{navigation: any, stackScreen: string, routeObject: any}, {deviceList: any, checkData: boolean}>{
+export class DevicesList extends Component<{navigation: any, stackScreen: string, routeObject: any}, {deletedRowKey: any, insertedRowKey: any, deviceList: any}>{
 
     constructor(props: any){
         super(props);
         this.state = ({
-            deviceList: [],
-            checkData: false
-
+            deletedRowKey: null,
+            insertedRowKey: null,
+            deviceList: []
         });
         this.launchModal = this.launchModal.bind(this);
         this.getDevices = this.getDevices.bind(this);
+    }
+
+    refreshListInsert = (insertedKey : any) => {
+        this.setState(() => {
+            return {
+                insertedRowKey: insertedKey
+            }
+        });
+        this.getDevices()
+   }
+
+   refreshListDelete = (deletedKey : any) => {
+    this.setState(() => {
+        return {
+            deletedRowKey: deletedKey
+        }
+    });
+    this.getDevices()
     }
 
     launchModal = () => {
@@ -134,44 +159,37 @@ export class DevicesList extends Component<{navigation: any, stackScreen: string
     getDevices = async() => {
 
         let collection: any = {}
-        collection.profile_id = this.props.routeObject.params.item.profile_id;
+        collection.user_email = this.props.routeObject.params.userEmail;
+        collection.profile_name = this.props.routeObject.params.item.profileName;
         collection.device_type = this.props.stackScreen;
-       
-        await axios.post(getAddressString() + '/devices/getDevices', collection).then((response) => {
+        await axios.post(getAddressString() + '/profiles/getProfiles', collection).then((response) => {
             //return response.data.profiles
-            if(response.data.devices.length === 0){
-                this.setState({checkData: true});
-            }else{
-                this.setState({checkData: false, deviceList: response.data.devices});
-            }
+            this.setState({deviceList: response.data.profiles})
+            console.log(response.data)
         }, (error) => {
-            console.log("ERROR GETTING DEVICES")
-            console.log(error)
+            console.log(error);
         })
 
     }
     render(){
+        console.log(this.props.routeObject)
        return (
             <View style={{flex: 1, backgroundColor: "#222222", alignItems: 'center', paddingTop: 20}}>
                 <FlatList
                     data={this.state.deviceList}
                     renderItem={({item, index} : any)=>{
                         return(
-                            <ListItem item={item} index={index} parentFlatList={this} stackScreen={this.props.stackScreen} navigation={this.props.navigation} deviceList={this.state.deviceList} />
+                            <ListItem item={item} index={index} parentFlatList={this} stackScreen={this.props.stackScreen} navigation={this.props.navigation} routeObject={this.props.routeObject} deviceList={this.state.deviceList} />
                         );
                     }}
-                    keyExtractor={item => item.device_id.toString()}
                     ListEmptyComponent={() => {
-                        if(this.state.checkData){
-                            return(
-                                <View style={{marginTop: height/12, flex: 1, alignItems: 'center', height: height/2, justifyContent: 'center'}}>
-                                    <Text style={{paddingTop: 18, fontSize: 19, color: "#fff", fontWeight: 'bold'}}>Looks like you haven't added any Devices.</Text>
-                                    <Text style={{paddingTop: 18, fontSize: 16, color: "#fff", fontWeight: 'bold', paddingBottom: 20}}>Click the "+" on the top right to add a new Device.</Text>
-                                    <Image style={styles.ImageStyle} source={{uri: 'https://www.pngkit.com/png/full/118-1180951_image-transparent-icons-free-color-desktops-and-gadgets.png'}}/>
-                                </View>
-                        )}else{
-                            return null;
-                        }
+                        return(
+                            <View style={{marginTop: 60, flex: 1, alignItems: 'center', height: height/2, justifyContent: 'center'}}>
+                                <Text style={{paddingTop: 18, fontSize: 19, color: "#fff", fontWeight: 'bold'}}>Looks like you haven't added any devices.</Text>
+                                <Text style={{paddingTop: 18, fontSize: 17, color: "#fff", fontWeight: 'bold', paddingBottom: 30}}>Click the "+" on the top right to add a new device.</Text>
+                                <Image style={styles.ImageStyle} source={{uri: 'https://www.pngkit.com/png/full/118-1180951_image-transparent-icons-free-color-desktops-and-gadgets.png'}}/>
+                            </View>
+                        )
                     }}
                 />
                 <DeviceModal ref={'deviceModal'} stackScreen={this.props.stackScreen} routeObject={this.props.routeObject} parentFlatList={this} deviceList={this.state.deviceList} />

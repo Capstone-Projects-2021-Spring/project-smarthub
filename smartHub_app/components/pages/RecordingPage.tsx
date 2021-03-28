@@ -4,6 +4,7 @@ import {WebView} from 'react-native-webview'
 import axios from 'axios'
 import Toast, {BaseToast} from 'react-native-toast-message'
 import { getAddressString } from '../../utils/utilities';
+var width : number = Dimensions.get('window').width;
 
 import {
 	RTCPeerConnection,
@@ -45,7 +46,6 @@ export default class Recording extends Component<{route: any, navigation: any}, 
                 ]
             })
         })
-
         this.beginStream = this.beginStream.bind(this);
         this.stopStream = this.stopStream.bind(this);    
         this.startRecord = this.startRecord.bind(this);
@@ -61,13 +61,17 @@ export default class Recording extends Component<{route: any, navigation: any}, 
     }
 
     getDeviceIP = async () => {
-        //console.log(this.props.route);
         let collection: any = {}
-        collection.device_id = this.props.route.params.device_id;
-        await axios.post(getAddressString() + '/devices/getDeviceInfo', collection).then((response) => {
-            this.setState({deviceIP: response.data.device[0].device_address})
-            this.setState({userEmail: response.data.device[0].user_email})
-            this.setState({profileName: response.data.device[0].profile_name})
+        collection.user_email = this.props.route.params.userEmail;
+        collection.profile_name = this.props.route.params.profileName;
+        collection.device_name = this.props.route.params.device_name;
+        collection.device_type = this.props.route.params.device_type;
+
+        await axios.post(getAddressString() + '/profiles/getProfileAddress', collection).then((response) => {
+            //return response.data.profiles
+            this.setState({deviceIP: response.data.profile.device_address})
+            console.log(this.state.deviceIP)
+            console.log(response.status)
         }, (error) => {
             console.log(error);
         })
@@ -236,15 +240,15 @@ export default class Recording extends Component<{route: any, navigation: any}, 
     }
 
     beginStream = () => {
-        console.log("HERE");
+        console.log(this.state.deviceIP);
         var url = 'http://' + this.state.deviceIP + ':4000/video/start_stream';
-        console.log(url)
+        //console.log(url);
         if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
             alert(this.props.route.params.device_name + ' not compatible for live streaming.')
             return;
         }
         if(this.state.responseText!== 'Stream Starting.'){
-            //console.log(this.state.deviceIP)
+            console.log(this.state.deviceIP)
             axios.post(url).then((response) => {
                 console.log(response.status)
                 Toast.show({
@@ -257,7 +261,7 @@ export default class Recording extends Component<{route: any, navigation: any}, 
                         Toast.show({
                             type: 'success',
                             text1: 'The Stream Is Live!',
-                            text2: 'Enjoy!',
+                            text2: 'Press the play button to begin.',
                             visibilityTime: 2000
                         })
                     }
@@ -322,10 +326,12 @@ export default class Recording extends Component<{route: any, navigation: any}, 
         }
     }
 
+
     startRecord = () => {
-        var url = 'http://' + this.state.deviceIP + ':4000/video/start_recording';
+
+        var url = 'http://' + this.state.deviceIP + ':4000/start_recording';
         if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
-            alert(this.props.route.params.device_name + ' not compatible for recording.')
+            alert(this.props.route.params.device_name + ' not compatible for live streaming.')
             return;
         }
         
@@ -353,15 +359,16 @@ export default class Recording extends Component<{route: any, navigation: any}, 
     }
 
     stopRecord = () => {
-        var url = 'http://' + this.state.deviceIP + ':4000/video/stop_recording';
+
+        var url = 'http://' + this.state.deviceIP + ':4000/stop_recording';
         if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
-            alert(this.props.route.params.device_name + ' not compatible for recording.')
+            alert(this.props.route.params.device_name + ' not compatible for live streaming.')
             return;
         }
         console.log(url);
         let collection: any = {}
-        collection.user_email = this.state.userEmail;
-        collection.profile_name = this.state.profileName;
+        collection.user_email = this.props.route.params.userEmail;
+        collection.profile_name = this.props.route.params.profileName;
 
         if(this.state.recordingResponseText !== 'Recording Stopping.'){
             axios.post(url, collection).then((response) => {
@@ -381,6 +388,41 @@ export default class Recording extends Component<{route: any, navigation: any}, 
             Toast.show({
                 type: 'success',
                 text1: 'The Recording has already stopped!',
+                visibilityTime: 2000
+            })
+        }
+    }
+
+    takePhoto = () => {
+        var url = 'http://' + this.state.deviceIP + ':4000/video/take_image';
+        if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
+            alert(this.props.route.params.device_name + ' not compatible for photo taking.')
+            return;
+        }
+        console.log(url);
+        let collection: any = {}
+        collection.user_email = this.state.userEmail;
+        collection.profile_name = this.state.profileName;
+        collection.component_name = "Images";
+
+        if(this.state.responseText !== 'Taking Picture'){
+            axios.post(url, collection).then((response) => {
+                // alert("Stopping Recording");
+                this.setState({responseText: response.data})
+                Toast.show({
+                    type: 'error',
+                    text1: 'Take Photo Clicked!',
+                    text2: 'Images Saved',
+                    visibilityTime: 2000
+                });
+            }, (error) => {
+                alert("Error Taking Picture");
+                console.log(error);
+            })
+        }else{
+            Toast.show({
+                type: 'success',
+                text1: 'Images have been saved!',
                 visibilityTime: 2000
             })
         }
@@ -471,8 +513,14 @@ export default class Recording extends Component<{route: any, navigation: any}, 
                 <Text style={{fontSize: 20}}>Stop Stream</Text>
             </TouchableOpacity>
             </View>
-
-            <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', padding: 50, paddingBottom: 80}}>
+            <View style={{alignItems: 'center'}}>
+            <TouchableOpacity
+                style={styles.photoButton}
+                onPress={this.takePhoto}>
+                <Text style={{fontSize: 20}}>Take Photo</Text>
+            </TouchableOpacity>
+                </View>
+            <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingTop: 30, paddingBottom: 80}}>
             <TouchableOpacity
                 style={styles.pillButton}
                 onPress={this.startRecord}>
@@ -496,7 +544,22 @@ const styles = StyleSheet.create ({
         justifyContent:'center',
         alignItems:'center',
         margin: 5,
-        width:175,
+        width:width-260,
+        height:50,        
+        borderRadius:20,
+        backgroundColor: '#FF9900',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.5,
+        shadowRadius: 5, 
+    },
+
+    photoButton: {
+        borderWidth:1,
+        justifyContent:'center',
+        alignItems:'center',
+        margin: 5,
+        width:width-75,
         height:50,        
         borderRadius:20,
         backgroundColor: '#FF9900',

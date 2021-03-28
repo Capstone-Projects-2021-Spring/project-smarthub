@@ -9,12 +9,16 @@ import { createDrawerNavigator, DrawerContentScrollView, DrawerItem, DrawerItemL
 import {Icon} from 'native-base'
 import Login from './components/pages/loginPage';
 import SignUp from './components/pages/signUpPage';
+import Streaming from './components/pages/StreamingPage';
 import Recording from './components/pages/RecordingPage';
 import { PlayVideos } from './components/lists/SavedRecordings';
 import { SmartLightDevices } from './components/LightComponent';
 import SmartLight from './components/pages/SmartLightsPage';
+import { SmartLockDevices } from './components/LockComponent';
+import SmartLock from './components/pages/SmartLockPage';
 import { NavigationActions } from 'react-navigation';
 import Streaming from './components/pages/StreamingPage';
+
 
 //App.tsx handles the navigation of the application
 
@@ -44,9 +48,8 @@ class SelectedProfileNavigation extends Component<{route: any, navigation: any}>
   //after the comp renders this will make sure the header changes to the page that was clicked 
   //and it creates the drawer menu in each of the pages
   componentDidMount = () => {
-    //console.log(this.props.route.params)
     this.props.navigation.setOptions({
-        headerTitle: this.props.route.params.item.profile_name,
+        headerTitle: this.props.route.params.item.profileName,
         headerRight: () => (
           <TouchableOpacity
           style={{marginRight: 10}}
@@ -60,62 +63,52 @@ class SelectedProfileNavigation extends Component<{route: any, navigation: any}>
   }
 
   render(){
-
-    const profilePage = () => {
-      return(
-        <ProfilePage navigation={this.props.navigation} routeObject={this.props.route}/>
-      )
-    }
-
-    const savedRecordings = () => {
-      return(
-        <SavedRecordings navigation={this.props.navigation} routeObject={this.props.route}/>        
-      )
-    }
-    
     return(
       <Drawer.Navigator drawerContent={props => <CustomDrawerContent {...props} />}>
-        <Drawer.Screen
-          options={{
-            drawerIcon:({color, size}) => (
-              <Icon name="home" style={{fontSize: size, color: color}} />
-            ),
-          }}
-          name = "Profile Page" 
-          component={profilePage}
-        />
-
-        <Drawer.Screen 
-          options={{
-            drawerIcon:({color, size}) => (
-              <Icon name="film" style={{fontSize: size, color: color}} />
-            ), }}
-          name="Saved Recordings" 
-          component={savedRecordings}
-        />
-
-        <Drawer.Screen 
-          options={{
+      <Drawer.Screen
+        options={{
           drawerIcon:({color, size}) => (
-            <Icon name="camera" style={{fontSize: size, color: color}} />
+            <Icon name="home" style={{fontSize: size, color: color}} />
+          ),
+        }}
+        name = "Profile Page" 
+        component={ () => <ProfilePage navigation={this.props.navigation} routeObject={this.props.route}/>}
+      />
+
+      <Drawer.Screen 
+        options={{
+          drawerIcon:({color, size}) => (
+            <Icon name="film" style={{fontSize: size, color: color}} />
           ), }}
-          name="Saved Images" 
-          component= {SavedImages} 
-        />
-      </Drawer.Navigator>
+        name="Saved Recordings" 
+        component={ () => <SavedRecordings navigation={this.props.navigation} routeObject={this.props.route}/>}
+      />
+
+      <Drawer.Screen 
+        options={{
+        drawerIcon:({color, size}) => (
+          <Icon name="camera" style={{fontSize: size, color: color}} />
+        ), }}
+        name="Saved Images" 
+        component= {SavedImages} 
+      />
+    </Drawer.Navigator>
     );
   }
 }
 
 export default function App(){
-  console.warn = () => {}
+  
   return (  
+
   <NavigationContainer>
     <Stack.Navigator initialRouteName="Login">
       
       <Stack.Screen 
         options={{
-          headerShown: false
+          headerStyle: {
+          backgroundColor: '#FF9900'
+          },
         }}
         name="Sign In" 
         component= {Login}
@@ -223,7 +216,6 @@ export default function App(){
         name="Recorded Video Screen" 
         component= {PlayVideos} 
       />
-
       <Stack.Screen 
         options={{
           headerStyle: {
@@ -242,6 +234,23 @@ export default function App(){
         component={SmartLight} 
       />
 
+      <Stack.Screen 
+        options={{
+          headerStyle: {
+          backgroundColor: '#FF9900'
+        }}} 
+        name="Smart Lock Devices" 
+        component={SmartLockDevices} 
+      />
+
+      <Stack.Screen 
+        options={{
+          headerStyle: {
+          backgroundColor: '#FF9900'
+        }}} 
+        name="Smart Lock" 
+        component={SmartLock} 
+      />
     </Stack.Navigator>
   </NavigationContainer>
     );

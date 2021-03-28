@@ -2,8 +2,6 @@ import React, {Component} from 'react';
 import {StyleSheet, Text, TextInput, Dimensions, Platform} from 'react-native';
 import Modal from 'react-native-modalbox'
 import Button from 'react-native-button';
-import axios from 'axios';
-import { getAddressString } from '../../utils/utilities';
 
 var screen = Dimensions.get('window');
 
@@ -11,8 +9,7 @@ var screen = Dimensions.get('window');
 
 interface PropVariables{
     parentFlatList: any,
-    profileList: any,
-    user_id: number
+    sampleList: any
 }
 
 interface StateVariables{
@@ -59,36 +56,21 @@ export default class ProfileModal extends Component<PropVariables, StateVariable
                             alert("You must enter a Profile Name first.");
                             return;
                         }
-                        // console.log(this.props.profileList)
                         //handles duplicate profile name
-                        if(this.props.profileList.some((item : any) => item.profile_name === this.state.newProfileName)){
+                        if(this.props.sampleList.some((item : any) => item.key === this.state.newProfileName)){
                             alert(this.state.newProfileName + ' already exists.')
                             return;
                         }
-                        
                         const newProfile = {
                             profileName: this.state.newProfileName,
                         }
-
-                        let collection: any = {}
-                        collection.user_id = this.props.user_id;
-                        collection.profile_name = newProfile.profileName;
-                        // console.warn(collection);
-
-                        axios.post(getAddressString() + '/profiles/addProfile', collection).then((response) => {
-                            //console.log(response.data)
-                            //Push the item to the list and then refresh the list
-                            //which would rerender the component
-                            console.log("Profile " + newProfile.profileName + " successfully added.")
-                            this.props.profileList.push(newProfile.profileName);
-                            this.props.parentFlatList.getProfiles()
-                            //Reset the state afterwards
-                            this.setState({newProfileName : ""});
-                        }, (error) => {
-                            console.log("ERROR IN ADDING A PROFILE");
-                            console.log(error);
-                        })
-
+                        //Push the item to the list and then refresh the list
+                        //which would rerender the component
+                        this.props.sampleList.push(newProfile);
+                        console.log(this.props.sampleList)
+                        this.props.parentFlatList.refreshList(this.state.newProfileName)
+                        //Reset the state afterwards
+                        this.setState({newProfileName : ""});
                         this.refs.profileModal.close();
                     }}
                 >Save</Button>
