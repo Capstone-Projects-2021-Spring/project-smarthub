@@ -18,7 +18,6 @@ interface PropVariables{
 interface StateVariables{
     DeviceIP: string,
     DeviceName: string,
-    DeviceModal: string
 }
 
 export default class DeviceModal extends Component<PropVariables, StateVariables>{
@@ -27,7 +26,6 @@ export default class DeviceModal extends Component<PropVariables, StateVariables
         this.state = ({
             DeviceName: '',
             DeviceIP: '',
-            DeviceModal: ''
         })
     }
 
@@ -77,29 +75,27 @@ export default class DeviceModal extends Component<PropVariables, StateVariables
                             return;
                         }
                         //handles duplicate device name
-                        if(this.props.deviceList.some((item : any) => item.DeviceName === this.state.DeviceName)){
+                        if(this.props.deviceList.some((item : any) => item.device_name === this.state.DeviceName)){
                             alert(this.state.DeviceName+ ' already exists.')
                             return;
                         }
-                        const DeviceName = {
+                        const newDevice = {
                             DeviceName: this.state.DeviceName
                         }
-
                          let collection: any = {}
-                        collection.user_email = this.props.routeObject.params.userEmail;
-                        collection.profile_name = this.props.routeObject.params.item.profileName;
+                        collection.profile_id = this.props.routeObject.params.item.profile_id;
                         collection.device_address = this.state.DeviceIP;
                         collection.device_name = this.state.DeviceName;
                         collection.device_type = this.props.stackScreen;
                         // console.warn(collection);
                       
-                       
-                        axios.post(getAddressString() + '/profiles/addProfile', collection).then((response) => {
-                            console.log(response.status)
+                        axios.post(getAddressString() + '/devices/addDevice', collection).then((response) => {
+                            //console.log(response.status)
                             //Push the item to the list and then refresh the list
                             //which would rerender the component
-                            this.props.deviceList.push(DeviceName);
-                            this.props.parentFlatList.refreshListInsert(this.state.DeviceName)
+                            console.log("Device " + newDevice.DeviceName + " successfully added.");
+                            this.props.deviceList.push(newDevice.DeviceName);
+                            this.props.parentFlatList.getDevices()
                             //Reset the state afterwards
                             this.setState({DeviceName : "", DeviceIP: ""});
                         }, (error) => {
