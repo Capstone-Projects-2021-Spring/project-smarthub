@@ -34,19 +34,11 @@ export default class LocalNotifications extends Component{
         //PushNotification.removeAllDeliveredNotifications();  
         PushNotification.localNotification({
           channelId: "smartHub-channel",
-          smallIcon: "ic_notification", 
-          showWhen: true, // (optional) default: true
-          autoCancel: true, // (optional) default: true
-          largeIcon: "ic_launcher", // (optional) default: "ic_launcher". Use "" for no large icon.
-          largeIconUrl: "https://www.example.tld/picture.jpg", // (optional) default: undefined
-          bigText: "My big text that will be shown when notification is expanded", // (optional) default: "message" prop
-          subText: "This is a subText", // (optional) default: none
           title: "ALERT FACE RECOGNIZED", // (optional)
           message: "...", // (required)
-          bigPictureUrl: "https://image.pngaaa.com/922/2623922-middle.png", // (optional) default: undefined
+          bigPictureUrl: "http://atlas-content-cdn.pixelsquid.com/stock-images/red-transparent-dice-RJz8Q7E-600.jpg", // (optional) default: undefined
           vibrate: true, // (optional) default: true
           color: "red"
-
         })
     }
 
