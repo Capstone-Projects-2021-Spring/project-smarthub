@@ -19,7 +19,7 @@ import {
 import * as socketio from "socket.io-client";
 const io = require("socket.io-client");
 
-export default class Streaming extends Component<{route: any, navigation: any}, {responseText: String, deviceIP: String}>{
+export default class Streaming extends Component<{route: any, navigation: any}, {responseText: String, deviceIP: String, socket: any, peerConnection: any, remoteStream: any}>{
 
 		constructor(props: any){
 				super(props);
@@ -27,6 +27,7 @@ export default class Streaming extends Component<{route: any, navigation: any}, 
 				this.state = ({
 						responseText: "",
 						deviceIP: "",
+						// Intercom
 						remoteStream: {toURL: () => null},
 						socket: null,
 						peerConnection: new RTCPeerConnection({
@@ -42,14 +43,21 @@ export default class Streaming extends Component<{route: any, navigation: any}, 
 								},
 							]
 						})
+						// End intercom
 				})
 
+				// Button calls for intercom
 				this.beginStream = this.beginStream.bind(this);
 				this.stopStream = this.stopStream.bind(this);
+				// End calls for intercom
 
+				// Socket code for intercom
 				this.handleOffer = this.handleOffer.bind(this);
 				this.handleCandidate = this.handleCandidate.bind(this);
 				this.handleOrigin = this.handleOrigin.bind(this);
+				// End socket code for intercom
+
+				//Updates state for remote stream. Needed for react
 				this.setRemoteStream = this.setRemoteStream.bind(this);
 		}
 
@@ -72,9 +80,9 @@ export default class Streaming extends Component<{route: any, navigation: any}, 
 
 			try {
 
-				this.state.peerConnection.onaddstream = event => this.setRemoteStream(event.stream);
+				this.state.peerConnection.onaddstream = (event: any) => this.setRemoteStream(event.stream);
 
-				this.state.peerConnection.onicecandidate = event => {
+				this.state.peerConnection.onicecandidate = (event: any) => {
 					if (event.candidate) {
 						this.state.socket.emit("candidate", id, event.candidate);
 					}
@@ -115,7 +123,7 @@ export default class Streaming extends Component<{route: any, navigation: any}, 
 		}
 
 		async handleOrigin () {
-			this.state.socket.emit("audio_join");
+			this.state.socket.emit("watcher");
 		}
 
 		// ---------------------------------------- Socket Handling Functions ----------------------------------------
@@ -127,72 +135,61 @@ export default class Streaming extends Component<{route: any, navigation: any}, 
 		}
 
 		beginStream = async () => {
+			var url = 'http://' + this.state.deviceIP + ':4000/video/start_stream';
+			if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
+				alert(this.props.route.params.device_name + ' not compatible for live streaming.')
+				return;
+			}
+			if(this.state.responseText!== 'Stream Starting.'){
+				//console.log(this.state.deviceIP)
+				axios.post(url).then((response) => {
+					console.log(response.status)
+					Toast.show({
+						type: 'success',
+						text1: 'Processing Request Please Wait...',
+						visibilityTime: 5000
+					})
+					setTimeout(() => {
+							this.setState({responseText: response.data})
+							Toast.show({
+								type: 'success',
+								text1: 'The Stream Is Live!',
+								text2: 'Enjoy!',
+								visibilityTime: 2000
+							})
+						}
+					,
+					5000);
+				}, (error) => {
+				 console.log(error);
+			 })
+			}else{
+				Toast.show({
+					type: 'success',
+					text1: 'The Stream Is Already Live!',
+					text2: 'Click on the video player to view the stream.',
+					visibilityTime: 2000
+				})
+			}
+
+
 				// New url for audio. Set to socket namespace called audio.
-				var url = 'http://' + this.state.deviceIP + ':4000/audio';
+				var url = 'http://' + this.state.deviceIP + ':4000/video';
 
 				console.log(this.state.deviceIP);
 
-				// if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
-				//     alert(this.props.route.params.device_name + ' not compatible for live streaming.')
-				//     return;
-				// }
 
 				const socket = io.connect(url);
 
 				socket.on("offer", (id: any, description: any) => this.handleOffer(id, description));
 				socket.on("candidate", (id: any, description: any) => this.handleCandidate(id, description));
-				socket.on("audio_origin", () => this.handleOrigin());
+				socket.on("broadcaster", () => this.handleOrigin());
 
 				this.setState({socket: socket});
-										
-				const constraints: any = { audio : true };
 
-				try{
+				this.state.socket.emit("watcher");
 
-					let stream = await mediaDevices.getUserMedia(constraints);
 
-					this.state.peerConnection.addStream(stream);
-
-					console.log("Start intercom success");
-
-					this.state.socket.emit("audio_join");
-
-				} catch (err) {
-					console.log("Start intercom error");
-					console.log(err);
-				}
-
-				// if(this.state.responseText!== 'Stream Starting.'){
-				//     console.log(this.state.deviceIP)
-				//     axios.post(url).then((response) => {
-				//         console.log(response.status)
-				//         Toast.show({
-				//             type: 'success',
-				//             text1: 'Processing Request Please Wait...',
-				//             visibilityTime: 5000
-				//         })
-				//         setTimeout(() => {
-				//                 this.setState({responseText: response.data})
-				//                 Toast.show({
-				//                     type: 'success',
-				//                     text1: 'The Stream Is Live!',
-				//                     text2: 'Enjoy.',
-				//                     visibilityTime: 2000
-				//                 })
-				//             }
-				//         ,
-				//         5000);
-				//     }, (error) => {
-				//      console.log(error);
-				//  })
-				// }else{
-				//     Toast.show({
-				//         type: 'success',
-				//         text1: 'The Stream Is Already Live!',
-				//         text2: 'Click on the video player to view the stream.',
-				//         visibilityTime: 2000
-				//     })
-				// }
 		}
 
 		stopStream = () => {
@@ -302,7 +299,18 @@ export default class Streaming extends Component<{route: any, navigation: any}, 
 				return(
 				<View style={{flex:1, backgroundColor: "#222222"}}>
 						<Toast style={{zIndex: 1}} config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
-							 <RTCView streamURL={this.state.remoteStream.toURL()} />
+							 {/* <RTCView streamURL={this.state.remoteStream.toURL()} /> */}
+
+
+						<View style={styles.videoContainer}>
+							<View style={[styles.videos, styles.remoteVideos]}>
+							<Text>Friends Video</Text>
+							<RTCView
+								streamURL={this.state.remoteStream.toURL()}
+								style={styles.remoteVideo}
+							/>
+							</View>
+						</View>
 						<View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', padding: 50, paddingBottom: 80}}>
 						<TouchableOpacity
 								style={styles.pillButton}
@@ -336,5 +344,34 @@ const styles = StyleSheet.create ({
 				shadowOpacity: 0.5,
 				shadowRadius: 5,
 		},
+		videoContainer: {
+			flex: 1,
+			minHeight: 450,
+		  },
+		  videos: {
+			width: '100%',
+			flex: 1,
+			position: 'relative',
+			overflow: 'hidden',
+		
+			borderRadius: 6,
+		  },
+		  localVideos: {
+			height: 100,
+			marginBottom: 10,
+		  },
+		  remoteVideos: {
+			height: 400,
+		  },
+		  localVideo: {
+			backgroundColor: '#f2f2f2',
+			height: '100%',
+			width: '100%',
+		  },
+		  remoteVideo: {
+			backgroundColor: '#f2f2f2',
+			height: '100%',
+			width: '100%',
+		  },
 
 })
