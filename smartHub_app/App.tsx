@@ -17,6 +17,7 @@ import { NavigationActions } from 'react-navigation';
 import { showImage } from './components/pages/SavedImagePage';
 import { SmartLockDevices } from './components/LockComponent';
 import SmartLock from './components/pages/SmartLockPage';
+import Streaming from './components/pages/StreamingPage';
 
 //App.tsx handles the navigation of the application
 
@@ -187,7 +188,8 @@ export default function App(){
         }}
       /> 
 
-      {/* <Stack.Screen 
+        {/* STEAMING */}
+      <Stack.Screen 
         options={{
           headerStyle: {
           backgroundColor: '#FF9900'
@@ -203,7 +205,7 @@ export default function App(){
         }}} 
         name="Streaming Devices" 
         component= {Streaming} 
-      /> */}
+      />
 
       <Stack.Screen 
         options={{

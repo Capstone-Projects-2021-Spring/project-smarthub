@@ -5,13 +5,14 @@ import { PlayVideos } from './lists/SavedRecordings';
 import { SavedRecordingsList } from './lists/SavedRecordingsList';
 import { SavedImagesList } from './lists/SavedImagesList';
 
-// export class LiveStreamingDevices extends Component<{route: any, navigation: any}>{
-//     render(){
-//         return (
-//             <DevicesList routeObject={this.props.route.params} stackScreen={'Streaming Devices'} navigation={this.props.navigation}/>
-//         )
-//     }
-// }
+// STREAMING
+export class LiveStreamingDevices extends Component<{route: any, navigation: any}>{
+    render(){
+        return (
+            <DevicesList routeObject={this.props.route.params} stackScreen={'Streaming Devices'} navigation={this.props.navigation}/>
+        )
+    }
+}
 
 export class LiveRecordingDevices extends Component<{route: any, navigation: any}>{
     render(){
