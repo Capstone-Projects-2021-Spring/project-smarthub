@@ -16,6 +16,8 @@ import {
 	registerGlobals,
 } from 'react-native-webrtc';
 
+var width : number = Dimensions.get('window').width;
+
 import * as socketio from "socket.io-client";
 const io = require("socket.io-client");
 
@@ -96,8 +98,6 @@ export default class Recording extends Component<{route: any, navigation: any}, 
 
             this.state.socket.emit("answer", id, this.state.peerConnection.localDescription);
 
-            // this.setState({peerConnection: this.state.peerConnection});
-
         } catch (err) {
 
             console.log("Offer went wrong, Error: " + err);
@@ -140,18 +140,18 @@ export default class Recording extends Component<{route: any, navigation: any}, 
 
         await axios.post(url).then((response) => {
             this.setState({responseText: response.data})
-            Toast.show({
-                type: 'error',
-                text1: 'Start Audio Clicked!',
-                text2: 'The Audio is live.',
-                visibilityTime: 2000
-            });
-            console.log(response.data);
+            // Toast.show({
+            //     type: 'error',
+            //     text1: 'Start Audio Clicked!',
+            //     text2: 'The Audio is live.',
+            //     visibilityTime: 2000
+            // });
+            //console.log(response.data);
         }, (error) => {
             console.log(error);
         })
 
-        console.log(this.state.deviceIP);
+        //console.log(this.state.deviceIP);
 
         // if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
         //     alert(this.props.route.params.device_name + ' not compatible for live streaming.')
@@ -192,12 +192,12 @@ export default class Recording extends Component<{route: any, navigation: any}, 
 
         axios.post(url).then((response) => {
             this.setState({responseText: response.data})
-            Toast.show({
-                type: 'error',
-                text1: 'Stop Audio Clicked!',
-                text2: 'The Audio is no longer live.',
-                visibilityTime: 2000
-            });
+            // Toast.show({
+            //     type: 'error',
+            //     text1: 'Stop Audio Clicked!',
+            //     text2: 'The Audio is no longer live.',
+            //     visibilityTime: 2000
+            // });
             console.log(response.data);
         }, (error) => {
             console.log(error);
@@ -236,9 +236,7 @@ export default class Recording extends Component<{route: any, navigation: any}, 
     }
 
     beginStream = () => {
-        console.log("HERE");
         var url = 'http://' + this.state.deviceIP + ':4000/video/start_stream';
-        console.log(url)
         if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
             alert(this.props.route.params.device_name + ' not compatible for live streaming.')
             return;
@@ -358,10 +356,11 @@ export default class Recording extends Component<{route: any, navigation: any}, 
             alert(this.props.route.params.device_name + ' not compatible for recording.')
             return;
         }
-        console.log(url);
+        //console.log(url);
         let collection: any = {}
         collection.user_email = this.state.userEmail;
         collection.profile_name = this.state.profileName;
+        collection.component_name = "Videos";
 
         if(this.state.recordingResponseText !== 'Recording Stopping.'){
             axios.post(url, collection).then((response) => {
@@ -384,6 +383,38 @@ export default class Recording extends Component<{route: any, navigation: any}, 
                 visibilityTime: 2000
             })
         }
+    }
+
+    takePhoto = () => {
+        var url = 'http://' + this.state.deviceIP + ':4000/video/take_image';
+        if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
+            alert(this.props.route.params.device_name + ' not compatible for photo taking.')
+            return;
+        }
+
+        if(this.state.responseText != 'Stream Starting.'){
+            alert("Please Begin the Stream First!");
+            return;
+        }
+
+        let collection: any = {}
+        collection.user_email = this.state.userEmail;
+        collection.profile_name = this.state.profileName;
+        collection.component_name = "Images";
+
+        axios.post(url, collection).then((response) => {
+            // alert("Stopping Recording");
+            this.setState({responseText: response.data})
+            Toast.show({
+                type: 'error',
+                text1: 'Take Photo Clicked!',
+                text2: 'The image has been saved',
+                visibilityTime: 2000
+            });
+        }, (error) => {
+            alert("Error Taking Picture");
+            console.log(error);
+        })
     }
 
     componentDidMount = () => {
@@ -440,51 +471,57 @@ export default class Recording extends Component<{route: any, navigation: any}, 
               )
         }
         return(
-        <View style={{flex:1, backgroundColor: "#222222"}}>
-            <Toast style={{zIndex: 1}} config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
-               <WebView
-                style={{
-                    flex: 1,
-                }}
-                originWhitelist={['*']}
-                source={{html: '<iframe style="box-sizing: border-box; width: 100%; height: 100%; border: 15px solid #FF9900; background-color: #222222"; src="http://' + this.state.deviceIP + ':4000/watch.html" frameborder="0" allow="autoplay encrypted-media" allowfullscreen></iframe>'}} 
-                mediaPlaybackRequiresUserAction={false}
+            <View style={{flex:1, backgroundColor: "#222222"}}>
+                <Toast style={{zIndex: 1}} config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
+                <WebView
+                    style={{
+                        flex: 1,
+                    }}
+                    originWhitelist={['*']}
+                    source={{html: '<iframe style="box-sizing: border-box; width: 100%; height: 100%; border: 15px solid #FF9900; background-color: #222222"; src="http://' + this.state.deviceIP + ':4000/watch.html" frameborder="0" allow="autoplay encrypted-media" allowfullscreen></iframe>'}} 
+                    mediaPlaybackRequiresUserAction={false}
                 />
                 <RTCView streamURL={this.state.remoteStream.toURL()} />
-            <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', padding: 50, paddingBottom: 80}}>
-            <TouchableOpacity
-                style={styles.pillButton}
-                onPress= {
-                    // console.log("streaming and intercom starting");
-                    this.beginStream
-                    // this.beginAudio
-                }>
-                <Text style={{fontSize: 20}}>Begin Stream</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-                style={styles.pillButton}
-                onPress={
-                    // console.log("streaming and intercom stoping");
-                    this.stopStream
-                    // this.stopAudio
-                }>
-                <Text style={{fontSize: 20}}>Stop Stream</Text>
-            </TouchableOpacity>
+                <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', padding: 50, paddingBottom: 30}}>
+                    <TouchableOpacity
+                        style={styles.pillButton}
+                        onPress= {
+                            // console.log("streaming and intercom starting");
+                            this.beginStream
+                            // this.beginAudio
+                        }>
+                        <Text style={{fontSize: 20}}>Begin Stream</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.pillButton}
+                        onPress={
+                            // console.log("streaming and intercom stoping");
+                            this.stopStream
+                            // this.stopAudio
+                        }>
+                        <Text style={{fontSize: 20}}>Stop Stream</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={{alignItems: 'center'}}>
+                    <TouchableOpacity
+                        style={styles.photoButton}
+                        onPress={this.takePhoto}>
+                        <Text style={{fontSize: 20}}>Take Photo</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingTop: 30, paddingBottom: 80}}>
+                <TouchableOpacity
+                    style={styles.pillButton}
+                    onPress={this.startRecord}>
+                    <Text style={{fontSize: 20}}>Begin Recording</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={styles.pillButton}
+                    onPress={this.stopRecord}>
+                    <Text style={{fontSize: 20}}>Stop Recording</Text>
+                </TouchableOpacity>
+                </View>
             </View>
-
-            <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', padding: 50, paddingBottom: 80}}>
-            <TouchableOpacity
-                style={styles.pillButton}
-                onPress={this.startRecord}>
-                <Text style={{fontSize: 20}}>Begin Recording</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-                style={styles.pillButton}
-                onPress={this.stopRecord}>
-                <Text style={{fontSize: 20}}>Stop Recording</Text>
-            </TouchableOpacity>
-            </View>
-        </View>
         );
     }
 }
@@ -497,6 +534,21 @@ const styles = StyleSheet.create ({
         alignItems:'center',
         margin: 5,
         width:175,
+        height:50,        
+        borderRadius:20,
+        backgroundColor: '#FF9900',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.5,
+        shadowRadius: 5, 
+    },
+
+    photoButton: {
+        borderWidth:1,
+        justifyContent:'center',
+        alignItems:'center',
+        margin: 5,
+        width:width-75,
         height:50,        
         borderRadius:20,
         backgroundColor: '#FF9900',
