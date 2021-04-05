@@ -18,7 +18,6 @@ import { showImage } from './components/pages/SavedImagePage';
 import { SmartLockDevices } from './components/LockComponent';
 import SmartLock from './components/pages/SmartLockPage';
 import { SavedFacialRecognitions } from './components/lists/SavedFacialRecognitionsList';
-import TakeImage from './components/pages/TakePhotoPage';
 import TakePhoto from './components/pages/TakePhotoPage';
 
 //App.tsx handles the navigation of the application
