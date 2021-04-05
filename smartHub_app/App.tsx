@@ -3,7 +3,7 @@ import { DrawerActions, getFocusedRouteNameFromRoute, NavigationContainer } from
 import {createStackNavigator, StackHeaderLeftButtonProps} from '@react-navigation/stack';
 import { StyleSheet, TouchableOpacity} from 'react-native';
 import ProfilePage from './components/pages/ProfilePage';
-import {LiveRecordingDevices, SavedRecordings, SavedImages, LiveStreamingDevices } from './components/VideoComponent';
+import {LiveRecordingDevices, ImageCaptureDevices, SavedRecordings, SavedImages} from './components/VideoComponent';
 import HomePage from './components/pages/HomePage';
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItem, DrawerItemList } from '@react-navigation/drawer';
 import {Icon} from 'native-base'
@@ -17,7 +17,9 @@ import { NavigationActions } from 'react-navigation';
 import { showImage } from './components/pages/SavedImagePage';
 import { SmartLockDevices } from './components/LockComponent';
 import SmartLock from './components/pages/SmartLockPage';
-import Streaming from './components/pages/StreamingPage';
+import { SavedFacialRecognitions } from './components/lists/SavedFacialRecognitionsList';
+import TakeImage from './components/pages/TakePhotoPage';
+import TakePhoto from './components/pages/TakePhotoPage';
 
 //App.tsx handles the navigation of the application
 
@@ -47,7 +49,7 @@ class SelectedProfileNavigation extends Component<{route: any, navigation: any}>
   //after the comp renders this will make sure the header changes to the page that was clicked 
   //and it creates the drawer menu in each of the pages
   componentDidMount = () => {
-    //console.log(this.props.route.params)
+    //console.log(this.props.route)
     this.props.navigation.setOptions({
         headerTitle: this.props.route.params.item.profile_name,
         headerRight: () => (
@@ -81,6 +83,12 @@ class SelectedProfileNavigation extends Component<{route: any, navigation: any}>
         <SavedImages navigation={this.props.navigation} routeObject={this.props.route}/>        
       )
     }
+
+    const savedFacialRecognitions = () => {
+      return(
+        <SavedFacialRecognitions navigation={this.props.navigation} routeObject={this.props.route}/>
+      )
+    }
     
     return(
       <Drawer.Navigator drawerContent={props => <CustomDrawerContent {...props} />}>
@@ -110,6 +118,16 @@ class SelectedProfileNavigation extends Component<{route: any, navigation: any}>
           ), }}
           name="Saved Images" 
           component= {savedImages} 
+        />
+
+        <Drawer.Screen 
+          options={{
+          drawerIcon:({color, size}) => (
+            <Icon name="person" style={{fontSize: size, color: color}} />
+          ), 
+          }}
+          name="Facial Recognitions" 
+          component= {savedFacialRecognitions} 
         />
       </Drawer.Navigator>
     );
@@ -188,8 +206,7 @@ export default function App(){
         }}
       /> 
 
-        {/* STEAMING */}
-      <Stack.Screen 
+     {/* <Stack.Screen 
         options={{
           headerStyle: {
           backgroundColor: '#FF9900'
@@ -205,7 +222,7 @@ export default function App(){
         }}} 
         name="Streaming Devices" 
         component= {Streaming} 
-      />
+      /> */}
 
       <Stack.Screen 
         options={{
@@ -215,7 +232,7 @@ export default function App(){
         name="Live Recording Devices" 
         component={LiveRecordingDevices} 
       />
-
+      
       <Stack.Screen 
         options={{
           headerStyle: {
@@ -224,7 +241,7 @@ export default function App(){
         name="Recording Devices" 
         component= {Recording} 
       />
-
+      
       <Stack.Screen 
         options={{
           headerStyle: {
@@ -232,6 +249,24 @@ export default function App(){
         }}} 
         name="Recorded Video Screen" 
         component= {PlayVideos} 
+      /> 
+
+       <Stack.Screen 
+        options={{
+          headerStyle: {
+          backgroundColor: '#FF9900'
+        }}} 
+        name="Image Capture Devices" 
+        component={ImageCaptureDevices} 
+      />
+
+      <Stack.Screen 
+        options={{
+          headerStyle: {
+          backgroundColor: '#FF9900'
+        }}} 
+        name="Take Photo" 
+        component= {TakePhoto} 
       />
 
       <Stack.Screen 
@@ -283,7 +318,6 @@ export default function App(){
   </NavigationContainer>
     );
 }
-
 
 const styles = StyleSheet.create({
   container: {
