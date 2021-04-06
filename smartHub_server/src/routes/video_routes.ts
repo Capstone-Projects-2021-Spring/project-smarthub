@@ -5,6 +5,7 @@ import { exec } from 'child_process';
 import path from 'path';
 import puppeteer from 'puppeteer-core';
 import { VideoController } from '../controllers/VideoController';
+const youauth = require('youauth');
 const { createFolder, uploadVideo, uploadImage } = require('../aws/amazon_s3');
 
 let live_browser: any;
@@ -16,6 +17,13 @@ const localStoragePath = path.resolve(__dirname, "../output/output.webm");
 const imageLocalStoragePath = path.resolve(__dirname, "../output/output.png");
 
 const controller = new VideoController();
+const recognizer = new youauth.FaceRecognizer();
+
+async function loadRecognizer() {
+	await youauth.loadModels();
+}
+
+loadRecognizer();
 
 const routes = express.Router({
 	mergeParams: true
@@ -132,6 +140,27 @@ routes.post('/take_image', async (req: any, res: any) => {
 });
 
 /*
+		Use: Starts face reg.
+		Params: none.
+*/
+routes.post('/start_face_reg', async (req: any, res: any) => {
+
+	controller.startFaceReg();
+	return res.status(200).send("Face Recognition Started.");
+});
+
+/*
+		Use: Stops face reg.
+		Params: none.
+*/
+routes.post('/stop_face_reg', async (req: any, res: any) => {
+
+	controller.stopFaceReg();
+	return res.status(200).send("Face Recognition Stopped.");
+});
+
+
+/*
 		Use: Starts the headless chromium browser to utilize WebRTC.
 		Params: none
 */
@@ -159,6 +188,23 @@ async function runLive() {
 		});
 	}
 }
+
+// Current face reg functionality. Checks every interval for face data in controller.
+setInterval( async () => {
+	// Get face data.
+	const faceData = await controller.getFaceData();
+	// If face data.
+	if(faceData.length !== 0) {
+		//console.log(faceData.length);
+		// Use youauth to detect faces.
+		const tensor = await recognizer.loadImage(faceData);
+		const detections = await recognizer.detect(tensor);
+		console.log(detections);
+	}
+	// Reset face data to avoid repetitive face data.
+	controller.setFaceData("");
+}
+, 100);
 
 module.exports = {
 	routes,

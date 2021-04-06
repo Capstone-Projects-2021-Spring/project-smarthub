@@ -1,4 +1,4 @@
-  
+
 import * as socketio from "socket.io";
 import fs from "fs";
 import path from 'path';
@@ -16,10 +16,12 @@ class VideoController {
   private namespace: SocketIO.Namespace | null;
   // The socket id of the socket at which the audio channel is first opened.
   private broadcaster: string;
+  private faceData: string;
 
   constructor(){
     this.namespace = null;
     this.broadcaster = "";
+    this.faceData = "";
   }
 
   // Attach an http server to the socket.io server.
@@ -58,6 +60,10 @@ class VideoController {
       this.handleImages(data);
     });
 
+    socket.on("face_image", (data:any) => {
+      this.handleFaceData(data);
+    });
+
     socket.on("disconnect", () => {
       this.handleDisconnect(socket);
     });
@@ -91,43 +97,64 @@ class VideoController {
   }
 
   private handleImages(data: any){
-// strip off the data: url prefix to get just the base64-encoded bytes
+    // strip off the data: url prefix to get just the base64-encoded bytes
     data = data.replace(/^data:image\/\w+;base64,/, "");
-     var buf = Buffer.from(data ,'base64');
-     const filePath = path.resolve(__dirname , "../output/output.png");
+    var buf = Buffer.from(data ,'base64');
+    const filePath = path.resolve(__dirname , "../output/output.png");
     const fileStream = fs.createWriteStream(filePath);
     fileStream.write(buf);
   }
-   
-  
+
+  private handleFaceData(data: any) {
+    this.faceData = data;
+  }
+
+  public async getFaceData() {
+    return this.faceData;
+  }
+
+  public setFaceData(data: string) {
+    this.faceData = data;
+  }
+
   private handleDisconnect(socket: SocketIO.Socket) {
     socket.to(this.broadcaster).emit("disconnectPeer", socket.id);
   }
 
   // Start the recording.
   public startRecording() {
-
     if(this.namespace !== null){
       this.namespace.to(this.broadcaster).emit("start_recording");
     }
-
-  }
-  public takingPicture() {
-
-    if(this.namespace !== null){
-      this.namespace.to(this.broadcaster).emit("images");
-    }
-
   }
 
   // Stop the recording.
   public stopRecording() {
-
     if(this.namespace !== null){
       this.namespace.to(this.broadcaster).emit("stop_recording");
     }
-
   }
+
+  // Take a picture of the current stream.
+  public takingPicture() {
+    if(this.namespace !== null){
+      this.namespace.to(this.broadcaster).emit("images");
+    }
+  }
+
+  public startFaceReg() {
+    if(this.namespace !== null){
+      this.namespace.to(this.broadcaster).emit("start_face_reg");
+    }
+  }
+
+  public stopFaceReg() {
+    if(this.namespace !== null){
+      this.namespace.to(this.broadcaster).emit("stop_face_reg");
+    }
+  }
+
+
 }
 
 export { VideoController };
