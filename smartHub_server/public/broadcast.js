@@ -13,21 +13,23 @@ let width = 320;
 let height = 320;
 let streaming = false;
 
-
 const canvas = document.getElementById("canvas");
 const photos = document.getElementById("photos");
 const photoButton = document.getElementById("photo-button");
 //get media stream
-navigator.mediaDevices.getUserMedia({ videoElement: true, audio: false })
-	.then(function (stream) {
-		//link to the video source
-		videoSource.srcObject = stream;
-		//play video
-		videoElement.play();
-	})
-		.catch(function (err) {
-		console.log('Error: $(err)');
-	});
+
+//This was throwing errors in console, and it looks like everything in broadcast.html works without it.
+// navigator.mediaDevices.getUserMedia({ videoElement: true, audio: false })
+// 	.then(function (stream) {
+// 		//link to the video source
+// 		console.log("Haha");
+// 		videoSource.srcObject = stream;
+// 		//play video
+// 		videoElement.play();
+// 	})
+// 	.catch(function (err) {
+// 		console.log("Error: ", err);
+// 	});
 
 photoButton.addEventListener('click', function (e) {
 	takePicture();

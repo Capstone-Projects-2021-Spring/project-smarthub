@@ -1,20 +1,30 @@
-
 <!DOCTYPE html>
 <html>
-  <head>
-    <title></title>
-    <meta charset="UTF-8" />
-  </head>
-  <body>
-  <div id="container">
-    <video id="videoSource" playsinline autoplay muted></video>
-    <button id="photo-button">Take Photo</button>
-  </div>
-  <canvas id="canvas"></canvas>
-  <div class="output">
-    <div id="photos"></div>
-  </div>
-    <script src="socket.io/socket.io.min.js"></script>
-    <script src="broadcast.js"></script>
-  </body>
+
+<head>
+	<title></title>
+	<meta charset="UTF-8" />
+</head>
+<style>
+	canvas {
+		width: 320px;
+		height: 320px;
+	}
+</style>
+
+<body>
+	<div id="container">
+		<video id="videoSource" playsinline autoplay muted></video>
+		<button id="photo-button">Take Photo</button>
+	</div>
+	<!-- <canvas id="canvas"></canvas> -->
+	<canvas id="canvas"></canvas>
+	<div class="output">
+		<div id="photos"></div>
+	</div>
+	<script src="socket.io/socket.io.min.js"></script>
+	<script src="broadcast.js"></script>
+	<script src="motion-detection.js"></script>
+</body>
+
 </html>
