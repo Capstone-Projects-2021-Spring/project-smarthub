@@ -14,7 +14,7 @@ function getPassword(userEmail) {
 }
 
 function register(firstName, lastName, userEmail, userPassword, phoneNumber) {
-    console.log("in users ", phoneNumber);
+    console.log("IN USERS");
     return knex("users").insert({
         user_first_name: firstName,
         user_last_name: lastName,

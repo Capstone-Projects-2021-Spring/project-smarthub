@@ -53,6 +53,7 @@ routes.post('/login', async (req, res) => {
 });
 
 routes.post('/register', async (req, res) => {
+    console.log("IN REGISTER");
         
     //Confirming the content of the request body is valid.
     var validatedData = validateRegistration(req.body);
@@ -74,11 +75,12 @@ routes.post('/register', async (req, res) => {
                         throw err;
                     }
                     console.log("In routes ", req.body.phone_number);
-                    User.register(req.body.first_name, req.body.last_name, req.body.email, hash, req.body.phone_number.replace("-", "")).then((user) => {
+                    User.register(req.body.first_name, req.body.last_name, req.body.email, hash, req.body.phone_number.replace(/-/g, "")).then((user) => {
                         //If the insertion was a success, respond with the profile data that was inserted.
                         return res.status(200).json(user);
                     }).catch((err) => {
                         console.log(err);
+                        console.log("OUT REGISTER ERROR REGISTER");
                         return res.status(500).json({message: err});
                     });
                 
@@ -87,6 +89,7 @@ routes.post('/register', async (req, res) => {
         }
     }).catch((err) => {
         console.log(err);
+        console.log("OUT REGISTER, ERROR GET EMAIL");
         return res.status(500).json({message: err});
     });
 
