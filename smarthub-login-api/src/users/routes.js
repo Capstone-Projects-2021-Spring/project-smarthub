@@ -64,7 +64,6 @@ routes.post('/register', async (req, res) => {
     User.getEmail(req.body.email).then((user) => {
         //If the insertion was a success, respond with the profile data that was inserted.
         if(user != undefined) {
-            console.log("THIS SHOsULD BE RUNNING");
             res.status(500).json({message: "A user with that email address already exists."});
         }
         else {
@@ -74,7 +73,8 @@ routes.post('/register', async (req, res) => {
                     if (err) {
                         throw err;
                     }
-                    User.register(req.body.first_name, req.body.last_name, req.body.email, hash).then((user) => {
+                    console.log("In routes ", req.body.phone_number);
+                    User.register(req.body.first_name, req.body.last_name, req.body.email, hash, req.body.phone_number.replace("-", "")).then((user) => {
                         //If the insertion was a success, respond with the profile data that was inserted.
                         return res.status(200).json(user);
                     }).catch((err) => {

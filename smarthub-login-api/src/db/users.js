@@ -13,13 +13,14 @@ function getPassword(userEmail) {
     });
 }
 
-function register(firstName, lastName, userEmail, userPassword) {
-    console.log("In register");
+function register(firstName, lastName, userEmail, userPassword, phoneNumber) {
+    console.log("in users ", phoneNumber);
     return knex("users").insert({
         user_first_name: firstName,
         user_last_name: lastName,
         user_email: userEmail,
-        user_password: userPassword
+        user_password: userPassword,
+        phone_number: phoneNumber,
     }).returning("*").then((rows) => { return rows[0]; });
 
 }
