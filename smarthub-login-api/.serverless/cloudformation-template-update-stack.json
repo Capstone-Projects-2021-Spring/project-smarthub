@@ -207,7 +207,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/smarthub-login-api/dev/1617994999056-2021-04-09T19:03:19.056Z/smarthub-login-api.zip"
+          "S3Key": "serverless/smarthub-login-api/dev/1617997291206-2021-04-09T19:41:31.206Z/smarthub-login-api.zip"
         },
         "Handler": "s_login_api.handler",
         "Runtime": "nodejs12.x",
@@ -225,14 +225,14 @@
         "LoginDashapiLogGroup"
       ]
     },
-    "LoginDashapiLambdaVersionFvaCBAJF9C5qVCLQ6euzvGZKHy1eOcmhFC0JBCIKU": {
+    "LoginDashapiLambdaVersionrbVPBSGCDaQ87m0wlsOPdjSSuTD7GpFemu4L8zTs": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "LoginDashapiLambdaFunction"
         },
-        "CodeSha256": "4PcSNEYjrgA293baDm/GNPpJs5r2lZYs4StiSxR2NhY="
+        "CodeSha256": "3qAqSNf1gR2XfkkP9V9wSO4Bmwg04E2lz4BOkR7QI3g="
       }
     },
     "ApiGatewayRestApi": {
@@ -444,7 +444,7 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayDeployment1617994989126": {
+    "ApiGatewayDeployment1617997281182": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -605,7 +605,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/smarthub-login-api/dev/1617994999056-2021-04-09T19:03:19.056Z/custom-resources.zip"
+          "S3Key": "serverless/smarthub-login-api/dev/1617997291206-2021-04-09T19:41:31.206Z/custom-resources.zip"
         },
         "FunctionName": "smarthub-login-api-dev-custom-resource-apigw-cw-role",
         "Handler": "apiGatewayCloudWatchRole/handler.handler",
@@ -661,7 +661,7 @@
     "LoginDashapiLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "LoginDashapiLambdaVersionFvaCBAJF9C5qVCLQ6euzvGZKHy1eOcmhFC0JBCIKU"
+        "Ref": "LoginDashapiLambdaVersionrbVPBSGCDaQ87m0wlsOPdjSSuTD7GpFemu4L8zTs"
       }
     },
     "ServiceEndpoint": {

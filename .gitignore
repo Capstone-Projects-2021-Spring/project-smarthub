@@ -2,8 +2,9 @@ smartHub_server/node_modules
 smartHub_server/.env
 smartHub_app/node_modules
 smartHub_app/.env
-smarthub_login-api/node_modules
-smarthub_login-api/.env
+smarthub-login-api/node_modules
+smarthub-login-api/.env
+smarthub-login-api/.serverless
 smartHub_app/android/app/build
 smartHubServer
 .env.enc
