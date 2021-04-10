@@ -1,10 +1,13 @@
 import fs from 'fs';
 var AWS = require('aws-sdk');
 require('dotenv').config();
-import * as dotenv from 'dotenv'
+import * as dotenv from 'dotenv';
 const path:string = './.env';
 dotenv.config({path});
 const envVars = process.env;
+
+import { v4 as uuidv4 } from 'uuid';
+
 //credential validation
 try{
     AWS.config.setPromisesDependency();
@@ -79,6 +82,57 @@ async function getFile (key: String) {
   };
 
   const response = await s3.getSignedUrl('getObject', params);
+
+  return response;
+}
+
+module.exports.storeImage = async function storeImage (accountName : String, profileName : String, componentName: String, dataURI: String) {
+
+  var buf = Buffer.from(dataURI.replace(/^data:image\/\w+;base64,/, ""), 'base64');
+
+  const key = (accountName + "/" + profileName + "/" + componentName + "/" + "img_" + uuidv4()).replace(/\s/g, "_");
+
+  const params = {
+    Bucket: envVars.S3_BUCKET,
+    Key: key,
+    Body: buf,
+    ContentType: "image/png"
+  };
+
+  const response = await s3.upload(params).promise();
+
+  console.log("File V2 Upload Complete.");
+
+  return response;
+}
+
+module.exports.generateSignedURL = async function generateSignedURL (key: String) {
+
+  key = key.replace(/\s/g, "_");
+
+  const signedUrlExpireSeconds: any = 60 * 10080;
+
+  const params = {
+    Bucket: envVars.S3_BUCKET,
+    Key: key,
+    Expires: signedUrlExpireSeconds
+  };
+
+  const response = await s3.getSignedUrl('getObject', params);
+
+  return response;
+}
+
+module.exports.deleteFile = async function deleteFile (key: String) {
+
+  key = key.replace(/\s/g, "_");
+
+  const params = {
+    Bucket: envVars.S3_BUCKET,
+    Key: key
+  };
+
+  const response = await s3.deleteObject(params).promise();
 
   return response;
 }
