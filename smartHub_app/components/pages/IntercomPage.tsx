@@ -21,7 +21,7 @@ var width : number = Dimensions.get('window').width;
 import * as socketio from "socket.io-client";
 const io = require("socket.io-client");
 
-export default class Recording extends Component<{route: any, navigation: any}, {responseText: String, deviceIP: String, recordingResponseText: any, userEmail: String, profileName: String}>{
+export default class Intercom extends Component<{route: any, navigation: any}, {responseText: String, deviceIP: String, recordingResponseText: any, userEmail: String, profileName: String}>{
 
     constructor(props: any){
         super(props);
@@ -48,10 +48,6 @@ export default class Recording extends Component<{route: any, navigation: any}, 
             })
         })
 
-        this.beginStream = this.beginStream.bind(this);
-        this.stopStream = this.stopStream.bind(this);    
-        this.startRecord = this.startRecord.bind(this);
-        this.stopRecord = this.stopRecord.bind(this);
         
         this.beginAudio = this.beginAudio.bind(this);
         this.stopAudio = this.stopAudio.bind(this);
@@ -154,7 +150,7 @@ export default class Recording extends Component<{route: any, navigation: any}, 
         //console.log(this.state.deviceIP);
 
         // if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
-        //     alert(this.props.route.params.device_name + ' not compatible for live streaming.')
+        //     alert(this.props.route.params.device_name + ' not compatible for live Intercom.')
         //     return;
         // }
 
@@ -234,187 +230,10 @@ export default class Recording extends Component<{route: any, navigation: any}, 
 
         // Code to stop audio.
     }
-
-    beginStream = () => {
-        var url = 'http://' + this.state.deviceIP + ':4000/video/start_stream';
-        // if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
-        //     alert(this.props.route.params.device_name + ' not compatible for live streaming.')
-        //     return;
-        // }
-        if(this.state.responseText!== 'Stream Starting.'){
-            //console.log(this.state.deviceIP)
-            axios.post(url).then((response) => {
-                console.log(response.status)
-                Toast.show({
-                    type: 'success',
-                    text1: 'Processing Request Please Wait...',
-                    visibilityTime: 5000
-                })
-                setTimeout(() => {
-                        this.setState({responseText: response.data})
-                        Toast.show({
-                            type: 'success',
-                            text1: 'The Stream Is Live!',
-                            text2: 'Enjoy!',
-                            visibilityTime: 2000
-                        })
-                    }
-                ,
-                5000);
-                this.beginAudio();
-            }, (error) => {
-             console.log(error);
-         })
-        }else{
-            Toast.show({
-                type: 'success',
-                text1: 'The Stream Is Already Live!',
-                text2: 'Click on the video player to view the stream.',
-                visibilityTime: 2000
-            })
-        }
-    }
     
-    stopStream = () => {
-        var url = 'http://' + this.state.deviceIP + ':4000/video/stop_stream';
-        // if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
-        //     alert(this.props.route.params.device_name + ' not compatible for live streaming.')
-        //     return;
-        // }
-        if(this.state.responseText !== 'Stream Closing.'){
-            axios.post(url).then((response) => {
-                this.setState({responseText: response.data})
-                Toast.show({
-                    type: 'error',
-                    text1: 'Stop Stream Clicked!',
-                    text2: 'The stream is no longer live.',
-                    visibilityTime: 2000
-                });
-                this.stopAudio();
-                console.log(response.data);
-            }, (error) => {
-                console.log(error);
-            })
-        }else{
-            Toast.show({
-                type: 'success',
-                text1: 'The Stream has already stopped!',
-                visibilityTime: 2000
-            })
-        }
-    }
 
     stopStreamOnBackClick = () => {
         this.stopAudio();
-        var url = 'http://' + this.state.deviceIP + ':4000/video/stop_stream';
-        // if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
-        //     return;
-        // }
-        if(this.state.responseText !== 'Stream Closing.'){
-            axios.post(url).then((response) => {
-                this.setState({responseText: response.data})
-                console.log(response.data)
-            }, (error) => {
-                console.log(error);
-            })
-        }
-    }
-
-    startRecord = () => {
-        var url = 'http://' + this.state.deviceIP + ':4000/video/start_recording';
-        // if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
-        //     alert(this.props.route.params.device_name + ' not compatible for recording.')
-        //     return;
-        // }
-        
-        if(this.state.recordingResponseText !== 'Recording Starting.'){
-            axios.post(url).then((response) => {
-                // alert("Recording");
-                this.setState({recordingResponseText: response.data})
-                Toast.show({
-                    type: 'error',
-                    text1: 'Start Record Clicked!',
-                    text2: 'The Recording is live.',
-                    visibilityTime: 2000
-                });
-            }, (error) => {
-                alert("Error Starting Recording");
-                console.log(error);
-            })
-        }else{
-            Toast.show({
-                type: 'success',
-                text1: 'The Recording has already started!',
-                visibilityTime: 2000
-            })
-        }
-    }
-
-    stopRecord = () => {
-        var url = 'http://' + this.state.deviceIP + ':4000/video/stop_recording';
-        // if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
-        //     alert(this.props.route.params.device_name + ' not compatible for recording.')
-        //     return;
-        // }
-        //console.log(url);
-        let collection: any = {}
-        collection.user_email = this.state.userEmail;
-        collection.profile_name = this.state.profileName;
-        collection.component_name = "Videos";
-
-        if(this.state.recordingResponseText !== 'Recording Stopping.'){
-            axios.post(url, collection).then((response) => {
-                // alert("Stopping Recording");
-                this.setState({recordingResponseText: response.data})
-                Toast.show({
-                    type: 'error',
-                    text1: 'Stop Record Clicked!',
-                    text2: 'The Recording is no longer live.',
-                    visibilityTime: 2000
-                });
-            }, (error) => {
-                alert("Error Stopping Recording");
-                console.log(error);
-            })
-        }else{
-            Toast.show({
-                type: 'success',
-                text1: 'The Recording has already stopped!',
-                visibilityTime: 2000
-            })
-        }
-    }
-
-    takePhoto = () => {
-        var url = 'http://' + this.state.deviceIP + ':4000/video/take_image';
-        // if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
-        //     alert(this.props.route.params.device_name + ' not compatible for photo taking.')
-        //     return;
-        // }
-
-        if(this.state.responseText != 'Stream Starting.'){
-            alert("Please Begin the Stream First!");
-            return;
-        }
-
-        let collection: any = {}
-        collection.user_email = this.state.userEmail;
-        collection.profile_name = this.state.profileName;
-        collection.component_name = "Images";
-
-        axios.post(url, collection).then((response) => {
-            // alert("Stopping Recording");
-            this.setState({responseText: response.data})
-            Toast.show({
-                type: 'error',
-                text1: 'Take Photo Clicked!',
-                text2: 'The image has been saved',
-                visibilityTime: 2000
-            });
-        }, (error) => {
-            alert("Error Taking Picture");
-            console.log(error);
-        })
     }
 
     componentDidMount = () => {
@@ -423,7 +242,7 @@ export default class Recording extends Component<{route: any, navigation: any}, 
             headerLeft: () => 
             <View>
                 <TouchableOpacity
-                    onPress={()=>{this.stopStreamOnBackClick(); this.props.navigation.navigate('Live Recording Devices')}}>
+                    onPress={()=>{this.stopStreamOnBackClick(); this.props.navigation.navigate('Live Intercom Devices')}}>
                 <Text style={{paddingLeft: 20, paddingBottom: 10, fontSize:15, fontWeight: 'bold'}}>Back</Text>
                 </TouchableOpacity>
             </View>
@@ -472,55 +291,28 @@ export default class Recording extends Component<{route: any, navigation: any}, 
         }
         return(
             <View style={{flex:1, backgroundColor: "#222222"}}>
-                <Toast style={{zIndex: 1}} config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
-                <WebView
-                    style={{
-                        flex: 1,
-                    }}
-                    originWhitelist={['*']}
-                    source={{html: '<iframe style="box-sizing: border-box; width: 100%; height: 100%; border: 15px solid #FF9900; background-color: #222222"; src="http://' + this.state.deviceIP + ':4000/watch.html" frameborder="0" allow="autoplay encrypted-media" allowfullscreen></iframe>'}} 
-                    mediaPlaybackRequiresUserAction={false}
-                />
+                <Toast style={{zIndex: 1}} config={toastConfig} ref={(ref) => Toast.setRef(ref)} />                
                 <RTCView streamURL={this.state.remoteStream.toURL()} />
                 <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', padding: 50, paddingBottom: 30}}>
                     <TouchableOpacity
                         style={styles.pillButton}
                         onPress= {
-                            // console.log("streaming and intercom starting");
-                            this.beginStream
-                            // this.beginAudio
+                            // console.log("Intercom and intercom starting");
+                            // this.beginStream
+                            this.beginAudio
                         }>
-                        <Text style={{fontSize: 20}}>Begin Stream</Text>
+                        <Text style={{fontSize: 20}}>Begin Intercom</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={styles.pillButton}
                         onPress={
-                            // console.log("streaming and intercom stoping");
-                            this.stopStream
-                            // this.stopAudio
+                            // console.log("Intercom and intercom stoping");
+                            // this.stopStream
+                            this.stopAudio
                         }>
-                        <Text style={{fontSize: 20}}>Stop Stream</Text>
+                        <Text style={{fontSize: 20}}>Stop Intercom</Text>
                     </TouchableOpacity>
-                </View>
-                <View style={{alignItems: 'center'}}>
-                    <TouchableOpacity
-                        style={styles.photoButton}
-                        onPress={this.takePhoto}>
-                        <Text style={{fontSize: 20}}>Take Photo</Text>
-                    </TouchableOpacity>
-                </View>
-                <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingTop: 30, paddingBottom: 80}}>
-                <TouchableOpacity
-                    style={styles.pillButton}
-                    onPress={this.startRecord}>
-                    <Text style={{fontSize: 20}}>Begin Recording</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={styles.pillButton}
-                    onPress={this.stopRecord}>
-                    <Text style={{fontSize: 20}}>Stop Recording</Text>
-                </TouchableOpacity>
-                </View>
+                </View>                              
             </View>
         );
     }
