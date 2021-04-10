@@ -19,12 +19,6 @@ const imageLocalStoragePath = path.resolve(__dirname, "../output/output.png");
 const controller = new VideoController();
 const recognizer = new youauth.FaceRecognizer();
 
-async function loadRecognizer() {
-	await youauth.loadModels();
-}
-
-loadRecognizer();
-
 const routes = express.Router({
 	mergeParams: true
 });
@@ -158,7 +152,6 @@ routes.post('/stop_face_reg', async (req: any, res: any) => {
 	controller.stopFaceReg();
 	return res.status(200).send("Face Recognition Stopped.");
 });
-
 
 /*
 		Use: Starts the headless chromium browser to utilize WebRTC.
