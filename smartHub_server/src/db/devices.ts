@@ -7,13 +7,20 @@ const knex = require('./connection');
     Params: device address, device name, device type, user email, profile name
 */
 function addDevice(deviceAddress: string, deviceName: string, deviceType: string, profileId: number) {
-
+    var config = {
+        notifications: false,
+        recording: false,
+        recordingTime: 5,
+        audio: false,
+        type: "None"
+    };
     return knex("devices")
         .insert({
             device_address: deviceAddress,
             device_name: deviceName,
             device_type: deviceType,
-            profile_id: profileId
+            profile_id: profileId,
+            device_config: config
         })
         .returning("*")
         .then((rows: any) => {
@@ -56,10 +63,30 @@ function getDeviceInfo(deviceId: number) {
         });
 }
 
+function updateConfig(deviceId: number, config: typeof Object) {
+    return knex("devices")
+        .where("device_id", deviceId)
+        .update({device_config: config})
+        .then((device: any) => {
+            return device;
+        });
+}
+
+function getConfig(deviceId: number) {
+    return knex("devices")
+        .select("device_config")
+        .where("device_id", deviceId)
+        .then((device: any) => {
+            return device[0];
+        });
+}
+
 
 module.exports = {
     addDevice,
     getDevices,
     getDeviceInfo,
-    deleteDevice
+    deleteDevice,
+    updateConfig,
+    getConfig
 }
