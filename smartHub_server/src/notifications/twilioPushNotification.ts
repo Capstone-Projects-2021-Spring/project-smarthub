@@ -16,7 +16,7 @@ module.exports.sendSMS = function(content: any){
     .create({
         body: content.messageBody,
         from: fromSMS ,
-        to: '+1' + content.phoneNumber,
+        to: content.phoneNumber,
         mediaUrl: content.mediaContent,
     })
     .then((response: any)=> {
