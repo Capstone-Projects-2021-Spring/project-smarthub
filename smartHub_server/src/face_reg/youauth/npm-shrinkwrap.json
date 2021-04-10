@@ -365,13 +365,7 @@
         "@tensorflow/tfjs-core": {
           "version": "3.3.0",
           "resolved": "https://registry.npmjs.org/@tensorflow/tfjs-core/-/tfjs-core-3.3.0.tgz",
-          "integrity": "sha512-6G+LcCiQBl4Kza5mDbWbf8QSWBTW3l7SDjGhQzMO1ITtQatHzxkuHGHcJ4CTUJvNA0JmKf4QJWOvlFqEmxwyLQ==",
-          "requires": {
-            "@types/offscreencanvas": "~2019.3.0",
-            "@types/seedrandom": "2.4.27",
-            "@types/webgl-ext": "0.0.30",
-            "seedrandom": "2.4.3"
-          }
+          "integrity": "sha512-6G+LcCiQBl4Kza5mDbWbf8QSWBTW3l7SDjGhQzMO1ITtQatHzxkuHGHcJ4CTUJvNA0JmKf4QJWOvlFqEmxwyLQ=="
         },
         "@types/webgl2": {
           "version": "0.0.4",

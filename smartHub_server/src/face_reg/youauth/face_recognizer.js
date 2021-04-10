@@ -75,7 +75,7 @@ FaceRecognizer.prototype.labelDescriptors = function labelDescriptors(labels, re
 }
 
 // Load the labeled descriptors from the JSON.stringified LabeledFaceDescriptors object.
-FaceRecognizer.prototype.loadDescriptors = function loadDescriptors(jsonString){
+FaceRecognizer.prototype.loadDescriptorsFromJSON = function loadDescriptorsFromJSON(jsonString){
   /*
    * Contents example (what the array contents should look like after parsing):
    * [
@@ -95,6 +95,28 @@ FaceRecognizer.prototype.loadDescriptors = function loadDescriptors(jsonString){
     // Create new LabeledFaceDescriptors using the label and descriptor.
     labeledFaceDescriptors[i] = new faceAPI.LabeledFaceDescriptors(content.label, arr);
   })
+  return labeledFaceDescriptors;
+}
+
+FaceRecognizer.prototype.loadDescriptors = function loadSingleDescriptor(objList) {
+
+  /*
+   * Contents example (what objList should contain):
+   * [
+   *  { label: 'person1', descriptors: [ [Array] ] },
+   *  { label: 'person2', descriptors: [ [Array] ] }
+   * ]
+  */
+
+  let labeledFaceDescriptors = [];
+
+  for(var i = 0; i < objList.length; i++) {
+
+    let values = new Float32Array(objList[i].descriptors[0]);
+    let arr = [values];
+    labeledFaceDescriptors[i] = new faceAPI.LabeledFaceDescriptors(objList[i].label, arr);
+  }
+
   return labeledFaceDescriptors;
 }
 
