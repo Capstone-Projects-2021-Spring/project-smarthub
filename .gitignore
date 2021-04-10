@@ -7,7 +7,6 @@ smarthub-login-api/.env
 smarthub-login-api/.serverless
 smartHub_app/android/app/build
 smartHubServer
-.env.enc
 smartHub_app/android/app/build
 smartHub_app/android/build
 smartHub_app/android/app/smarthub.keystore
