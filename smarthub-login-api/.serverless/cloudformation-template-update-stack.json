@@ -154,6 +154,52 @@
         }
       }
     },
+    "EnterpriseLogAccessIamRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:aws:iam::802587217904:root"
+              },
+              "Action": "sts:AssumeRole",
+              "Condition": {
+                "StringEquals": {
+                  "sts:ExternalId": "ServerlessEnterprise-5dfa4086-366f-4cf2-afe9-c7a2b7877e32"
+                }
+              }
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "LogFilterAccess",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:FilterLogEvents"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::GetAtt": [
+                        "LoginDashapiLogGroup",
+                        "Arn"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
     "LoginDashapiLambdaFunction": {
       "Type": "AWS::Lambda::Function",
       "Properties": {
@@ -161,9 +207,9 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/smarthub-login-api/dev/1615686034691-2021-03-14T01:40:34.691Z/smarthub-login-api.zip"
+          "S3Key": "serverless/smarthub-login-api/dev/1617997291206-2021-04-09T19:41:31.206Z/smarthub-login-api.zip"
         },
-        "Handler": "src/handler.users",
+        "Handler": "s_login_api.handler",
         "Runtime": "nodejs12.x",
         "FunctionName": "smarthub-login-api-dev-login-api",
         "MemorySize": 1024,
@@ -179,14 +225,14 @@
         "LoginDashapiLogGroup"
       ]
     },
-    "LoginDashapiLambdaVersion0kAcfxHKryV7oXstxraFYOTiJETeUWDWU3Iit9GUsLk": {
+    "LoginDashapiLambdaVersionrbVPBSGCDaQ87m0wlsOPdjSSuTD7GpFemu4L8zTs": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "LoginDashapiLambdaFunction"
         },
-        "CodeSha256": "GzU0bJbwhxuOoT0MMJ+JNWAFqU1nVbAm3sJvQf19yIw="
+        "CodeSha256": "3qAqSNf1gR2XfkkP9V9wSO4Bmwg04E2lz4BOkR7QI3g="
       }
     },
     "ApiGatewayRestApi": {
@@ -398,7 +444,7 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayDeployment1615686026939": {
+    "ApiGatewayDeployment1617997281182": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -449,6 +495,153 @@
           ]
         }
       }
+    },
+    "ApiGatewayLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/api-gateway/smarthub-login-api-dev"
+      }
+    },
+    "CustomApiGatewayAccountCloudWatchRole": {
+      "Type": "Custom::ApiGatewayAccountRole",
+      "Version": 1,
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "CustomDashresourceDashapigwDashcwDashroleLambdaFunction",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "IamRoleCustomResourcesLambdaExecution": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": {
+              "Fn::Join": [
+                "-",
+                [
+                  "dev",
+                  "smarthub-login-api",
+                  "custom-resources-lambda"
+                ]
+              ]
+            },
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Resource": {
+                    "Fn::Join": [
+                      ":",
+                      [
+                        "arn",
+                        {
+                          "Ref": "AWS::Partition"
+                        },
+                        "iam:",
+                        {
+                          "Ref": "AWS::AccountId"
+                        },
+                        "role/*"
+                      ]
+                    ]
+                  },
+                  "Action": [
+                    "iam:AttachRolePolicy",
+                    "iam:CreateRole",
+                    "iam:ListAttachedRolePolicies",
+                    "iam:PassRole"
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Resource": {
+                    "Fn::Join": [
+                      ":",
+                      [
+                        "arn",
+                        {
+                          "Ref": "AWS::Partition"
+                        },
+                        "apigateway:*::/account"
+                      ]
+                    ]
+                  },
+                  "Action": [
+                    "apigateway:GET",
+                    "apigateway:PATCH"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "CustomDashresourceDashapigwDashcwDashroleLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/smarthub-login-api/dev/1617997291206-2021-04-09T19:41:31.206Z/custom-resources.zip"
+        },
+        "FunctionName": "smarthub-login-api-dev-custom-resource-apigw-cw-role",
+        "Handler": "apiGatewayCloudWatchRole/handler.handler",
+        "MemorySize": 1024,
+        "Runtime": "nodejs12.x",
+        "Timeout": 180,
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleCustomResourcesLambdaExecution",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "IamRoleCustomResourcesLambdaExecution"
+      ]
+    },
+    "CloudWatchLogsSubscriptionFilterLoginDashapiLogGroup": {
+      "Type": "AWS::Logs::SubscriptionFilter",
+      "Properties": {
+        "DestinationArn": "arn:aws:logs:us-east-1:802587217904:destination:5dfa4086-366f-4cf2-afe9-c7a2b7877e32#wVtwnKtdr6HLR95vBN#smarthub-login-api#dev",
+        "FilterPattern": "?\"REPORT RequestId: \" ?\"SERVERLESS_ENTERPRISE\"",
+        "LogGroupName": {
+          "Ref": "LoginDashapiLogGroup"
+        }
+      }
+    },
+    "CloudWatchLogsSubscriptionFilterApiGatewayLogGroup": {
+      "Type": "AWS::Logs::SubscriptionFilter",
+      "Properties": {
+        "DestinationArn": "arn:aws:logs:us-east-1:802587217904:destination:5dfa4086-366f-4cf2-afe9-c7a2b7877e32#wVtwnKtdr6HLR95vBN#smarthub-login-api#dev",
+        "FilterPattern": "\"SLS_ACCESS_LOG\"",
+        "LogGroupName": {
+          "Ref": "ApiGatewayLogGroup"
+        }
+      }
     }
   },
   "Outputs": {
@@ -457,10 +650,18 @@
         "Ref": "ServerlessDeploymentBucket"
       }
     },
+    "EnterpriseLogAccessIamRole": {
+      "Value": {
+        "Fn::GetAtt": [
+          "EnterpriseLogAccessIamRole",
+          "Arn"
+        ]
+      }
+    },
     "LoginDashapiLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "LoginDashapiLambdaVersion0kAcfxHKryV7oXstxraFYOTiJETeUWDWU3Iit9GUsLk"
+        "Ref": "LoginDashapiLambdaVersionrbVPBSGCDaQ87m0wlsOPdjSSuTD7GpFemu4L8zTs"
       }
     },
     "ServiceEndpoint": {
