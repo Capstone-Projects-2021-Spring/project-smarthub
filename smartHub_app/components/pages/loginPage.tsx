@@ -88,7 +88,7 @@ export default class Login extends Component<{navigation: any}>{
         collection.password=this.state.password
         // console.warn(collection);
 
-        var url = "https://b2bgr96nbc.execute-api.us-east-1.amazonaws.com/dev/user/login"
+        var url = "https://m3257rqtq8.execute-api.us-east-1.amazonaws.com/dev/user/login"
         
         axios.post(url, collection).then((response) => {
             this.state.user_id = response.data.user_id;

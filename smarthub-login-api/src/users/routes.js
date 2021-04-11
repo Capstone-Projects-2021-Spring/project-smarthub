@@ -34,7 +34,7 @@ routes.post('/login', async (req, res) => {
             User.getPassword(req.body.email).then(password => {
                 bcrypt.compare(req.body.password, password, function(err, result) {
                     if(result){  
-                        return res.status(200).json({message: "Login Successful!"});
+                        return res.status(200).json({message: "Login Successful!", user_id: user.user_id});
                     }
                     else{
                         return res.status(500).json({message: "Incorrect password!"});
@@ -53,6 +53,7 @@ routes.post('/login', async (req, res) => {
 });
 
 routes.post('/register', async (req, res) => {
+    console.log("IN REGISTER");
         
     //Confirming the content of the request body is valid.
     var validatedData = validateRegistration(req.body);
@@ -64,7 +65,6 @@ routes.post('/register', async (req, res) => {
     User.getEmail(req.body.email).then((user) => {
         //If the insertion was a success, respond with the profile data that was inserted.
         if(user != undefined) {
-            console.log("THIS SHOsULD BE RUNNING");
             res.status(500).json({message: "A user with that email address already exists."});
         }
         else {
@@ -74,11 +74,13 @@ routes.post('/register', async (req, res) => {
                     if (err) {
                         throw err;
                     }
-                    User.register(req.body.first_name, req.body.last_name, req.body.email, hash).then((user) => {
+                    console.log("In routes ", req.body.phone_number);
+                    User.register(req.body.first_name, req.body.last_name, req.body.email, hash, req.body.phone_number.replace(/-/g, "")).then((user) => {
                         //If the insertion was a success, respond with the profile data that was inserted.
                         return res.status(200).json(user);
                     }).catch((err) => {
                         console.log(err);
+                        console.log("OUT REGISTER ERROR REGISTER");
                         return res.status(500).json({message: err});
                     });
                 
@@ -87,6 +89,7 @@ routes.post('/register', async (req, res) => {
         }
     }).catch((err) => {
         console.log(err);
+        console.log("OUT REGISTER, ERROR GET EMAIL");
         return res.status(500).json({message: err});
     });
 
