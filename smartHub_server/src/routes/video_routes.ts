@@ -184,7 +184,7 @@ routes.post("/takeFaceImage", async (req: any, res: any) => {
 
 		const imageLink = await generateSignedURL(obj.key);
 
-		Images.addImage(defaultName, imageLink, 4, obj.key, profileId).then( (image: any) => {
+		Images.addImage(defaultName, imageLink, 1, obj.key, profileId).then( (image: any) => {
 				if(!image) {
 					return res.status(500).json({message: "Unable to insert image."});
 				}

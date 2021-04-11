@@ -15,7 +15,7 @@ routes.post("/getImages", async (req: any, res: any) => {
 
   console.log(images);
 
-	return res.status(200).json(images);
+	return res.status(200).json({images});
 });
 
 routes.post("/deleteImage", async (req: any, res: any) => {
