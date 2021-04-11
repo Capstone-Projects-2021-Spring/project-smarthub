@@ -29,10 +29,9 @@ export default class ProfilePage extends Component<{navigation: any, routeObject
                     <Text style={{color: "#fff", textAlign: 'center', fontSize: 22}}>Smart Lock</Text>
                     <Image style={styles.LightImageStyle} source={{uri: 'https://cdn0.iconfinder.com/data/icons/small-n-flat/24/678129-lock-256.png'}}/>
                 </TouchableOpacity>
-                {/* STREAMING */}
                 <TouchableOpacity
                     style={styles.button}
-                    onPress={() => this.props.navigation.navigate('Live Streaming Devices', this.props.routeObject)}>
+                    onPress={() => this.props.navigation.navigate('Live Intercom Devices', this.props.routeObject)}>
                     <Text style={{color: "#fff", textAlign: 'center', fontSize: 22}}>Intercom</Text>
                     <Image style={styles.LightImageStyle} source={{uri: 'https://cdn3.iconfinder.com/data/icons/smart-home-71/96/lightbulb_light_lighting_wireless_smartphone_control-512.png'}}/>
                 </TouchableOpacity>  
