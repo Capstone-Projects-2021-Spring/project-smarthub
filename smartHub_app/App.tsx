@@ -18,6 +18,7 @@ import { SmartLockDevices } from './components/LockComponent';
 import SmartLock from './components/pages/SmartLockPage';
 import { FeaturesList } from './components/lists/FeaturesList';
 import TakePhoto from './components/pages/TakePhotoPage';
+import Intercom from './components/pages/IntercomPage';
 import Toast from 'react-native-toast-message';
 import getToastConfig from './components/configurations/toastConfig';
 
@@ -246,6 +247,25 @@ export default function App(){
         name="Streaming Devices" 
         component= {Streaming} 
       /> */}
+      
+      <Stack.Screen 
+        options={{
+          headerStyle: {
+          backgroundColor: '#FF9900'
+        }}} 
+        name="Live Intercom Devices" 
+        component= {LiveIntercomDevices} 
+      />
+      
+      <Stack.Screen 
+        options={{
+          headerStyle: {
+          backgroundColor: '#FF9900'
+        }}} 
+        name="Intercom Devices" 
+        component= {Intercom} 
+      />
+
 
      <Stack.Screen 
         options={{

@@ -1,12 +1,13 @@
 smartHub_server/node_modules
 smartHub_server/.env
+smartHub_server/src/face_reg/youauth/node_modules
 smartHub_app/node_modules
 smartHub_app/.env
-smarthub_login-api/node_modules
-smarthub_login-api/.env
+smarthub-login-api/node_modules
+smarthub-login-api/.env
+smarthub-login-api/.serverless
 smartHub_app/android/app/build
 smartHubServer
-.env.enc
 smartHub_app/android/app/build
 smartHub_app/android/build
 smartHub_app/android/app/smarthub.keystore

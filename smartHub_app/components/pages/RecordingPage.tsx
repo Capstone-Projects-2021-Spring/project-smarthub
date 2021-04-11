@@ -396,6 +396,7 @@ export default class Recording extends Component<{ route: any, navigation: any }
                     text2: 'The stream is no longer live.',
                     visibilityTime: 2000
                 });
+                this.setVideoRemoteStream({ toURL: () => null });
                 this.stopAudio();
                 console.log(response.data);
             }, (error) => {

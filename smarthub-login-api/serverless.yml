@@ -13,8 +13,8 @@
 
 service: smarthub-login-api
 # app and org for use with dashboard.serverless.com
-#app: your-app-name
-#org: your-org-name
+app: smarthub-accounts
+org: dahlgood
 
 # You can pin your service to only deploy with a specific Serverless version
 # Check out our docs for more details
@@ -60,7 +60,7 @@ provider:
 
 functions:
   login-api:
-    handler: src/handler.users
+    handler: handler.users
     events:
       - http:
           path: /

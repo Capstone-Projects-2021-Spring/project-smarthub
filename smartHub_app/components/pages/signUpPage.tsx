@@ -16,6 +16,7 @@ export default class SignUp extends Component<{navigation: any}>{
         inputAnimation: new Animated.Value(0),
         firstName: "",
         lastName: "",
+        phoneNumber: "",
         email: "",
         password: "",
         passwordConfirmation: "",
@@ -76,11 +77,12 @@ export default class SignUp extends Component<{navigation: any}>{
         collection.first_name = this.state.firstName;
         collection.last_name = this.state.lastName;
         collection.email = this.state.email;
+        collection.phone_number = this.state.phoneNumber;
         collection.password = this.state.password;
         collection.confirm_password = this.state.passwordConfirmation;
-        // console.warn(collection);
+        console.log(collection.phone_number);
 
-        var url = "https://b2bgr96nbc.execute-api.us-east-1.amazonaws.com/dev/user/register"
+        var url = "https://m3257rqtq8.execute-api.us-east-1.amazonaws.com/dev/user/register"
         
         axios.post(url, collection).then((response) => {
             this.state.user_id = response.data.user_id;
@@ -89,7 +91,8 @@ export default class SignUp extends Component<{navigation: any}>{
             this.signUpPressHandler();
         }, ({error, response}) => {
             console.log(error);
-            alert(response.data.message);
+            console.log(response.status);
+            // alert(response.data.message);
         })
     }
 
@@ -107,6 +110,7 @@ export default class SignUp extends Component<{navigation: any}>{
                         <View style={{marginTop: 30, marginBottom: 10}}>
                             <TextInput onBlur={() => this.reverseAnimateInput()} onFocus={() => this.AnimateInput()} placeholder="first name" style={styles.input} onChangeText={(value) => this.setState({firstName: value})} />
                             <TextInput onBlur={() => this.reverseAnimateInput()} onFocus={() => this.AnimateInput()} placeholder="last name" style={styles.input} onChangeText={(value) => this.setState({lastName: value})} />
+                            <TextInput onBlur={() => this.reverseAnimateInput()} onFocus={() => this.AnimateInput()} placeholder="phone number: 1-xxx-xxx-xxxx" style={styles.input} onChangeText={(value) => this.setState({phoneNumber: value})} />
                             <TextInput onBlur={() => this.reverseAnimateInput()} onFocus={() => this.AnimateInput()} placeholder="email" style={styles.input} onChangeText={(value) => this.setState({email: value})} />
                             <TextInput onBlur={() => this.reverseAnimateInput()} onFocus={() => this.AnimateInput()} secureTextEntry={true} placeholder="password" style={styles.input} onChangeText={(value) => this.setState({password: value})} />
                             <TextInput onBlur={() => this.reverseAnimateInput()} onFocus={() => this.AnimateInput()} secureTextEntry={true} placeholder="confirm password" style={styles.input} onChangeText={(value) => this.setState({passwordConfirmation: value})} />
