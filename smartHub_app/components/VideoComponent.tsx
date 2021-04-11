@@ -5,11 +5,10 @@ import { PlayVideos } from './lists/SavedRecordings';
 import { SavedRecordingsList } from './lists/SavedRecordingsList';
 import { SavedImagesList } from './lists/SavedImagesList';
 
-// STREAMING
-export class LiveStreamingDevices extends Component<{route: any, navigation: any}>{
+export class LiveIntercomDevices extends Component<{route: any, navigation: any}>{
     render(){
         return (
-            <DevicesList routeObject={this.props.route.params} stackScreen={'Streaming Devices'} navigation={this.props.navigation}/>
+            <DevicesList routeObject={this.props.route.params} stackScreen={'Intercom Devices'} navigation={this.props.navigation}/>
         )
     }
 }
