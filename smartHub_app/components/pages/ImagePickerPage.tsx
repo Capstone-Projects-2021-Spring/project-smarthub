@@ -1,12 +1,11 @@
-import React, { useState } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 import axios from 'axios';
 import prompt from 'react-native-prompt-android';
-import Toast, {BaseToast} from 'react-native-toast-message'
+import Toast from 'react-native-toast-message'
 import {getAddressString} from '../../utils/utilities';
 
-export default async function ImagePickerPage(props: any, routeObject: any){
+export default async function ImagePickerPage(props: any, routeObject: any, parentFlatList: any){
     let result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true
@@ -17,7 +16,7 @@ export default async function ImagePickerPage(props: any, routeObject: any){
     const getUserInfo = async () => {
         let collection: any = {}
         collection.user_id = routeObject.params.item.user_id;
-        console.log(collection)
+        //console.log(collection)
         await axios.post(getAddressString() + '/profiles/getUserInfo', collection).then((response) => {
             console.log(response.data.profiles[0].user_email)
             email = response.data.profiles[0].user_email;
@@ -47,32 +46,29 @@ export default async function ImagePickerPage(props: any, routeObject: any){
                         profile_name: routeObject.params.item.profile_name, 
                         profile_id: routeObject.params.item.profile_id
                     }
-                    axios.post("http://petepicam1234.zapto.org:4000/faces/addFaceImage", collection) .then((response) => {
+                    Toast.show({
+                        type: 'error',
+                        text1: "Processing Please Wait...",
+                        visibilityTime: 5000
+                    });
+                    axios.post("http://petepicam1234.zapto.org:4000/faces/addFaceImage", collection).then((response) => {
+                        Toast.show({
+                            type: 'success',
+                            text1: response.data,
+                            visibilityTime: 2000
+                        })
                         console.log(response.data)
+                        parentFlatList.getDataList();
+                        props.refs.facialRecognitionModal.close();
                     }, ({error, response}) : any => {
-                        console.log(error);
-                        console.log(response.data);
+                        console.log(error)
+                        Toast.show({
+                            type: 'error',
+                            text1: response.data,
+                            text2: 'Please Try again...',
+                            visibilityTime: 2000
+                        });
                     })
-                
-                    // Toast.show({
-                    //     type: 'error',
-                    //     text1: 'Image could not be saved',
-                    //     text2: 'Please Try again...',
-                    //     visibilityTime: 2000
-                    // });
-                    // Toast.show({
-                    //     type: 'success',
-                    //     text1: 'Processing Please Wait...',
-                    //     visibilityTime: 2000
-                    // })
-
-                    //below will be used to close the modal on success
-                    //props.refs.facialRecognitionModal.close();
-                    // Toast.show({
-                    //     type: 'success',
-                    //     text1: 'Image Uploaded Successfully!',
-                    //     visibilityTime: 2000
-                    // })
                 }
             }},
         ],

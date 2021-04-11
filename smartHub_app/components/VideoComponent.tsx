@@ -34,7 +34,6 @@ export class SavedRecordings extends Component<{routeObject: any, navigation: an
     render(){
         return (
             <SavedRecordingsList routeObject={this.props.routeObject.params} navigation={this.props.navigation}/>
-            // <PlayVideos routeObject={this.props.routeObject.params} stackScreen={'Saved Recordings'} navigation={this.props.navigation}/>
         );
     }
 }

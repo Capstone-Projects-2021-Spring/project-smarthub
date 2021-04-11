@@ -47,7 +47,7 @@ function getDevices(profileId: number, deviceType: string) {
 
 function getDeviceInfo(deviceId: number) {
     return knex({d: "devices"})
-        .select("device_address", "profile_name", "user_email")
+        .select("p.profile_id", "device_address", "profile_name", "user_email",)
         .join({p: "profiles"}, "d.profile_id", "=", "p.profile_id")
         .join({u: "users"}, "p.user_id", "=", "u.user_id")
         .where("device_id", deviceId)
@@ -55,7 +55,6 @@ function getDeviceInfo(deviceId: number) {
             return devices;
         });
 }
-
 
 module.exports = {
     addDevice,

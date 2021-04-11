@@ -2,26 +2,27 @@ import React, {Component} from 'react';
 import {StyleSheet, View, Text, TouchableOpacity, Dimensions} from 'react-native';
 import {WebView} from 'react-native-webview'
 import axios from 'axios'
-import Toast, {BaseToast} from 'react-native-toast-message'
+import Toast from 'react-native-toast-message'
 import { getAddressString } from '../../utils/utilities';
 
 var width : number = Dimensions.get('window').width;
 
-export default class TakePhoto extends Component<{route: any, navigation: any}, {responseText: String, deviceIP: String, recordingResponseText: any, userEmail: String, profileName: String}>{
+export default class TakePhoto extends Component<{route: any, navigation: any}, {profileId: number, hasStarted: boolean, deviceIP: String, userEmail: String, profileName: String}>{
 
     constructor(props: any){
         super(props);
         this.state= ({
-            responseText: "",
-            recordingResponseText: "",
+            hasStarted: false,
             deviceIP: "",
+            profileId: 0,
             userEmail: "",
             profileName: "",
         })
-
+    
         this.beginStream = this.beginStream.bind(this);
         this.stopStream = this.stopStream.bind(this);    
     }
+
 
     getDeviceIP = async () => {
         //console.log(this.props.route);
@@ -31,34 +32,33 @@ export default class TakePhoto extends Component<{route: any, navigation: any}, 
             this.setState({deviceIP: response.data.device[0].device_address})
             this.setState({userEmail: response.data.device[0].user_email})
             this.setState({profileName: response.data.device[0].profile_name})
+            this.setState({profileId: response.data.device[0].profile_id})
         }, (error) => {
             console.log(error);
         })
     }
-
-
+    
     beginStream = () => {
         var url = 'http://' + this.state.deviceIP + ':4000/video/start_stream';
         if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
             alert(this.props.route.params.device_name + ' not compatible for live streaming.')
             return;
         }
-        if(this.state.responseText!== 'Stream Starting.'){
+        if(!this.state.hasStarted){
             //console.log(this.state.deviceIP)
             axios.post(url).then((response) => {
-                console.log(response.status)
                 Toast.show({
                     type: 'success',
                     text1: 'Processing Request Please Wait...',
                     visibilityTime: 5000
                 })
                 setTimeout(() => {
-                        this.setState({responseText: response.data})
+                        this.setState({hasStarted: true})
                         Toast.show({
                             type: 'success',
                             text1: 'The Stream Is Live!',
                             text2: 'Enjoy!',
-                            visibilityTime: 2000
+                            visibilityTime: 4000
                         })
                     }
                 ,
@@ -82,16 +82,15 @@ export default class TakePhoto extends Component<{route: any, navigation: any}, 
             alert(this.props.route.params.device_name + ' not compatible for live streaming.')
             return;
         }
-        if(this.state.responseText !== 'Stream Closing.'){
+        if(this.state.hasStarted){
             axios.post(url).then((response) => {
-                this.setState({responseText: response.data})
+                this.setState({hasStarted: false})
                 Toast.show({
                     type: 'error',
                     text1: 'Stop Stream Clicked!',
                     text2: 'The stream is no longer live.',
                     visibilityTime: 2000
                 });
-                console.log(response.data);
             }, (error) => {
                 console.log(error);
             })
@@ -109,10 +108,9 @@ export default class TakePhoto extends Component<{route: any, navigation: any}, 
         if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
             return;
         }
-        if(this.state.responseText !== 'Stream Closing.'){
+        if(this.state.hasStarted){
             axios.post(url).then((response) => {
-                this.setState({responseText: response.data})
-                console.log(response.data)
+                this.setState({hasStarted: false})
             }, (error) => {
                 console.log(error);
             })
@@ -120,34 +118,43 @@ export default class TakePhoto extends Component<{route: any, navigation: any}, 
     }
 
     takePhoto = () => {
-        var url = 'http://' + this.state.deviceIP + ':4000/video/take_image';
+        var url = 'http://' + this.state.deviceIP + ':4000/video/takeFaceImage';
         if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
             alert(this.props.route.params.device_name + ' not compatible for photo taking.')
             return;
         }
 
-        if(this.state.responseText != 'Stream Starting.'){
-            alert("Please Begin the Stream First!");
+        if(!this.state.hasStarted){
+            alert("You must begin the stream first");
             return;
         }
 
         let collection: any = {}
         collection.user_email = this.state.userEmail;
         collection.profile_name = this.state.profileName;
-        collection.component_name = "Images";
+        collection.component_name = "Faces";
+        collection.profile_id = this.state.profileId;
 
+        Toast.show({
+            type: 'success',
+            text1:"Processing Please Wait...",
+            visibilityTime: 6000
+        });
         axios.post(url, collection).then((response) => {
-            // alert("Stopping Recording");
-            this.setState({responseText: response.data})
+            console.log(response.data)
             Toast.show({
-                type: 'error',
-                text1: 'Take Photo Clicked!',
-                text2: 'The image has been saved',
+                type: 'success',
+                text1: response.data,
                 visibilityTime: 2000
             });
-        }, (error) => {
-            alert("Error Taking Picture");
-            console.log(error);
+        }, ({error,response}) : any => {
+            Toast.show({
+                type: 'success',
+                text1: response.data,
+                text2: "Please Try Again.",
+                visibilityTime: 3000
+            });
+            console.log(response.data);
         })
     }
 
@@ -157,7 +164,7 @@ export default class TakePhoto extends Component<{route: any, navigation: any}, 
             <View>
                 <TouchableOpacity
                     onPress={()=>{this.stopStreamOnBackClick(); this.props.navigation.navigate('Image Capture Devices')}}>
-                <Text style={{paddingLeft: 20, paddingTop: 8, paddingBottom: 10, fontSize:15, fontWeight: 'bold'}}>Back</Text>
+                    <Text style={{paddingLeft: 20, paddingTop: 8, paddingBottom: 10, fontSize:15, fontWeight: 'bold'}}>Back</Text>
                 </TouchableOpacity>
             </View>
         })
@@ -165,47 +172,8 @@ export default class TakePhoto extends Component<{route: any, navigation: any}, 
     }
 
     render(){
-       // console.log(this.props.route)
-        const toastConfig = {
-            success: ({ text1, text2, ...rest } : any) => (
-              <BaseToast
-                {...rest}
-                style={{ borderLeftColor: '#FF9900', backgroundColor: "#fff" }}
-                contentContainerStyle={{ paddingHorizontal: 15 }}
-                text1Style={{
-                  fontSize: 18,
-                  fontWeight: 'bold'
-                }}
-                text2Style={{
-                    color: "#000",
-                    fontSize: 12
-                }}
-                text1={text1}
-                text2={text2}
-              />
-            ),
-
-            error: ({ text1, text2, ...rest } : any) => (
-                <BaseToast
-                  {...rest}
-                  style={{ borderLeftColor: '#FF9900', backgroundColor: "#fff" }}
-                  contentContainerStyle={{ paddingHorizontal: 15 }}
-                  text1Style={{
-                    fontSize: 18,
-                    fontWeight: 'bold'
-                  }}
-                  text2Style={{
-                      color: "#000",
-                      fontSize: 10
-                  }}
-                  text1={text1}
-                  text2={text2}
-                />
-              )
-        }
         return(
             <View style={{flex:1, backgroundColor: "#222222"}}>
-                <Toast style={{zIndex: 1}} config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
                 <WebView
                     style={{
                         flex: 1,
