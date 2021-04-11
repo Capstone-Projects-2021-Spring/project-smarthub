@@ -70,6 +70,34 @@ routes.post("/getDeviceInfo", async (req, res) => {
     });;
 });
 
+routes.post("/updateConfig", async (req, res) => {
+	Devices.updateConfig(req.body.device_id, req.body.device_config).then((device:any) => {
+        if(device) {
+            res.status(200).json({device});
+        }
+        else {
+            return res.status(500).json({message: "Unable to set device config."});
+        }
+    }).catch((err: any) => {
+        console.log(err);
+        return res.status(500).json({message: err});
+    });;
+});
+
+routes.post("/getConfig", async (req, res) => {
+	Devices.getConfig(req.body.device_id).then((device:any) => {
+        if(device) {
+            res.status(200).json({device});
+        }
+        else {
+            return res.status(500).json({message: "Unable to get device config."});
+        }
+    }).catch((err: any) => {
+        console.log(err);
+        return res.status(500).json({message: err});
+    });;
+});
+
 module.exports = {
 	routes
 };
