@@ -1,4 +1,4 @@
-  
+
 import * as socketio from "socket.io";
 import fs from "fs";
 import path from 'path';
@@ -16,10 +16,19 @@ class VideoController {
   private namespace: SocketIO.Namespace | null;
   // The socket id of the socket at which the audio channel is first opened.
   private broadcaster: string;
+  // Holds the current face data detected.
+  private faceData: string;
+  // Holds the current frame of video that was taken.
+  private imageData: string;
+  // Stores callbacks to send image data back.
+  private imageCallbacks: Array<any>;
 
   constructor(){
     this.namespace = null;
     this.broadcaster = "";
+    this.faceData = "";
+    this.imageData = "";
+    this.imageCallbacks = [];
   }
 
   // Attach an http server to the socket.io server.
@@ -54,8 +63,13 @@ class VideoController {
       this.handleReceiveRecording(data);
     });
 
-    socket.on("handle_images" , (data:any) =>{
-      this.handleImages(data);
+    socket.on("taken_image", (data:any) =>{
+      this.sendImageData(data);
+      this.handleImage(data);
+    });
+
+    socket.on("face_image", (data:any) => {
+      this.setFaceData(data);
     });
 
     socket.on("disconnect", () => {
@@ -90,44 +104,75 @@ class VideoController {
     fileStream.write(Buffer.from(new Uint8Array(data)));
   }
 
-  private handleImages(data: any){
-// strip off the data: url prefix to get just the base64-encoded bytes
+  private handleImage(data: any){
+    // strip off the data: url prefix to get just the base64-encoded bytes
     data = data.replace(/^data:image\/\w+;base64,/, "");
-     var buf = Buffer.from(data ,'base64');
-     const filePath = path.resolve(__dirname , "../output/output.png");
+    var buf = Buffer.from(data ,'base64');
+    const filePath = path.resolve(__dirname , "../output/output.png");
     const fileStream = fs.createWriteStream(filePath);
     fileStream.write(buf);
   }
-   
-  
+
   private handleDisconnect(socket: SocketIO.Socket) {
     socket.to(this.broadcaster).emit("disconnectPeer", socket.id);
   }
 
+  public async getFaceData() {
+    return this.faceData;
+  }
+
+  public setFaceData(data: string) {
+    this.faceData = data;
+  }
+
+  public sendImageData(data: string) {
+    for(var i = 0; i < this.imageCallbacks.length; i++) {
+      this.imageCallbacks[i](data);
+    }
+    this.imageCallbacks = [];
+  }
+
   // Start the recording.
   public startRecording() {
-
     if(this.namespace !== null){
       this.namespace.to(this.broadcaster).emit("start_recording");
     }
-
-  }
-  public takingPicture() {
-
-    if(this.namespace !== null){
-      this.namespace.to(this.broadcaster).emit("images");
-    }
-
   }
 
   // Stop the recording.
   public stopRecording() {
-
     if(this.namespace !== null){
       this.namespace.to(this.broadcaster).emit("stop_recording");
     }
-
   }
+
+  // Take a picture of the current stream.
+  public takePicture() {
+    if(this.namespace !== null){
+      this.namespace.to(this.broadcaster).emit("take_image");
+    }
+  }
+
+  public getPicture(callback: any) {
+    this.imageCallbacks.push(callback);
+    if(this.namespace !== null){
+      this.namespace.to(this.broadcaster).emit("take_image");
+    }
+  }
+
+  public startFaceReg() {
+    if(this.namespace !== null){
+      this.namespace.to(this.broadcaster).emit("start_face_reg");
+    }
+  }
+
+  public stopFaceReg() {
+    if(this.namespace !== null){
+      this.namespace.to(this.broadcaster).emit("stop_face_reg");
+    }
+  }
+
+
 }
 
 export { VideoController };
