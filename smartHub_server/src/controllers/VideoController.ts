@@ -5,6 +5,16 @@ import path from 'path';
 // Fetch the socket.io Server class.
 const io = require("socket.io");
 
+// Hold a function type that accept a string (params) and returns nothing (void).
+interface CallbackType {
+    (data: string): void;
+}
+
+// Associative array type for callbacks.
+interface AssociativeType {
+  [key: string]: CallbackType;
+}
+
 /*
   The videoController class will contain a socket server that handles events from the client side.
   The client side is a web browser that hosts the video stream.
@@ -13,22 +23,20 @@ const io = require("socket.io");
 
 class VideoController {
 
+  // Holds namespace of socketio server.
   private namespace: SocketIO.Namespace | null;
   // The socket id of the socket at which the audio channel is first opened.
   private broadcaster: string;
-  // Holds the current face data detected.
-  private faceData: string;
-  // Holds the current frame of video that was taken.
-  private imageData: string;
   // Stores callbacks to send image data back.
-  private imageCallbacks: Array<any>;
+  private imageCallbacks: CallbackType[];
+  // Stores callbacks to send face data back.
+  private faceCallbacks: AssociativeType;
 
   constructor(){
     this.namespace = null;
     this.broadcaster = "";
-    this.faceData = "";
-    this.imageData = "";
     this.imageCallbacks = [];
+    this.faceCallbacks = {};
   }
 
   // Attach an http server to the socket.io server.
@@ -69,7 +77,7 @@ class VideoController {
     });
 
     socket.on("face_image", (data:any) => {
-      this.setFaceData(data);
+      this.sendFaceData(data);
     });
 
     socket.on("disconnect", () => {
@@ -117,12 +125,18 @@ class VideoController {
     socket.to(this.broadcaster).emit("disconnectPeer", socket.id);
   }
 
-  public async getFaceData() {
-    return this.faceData;
+  public async getFaceData(callback: any, key: string) {
+    this.faceCallbacks[key] = callback;
   }
 
-  public setFaceData(data: string) {
-    this.faceData = data;
+  public removeCallback(key: string) {
+    delete this.faceCallbacks[key];
+  }
+
+  public sendFaceData(data: string) {
+    for(var key in this.faceCallbacks) {
+      this.faceCallbacks[key](data);
+    }
   }
 
   public sendImageData(data: string) {
