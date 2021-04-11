@@ -7,6 +7,7 @@ import puppeteer from 'puppeteer-core';
 import { VideoController } from '../controllers/VideoController';
 const Faces = require('../db/faces');
 const Images = require('../db/images');
+const Devices = require('../db/devices');
 const youauth = require('youauth');
 const { createFolder, uploadVideo, uploadImage, storeImage, generateSignedURL } = require('../aws/amazon_s3');
 import { v4 as uuidv4 } from 'uuid';
@@ -22,7 +23,7 @@ const imageLocalStoragePath = path.resolve(__dirname, "../output/output.png");
 const controller = new VideoController();
 const recognizer = new youauth.FaceRecognizer();
 
-const faceIntervalIDs: any = [];
+let faceCoolDownTimer;
 
 const routes = express.Router({
 	mergeParams: true
@@ -150,7 +151,6 @@ routes.post("/takeFaceImage", async (req: any, res: any) => {
 	const componentName: string = req.body.component_name;
 
 	controller.getPicture(printData);
-	let dataURI: string = "";
 
 	async function printData(dataURI: any) {
 
@@ -205,6 +205,7 @@ routes.post("/takeFaceImage", async (req: any, res: any) => {
 routes.post('/start_face_reg', async (req: any, res: any) => {
 
 	const profileId: number = req.body.profile_id;
+	const deviceId: number = req.body.device_id;
 
 	controller.startFaceReg();
 
@@ -218,9 +219,7 @@ routes.post('/start_face_reg', async (req: any, res: any) => {
 				labeledFaceDescriptors = recognizer.loadDescriptors(objList);
 		}
 
-		getDetections(processDetections, profileId);
-
-		function processDetections(detections: any) {
+		getDetections( function (detections: any, tensor: any) {
 
 			// If there are faces to detect.
 			if(labeledFaceDescriptors.length !== 0) {
@@ -229,14 +228,13 @@ routes.post('/start_face_reg', async (req: any, res: any) => {
 					let matchedLabels: any = recognizer.getMatchedLabels(matches);
 					// If something is detected. Matched labels is an array that contains the names detected.
 					// Example: ["fred", "ashley"]
-					console.log(matchedLabels);
+					processDetections(matches, matchedLabels, detections, tensor, profileId, deviceId);
 			}
 			else {
-
 					// Alert user with image that face was detected on.
-
+					processDetections(null, null, detections, tensor, profileId, deviceId);
 			}
-		}
+		}, profileId);
 
 	}).catch( (err: any) => {
 			console.log(err);
@@ -264,7 +262,8 @@ routes.post('/stop_face_reg', async (req: any, res: any) => {
 routes.post('/stop_face_reg_profile', async (req: any, res: any) => {
 
 	const profileId: number = req.body.profile_id;
-	clearInterval(faceIntervalIDs[profileId]);
+
+	controller.removeCallback(profileId + "");
 
 	return res.status(200).send("Face Recognition Stopped for Profile.");
 });
@@ -298,24 +297,49 @@ async function runLive() {
 	}
 }
 
+// Throttler for function calling.
+// function throttle(func: any, timeFrame: number) {
+//   var lastTime: number = 0;
+//   return function () {
+//       var now: Date = new Date();
+//       if (now - lastTime >= timeFrame) {
+//           func();
+//           lastTime = now;
+//       }
+//   };
+// }
+
+async function processDetections (matches: any, matchedLabels: any, detections: any,  tensor: any, profileID: number, deviceID: number) {
+
+	const deviceConfig: any = await Devices.getConfig(deviceID);
+
+	const dataURI = await recognizer.drawFaceDetections(matches, detections, tensor, true);
+
+	console.log(matchedLabels);
+	console.log(profileID);
+
+	if(deviceConfig.notifications) {
+
+	}
+
+	if(matches && matchedLabels){
+
+	}
+	else{
+
+	}
+
+}
+
 // Function that starts continous fetching of face images from controller.
 function getDetections (callback: any, profileId: number) {
-	// Current face reg functionality. Checks every interval for face data in controller.
-	faceIntervalIDs[profileId] = setInterval( async () => {
-		// Get face data.
-		const faceData = await controller.getFaceData();
-		// console.log("I am active!");
-		// If face data.
-		if(faceData.length !== 0) {
-			// Use youauth to detect faces.
-			const tensor = await recognizer.loadImage(faceData);
-			const detections = await recognizer.detect(tensor);
-			callback(detections);
-		}
-		// Reset face data to avoid repetitive face data.
-		controller.setFaceData("");
+
+	const newCallback = async function processFaceImage(faceImage: any) {
+		const tensor = await recognizer.loadImage(faceImage);
+		const detections = await recognizer.detect(tensor);
+		if(detections.length !== 0) callback(detections, tensor);
 	}
-	, 100);
+	controller.getFaceData(newCallback, profileId + "");
 }
 
 // Function just for parsing the array passed
@@ -326,7 +350,6 @@ function parseFacesData(faces: any) {
 	}
 	return objList;
 }
-
 
 module.exports = {
 	routes,
