@@ -16,12 +16,19 @@ class VideoController {
   private namespace: SocketIO.Namespace | null;
   // The socket id of the socket at which the audio channel is first opened.
   private broadcaster: string;
+  // Holds the current face data detected.
   private faceData: string;
+  // Holds the current frame of video that was taken.
+  private imageData: string;
+  // Stores callbacks to send image data back.
+  private imageCallbacks: Array<any>;
 
   constructor(){
     this.namespace = null;
     this.broadcaster = "";
     this.faceData = "";
+    this.imageData = "";
+    this.imageCallbacks = [];
   }
 
   // Attach an http server to the socket.io server.
@@ -56,12 +63,13 @@ class VideoController {
       this.handleReceiveRecording(data);
     });
 
-    socket.on("handle_images" , (data:any) =>{
-      this.handleImages(data);
+    socket.on("taken_image", (data:any) =>{
+      this.sendImageData(data);
+      this.handleImage(data);
     });
 
     socket.on("face_image", (data:any) => {
-      this.handleFaceData(data);
+      this.setFaceData(data);
     });
 
     socket.on("disconnect", () => {
@@ -96,7 +104,7 @@ class VideoController {
     fileStream.write(Buffer.from(new Uint8Array(data)));
   }
 
-  private handleImages(data: any){
+  private handleImage(data: any){
     // strip off the data: url prefix to get just the base64-encoded bytes
     data = data.replace(/^data:image\/\w+;base64,/, "");
     var buf = Buffer.from(data ,'base64');
@@ -105,8 +113,8 @@ class VideoController {
     fileStream.write(buf);
   }
 
-  private handleFaceData(data: any) {
-    this.faceData = data;
+  private handleDisconnect(socket: SocketIO.Socket) {
+    socket.to(this.broadcaster).emit("disconnectPeer", socket.id);
   }
 
   public async getFaceData() {
@@ -117,8 +125,11 @@ class VideoController {
     this.faceData = data;
   }
 
-  private handleDisconnect(socket: SocketIO.Socket) {
-    socket.to(this.broadcaster).emit("disconnectPeer", socket.id);
+  public sendImageData(data: string) {
+    for(var i = 0; i < this.imageCallbacks.length; i++) {
+      this.imageCallbacks[i](data);
+    }
+    this.imageCallbacks = [];
   }
 
   // Start the recording.
@@ -136,9 +147,16 @@ class VideoController {
   }
 
   // Take a picture of the current stream.
-  public takingPicture() {
+  public takePicture() {
     if(this.namespace !== null){
-      this.namespace.to(this.broadcaster).emit("images");
+      this.namespace.to(this.broadcaster).emit("take_image");
+    }
+  }
+
+  public getPicture(callback: any) {
+    this.imageCallbacks.push(callback);
+    if(this.namespace !== null){
+      this.namespace.to(this.broadcaster).emit("take_image");
     }
   }
 

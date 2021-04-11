@@ -7,6 +7,10 @@ const peerConnections = {};
 const socket = io.connect(window.location.origin + "/video");
 const videoElement = document.getElementById("videoSource");
 let mediaRecorder;
+let faceRegInterval;
+const canvas = document.getElementById("canvas");
+const photos = document.getElementById("photoOutput");
+const photoButton = document.getElementById("photo-button");
 
 // ----------------------------------------------------- Start of Configuration Options. -----------------------------------------------------
 
@@ -31,47 +35,14 @@ const config = {
   ]
 };
 
-
-
-let isFaceReg = false;
 let width = 320;
 let height = 320;
 
 // ------------------------------------------------------ End of Configuration Options. ------------------------------------------------------
 
-const canvas = document.getElementById("canvas");
-const photos = document.getElementById("photos");
-const photoButton = document.getElementById("photo-button");
 
-photoButton.addEventListener('click', function(e){
-  takePicture();
-  e.preventDefault();
-} , false);
 
-//take picture from canvas
-function takePicture() {
-  //create canvas
-  const context = canvas.getContext('2d');
-  //set canvas props
-  canvas.width = width;
-  canvas.height = height;
-  //draw image of the video on the canvas
-  context.drawImage(videoElement, 0, 0,  width, height);
-  //create image from canvas
-  const imgURL = canvas.toDataURL('image/png');
-  // console.log("imgURL is " , imgURL);
-  //create img element
-  const img = document.createElement('img');
-  // console.log("img source is" , img);
-  //set image source
-  img.setAttribute('src', imgURL);
-  //add img to photos
-  photos.appendChild(img);
-  //console.log(photos);
-  handleImages(imgURL);
-}
-
-//----------------------------------------- Socket Events ---------------------------------------
+// ----------------------------------------- Socket Events ---------------------------------------
 
 socket.on("watcher", id => {
   const peerConnection = new RTCPeerConnection(config);
@@ -110,7 +81,7 @@ socket.on("stop_recording", id => {
   stopRecording();
 });
 
-socket.on("images", () =>{
+socket.on("take_image", () =>{
   takePicture();
 });
 
@@ -127,10 +98,11 @@ socket.on("disconnectPeer", id => {
   delete peerConnections[id];
 });
 
-//----------------------------------------- Socket Events ---------------------------------------
+// ----------------------------------------- End Of Socket Events ---------------------------------------
 
 
-//----------------------------------------- Face Recognition ---------------------------------------
+
+// ----------------------------------------- Face Recognition ---------------------------------------
 
 // Load models from face API.
 async function loadModels () {
@@ -139,82 +111,80 @@ async function loadModels () {
   await faceapi.nets.faceRecognitionNet.loadFromUri('/models');
 }
 
-function addFaceReg () {
-
-  videoElement.addEventListener('playing', function () {
-
-    const videoCanvas = faceapi.createCanvasFromMedia(videoElement);
-    const displaySize = { width: 320, height: 320 };
-    faceapi.matchDimensions(videoCanvas, displaySize);
-
-    setInterval( async () => {
-      if(isFaceReg) {
-        // Use in browser API to only send image back when a face is detected. Avoids sending too many images.
-        const detections = await faceapi.detectAllFaces(videoElement, new faceapi.SsdMobilenetv1Options()).withFaceLandmarks();
-        const resizedDetections = faceapi.resizeResults(detections, displaySize);
-
-        const context = videoCanvas.getContext("2d");
-
-        if(resizedDetections.length !== 0){
-          context.drawImage(videoElement, 0, 0);
-          console.log(resizedDetections);
-          socket.emit("face_image", videoCanvas.toDataURL());
-        }
-
-      }
-    }, 100);
-
-  });
-}
-
-// Set boolean for face reg to true.
+// Starts face reg.
 async function startFaceReg () {
-  isFaceReg = true;
-}
 
-// Set boolean for face reg to false.
-async function stopFaceReg () {
-  isFaceReg = false;
-}
+  const videoCanvas = faceapi.createCanvasFromMedia(videoElement);
+  const displaySize = { width: 320, height: 320 };
+  faceapi.matchDimensions(videoCanvas, displaySize);
 
-//----------------------------------------- Face Recognition ---------------------------------------
+  if(!faceRegInterval) {
 
+      faceRegInterval = setInterval( async () => {
+          // Use in browser API to only send image back when a face is detected. Avoids sending too many images.
+          const detections = await faceapi.detectAllFaces(videoElement, new faceapi.SsdMobilenetv1Options()).withFaceLandmarks();
+          const resizedDetections = faceapi.resizeResults(detections, displaySize);
 
-window.onunload = window.onbeforeunload = () => {
-  socket.close();
-};
+          const context = videoCanvas.getContext("2d");
 
-function getStream() {
-  if (window.stream) {
-    window.stream.getTracks().forEach(track => {
-      track.stop();
-    });
+          if(resizedDetections.length !== 0){
+            context.drawImage(videoElement, 0, 0);
+            console.log(resizedDetections);
+            socket.emit("face_image", videoCanvas.toDataURL());
+          }
+      }, 100);
   }
-  const constraints = {
-    video: {
-      width: 320,
-      height: 320
-    }
-  };
-  return navigator.mediaDevices
-    .getUserMedia(constraints)
-    .then(startStream)
-    .catch(handleError);
+
 }
 
-function startStream(stream) {
-  // Make stream object available to the browser console.
-  window.stream = stream;
-  // Change src of video element to the stream object.
-  videoElement.srcObject = stream;
-  // Emit to all sockets that a broadcaster is ready.
-  socket.emit("broadcaster");
+// Stops face reg.
+async function stopFaceReg () {
+  console.log("Face Reg Stopped!");
+  clearInterval(faceRegInterval);
 }
 
-// Error handler for starting stream.
-function handleError(error) {
-  console.error("Error: ", error);
+// ----------------------------------------- End Of Face Recognition ---------------------------------------
+
+
+
+// ----------------------------------------- Image Taking ---------------------------------------
+
+photoButton.addEventListener('click', function(e){
+  takePicture();
+  e.preventDefault();
+} , false);
+
+//take picture from canvas
+function takePicture() {
+  //create canvas
+  const context = canvas.getContext('2d');
+  //set canvas props
+  canvas.width = width;
+  canvas.height = height;
+  //draw image of the video on the canvas
+  context.drawImage(videoElement, 0, 0,  width, height);
+  //create image from canvas
+  const imgURL = canvas.toDataURL('image/png');
+  // console.log("imgURL is " , imgURL);
+  //create img element
+  const img = document.createElement('img');
+  // console.log("img source is" , img);
+  //set image source
+  img.setAttribute('src', imgURL);
+  //add img to photos
+  photos.src = imgURL;
+  //console.log(photos);
+  handleImages(imgURL);
 }
+
+function handleImages(data){
+  socket.emit("taken_image" , data);
+}
+// ----------------------------------------- End of Image Taking ---------------------------------------
+
+
+
+// ----------------------------------------- Video Recording ---------------------------------------
 
 function startRecording() {
 
@@ -254,15 +224,49 @@ function handleDataAvailable(event) {
   }
 }
 
-function handleImages(data){
-  socket.emit("handle_images" , data );
-}
-
-
 function stopRecording() {
   mediaRecorder.stop();
 }
 
+// ----------------------------------------- End Of Video Recording ---------------------------------------
+
+
+
+window.onunload = window.onbeforeunload = () => {
+  socket.close();
+};
+
+function getStream() {
+  if (window.stream) {
+    window.stream.getTracks().forEach(track => {
+      track.stop();
+    });
+  }
+  const constraints = {
+    video: {
+      width: 320,
+      height: 320
+    }
+  };
+  return navigator.mediaDevices
+    .getUserMedia(constraints)
+    .then(startStream)
+    .catch(handleError);
+}
+
+function startStream(stream) {
+  // Make stream object available to the browser console.
+  window.stream = stream;
+  // Change src of video element to the stream object.
+  videoElement.srcObject = stream;
+  // Emit to all sockets that a broadcaster is ready.
+  socket.emit("broadcaster");
+}
+
+// Error handler for starting stream.
+function handleError(error) {
+  console.error("Error: ", error);
+}
+
 getStream();
 loadModels();
-addFaceReg();

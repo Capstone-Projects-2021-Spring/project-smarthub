@@ -18,7 +18,7 @@ function addFace(name: string, faceData: string, profileId: number) {
 
 function getFaces(profileId: number) {
     return knex("faces")
-        .select("face_name", "face_data")
+        .select("face_data")
         .where("profile_id", profileId)
         .then((rows: any) => {
             return rows;

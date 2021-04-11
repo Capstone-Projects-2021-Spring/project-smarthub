@@ -35,8 +35,6 @@ routes.post("/deleteImage", async (req: any, res: any) => {
     }
   }
 
-  console.log(key);
-
   const deleteResponse = await Images.deleteImage(imageName, profileId);
 
   console.log(deleteResponse);

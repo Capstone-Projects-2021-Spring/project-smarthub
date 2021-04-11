@@ -106,6 +106,26 @@ module.exports.storeImage = async function storeImage (accountName : String, pro
   return response;
 }
 
+module.exports.storeImageByPath = async function storeImageByPath (accountName: string, profileName: string, componentName: string, filePath: string) {
+
+  const fileContent = fs.readFileSync(filePath);
+
+  const key = (accountName + "/" + profileName + "/" + componentName + "/" + "img_" + uuidv4()).replace(/\s/g, "_");
+
+  const params = {
+    Bucket: envVars.S3_BUCKET,
+    Key: key,
+    Body: fileContent,
+    ContentType: "image/png"
+  };
+
+  const response = await s3.upload(params).promise();
+
+  console.log("File V2 Path Upload Complete.");
+
+  return response;
+}
+
 module.exports.generateSignedURL = async function generateSignedURL (key: String) {
 
   key = key.replace(/\s/g, "_");
