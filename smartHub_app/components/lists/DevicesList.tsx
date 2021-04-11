@@ -135,7 +135,7 @@ export class DevicesList extends Component<{navigation: any, stackScreen: string
 
         let collection: any = {}
         collection.profile_id = this.props.routeObject.params.item.profile_id;
-        collection.device_type = this.props.stackScreen;
+        collection.device_type = this.props.stackScreen === 'Take Photo' ? 'Recording Devices' : this.props.stackScreen;
        
         await axios.post(getAddressString() + '/devices/getDevices', collection).then((response) => {
             //return response.data.profiles

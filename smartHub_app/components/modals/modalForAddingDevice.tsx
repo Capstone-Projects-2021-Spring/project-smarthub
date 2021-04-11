@@ -86,7 +86,8 @@ export default class DeviceModal extends Component<PropVariables, StateVariables
                         collection.profile_id = this.props.routeObject.params.item.profile_id;
                         collection.device_address = this.state.DeviceIP;
                         collection.device_name = this.state.DeviceName;
-                        collection.device_type = this.props.stackScreen;
+                        collection.device_type = this.props.stackScreen === 'Take Photo' ? 'Recording Devices' : this.props.stackScreen;
+                        console.log(this.props.stackScreen)
                         // console.warn(collection);
                       
                         axios.post(getAddressString() + '/devices/addDevice', collection).then((response) => {
