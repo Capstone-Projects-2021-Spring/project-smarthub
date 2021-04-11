@@ -3,7 +3,7 @@ import { DrawerActions, getFocusedRouteNameFromRoute, NavigationContainer } from
 import {createStackNavigator, StackHeaderLeftButtonProps} from '@react-navigation/stack';
 import { StyleSheet, TouchableOpacity} from 'react-native';
 import ProfilePage from './components/pages/ProfilePage';
-import {LiveRecordingDevices, SavedRecordings, SavedImages, LiveStreamingDevices } from './components/VideoComponent';
+import {LiveRecordingDevices, SavedRecordings, SavedImages, LiveIntercomDevices } from './components/VideoComponent';
 import HomePage from './components/pages/HomePage';
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItem, DrawerItemList } from '@react-navigation/drawer';
 import {Icon} from 'native-base'
@@ -17,6 +17,7 @@ import { NavigationActions } from 'react-navigation';
 import { showImage } from './components/pages/SavedImagePage';
 import { SmartLockDevices } from './components/LockComponent';
 import SmartLock from './components/pages/SmartLockPage';
+import Intercom from './components/pages/IntercomPage';
 
 //App.tsx handles the navigation of the application
 
@@ -187,13 +188,13 @@ export default function App(){
         }}
       /> 
 
-      {/* <Stack.Screen 
+      <Stack.Screen 
         options={{
           headerStyle: {
           backgroundColor: '#FF9900'
         }}} 
-        name="Live Streaming Devices" 
-        component= {LiveStreamingDevices} 
+        name="Live Intercom Devices" 
+        component= {LiveIntercomDevices} 
       />
       
       <Stack.Screen 
@@ -201,9 +202,9 @@ export default function App(){
           headerStyle: {
           backgroundColor: '#FF9900'
         }}} 
-        name="Streaming Devices" 
-        component= {Streaming} 
-      /> */}
+        name="Intercom Devices" 
+        component= {Intercom} 
+      />
 
       <Stack.Screen 
         options={{

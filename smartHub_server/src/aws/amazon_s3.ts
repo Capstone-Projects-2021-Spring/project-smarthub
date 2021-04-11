@@ -1,9 +1,12 @@
 import fs from 'fs';
 var AWS = require('aws-sdk');
-require('dotenv').config();
-import * as dotenv from 'dotenv';
-const path:string = './.env';
-dotenv.config({path});
+// require('dotenv').config();
+// import * as dotenv from 'dotenv'
+// const path:string = './.env';
+// dotenv.config({path});
+const secureEnv = require('secure-env');
+process.env = secureEnv({secret: 'SmartHub'});
+
 const envVars = process.env;
 
 import { v4 as uuidv4 } from 'uuid';

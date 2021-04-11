@@ -45,40 +45,39 @@ let height = 320;
 // ----------------------------------------- Socket Events ---------------------------------------
 
 socket.on("watcher", id => {
-  const peerConnection = new RTCPeerConnection(config);
-  peerConnections[id] = peerConnection;
+	const peerConnection = new RTCPeerConnection(config);
+	peerConnections[id] = peerConnection;
 
-  let stream = videoElement.srcObject;
-  stream.getTracks().forEach(track => peerConnection.addTrack(track, stream));
+	let stream = videoElement.srcObject;
+	stream.getTracks().forEach(track => peerConnection.addTrack(track, stream));
 
-  peerConnection.onicecandidate = event => {
-    if (event.candidate) {
-      socket.emit("candidate", id, event.candidate);
-    }
-  };
+	peerConnection.onicecandidate = event => {
+		if (event.candidate) {
+			socket.emit("candidate", id, event.candidate);
+		}
+	};
 
-  peerConnection
-    .createOffer()
-    .then(sdp => peerConnection.setLocalDescription(sdp))
-    .then(() => {
-      socket.emit("offer", id, peerConnection.localDescription);
-    });
+	peerConnection.createOffer()
+		.then(sdp => peerConnection.setLocalDescription(sdp))
+		.then(() => {
+			socket.emit("offer", id, peerConnection.localDescription);
+		});
 });
 
 socket.on("answer", (id, description) => {
-  peerConnections[id].setRemoteDescription(description);
+	peerConnections[id].setRemoteDescription(description);
 });
 
 socket.on("candidate", (id, candidate) => {
-  peerConnections[id].addIceCandidate(new RTCIceCandidate(candidate));
+	peerConnections[id].addIceCandidate(new RTCIceCandidate(candidate));
 });
 
 socket.on("start_recording", id => {
-  startRecording();
+	startRecording();
 });
 
 socket.on("stop_recording", id => {
-  stopRecording();
+	stopRecording();
 });
 
 socket.on("take_image", () =>{
@@ -94,8 +93,8 @@ socket.on("start_face_reg", async () => {
 })
 
 socket.on("disconnectPeer", id => {
-  peerConnections[id].close();
-  delete peerConnections[id];
+	peerConnections[id].close();
+	delete peerConnections[id];
 });
 
 // ----------------------------------------- End Of Socket Events ---------------------------------------
@@ -188,44 +187,45 @@ function handleImages(data){
 
 function startRecording() {
 
-  let options = {mimeType: 'video/webm;codecs=vp9,opus'};
-  if (!MediaRecorder.isTypeSupported(options.mimeType)) {
-    console.error(`${options.mimeType} is not supported`);
-    options = {mimeType: 'video/webm;codecs=vp8,opus'};
-    if (!MediaRecorder.isTypeSupported(options.mimeType)) {
-      console.error(`${options.mimeType} is not supported`);
-      options = {mimeType: 'video/webm'};
-      if (!MediaRecorder.isTypeSupported(options.mimeType)) {
-        console.error(`${options.mimeType} is not supported`);
-        options = {mimeType: ''};
-      }
-    }
-  }
+	let options = { mimeType: 'video/webm;codecs=vp9,opus' };
+	if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+		console.error(`${options.mimeType} is not supported`);
+		options = { mimeType: 'video/webm;codecs=vp8,opus' };
+		if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+			console.error(`${options.mimeType} is not supported`);
+			options = { mimeType: 'video/webm' };
+			if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+				console.error(`${options.mimeType} is not supported`);
+				options = { mimeType: '' };
+			}
+		}
+	}
 
-  try {
-    mediaRecorder = new MediaRecorder(window.stream, options);
-  } catch (e) {
-    console.error('Exception while creating MediaRecorder:', e);
-    return;
-  }
+	try {
+		mediaRecorder = new MediaRecorder(window.stream, options);
+	}
+	catch (e) {
+		console.error('Exception while creating MediaRecorder:', e);
+		return;
+	}
 
-  mediaRecorder.onstop = (event) => {
-    console.log('Recorder stopped: ', event);
-  };
+	mediaRecorder.onstop = (event) => {
+		console.log('Recorder stopped: ', event);
+	};
 
-  mediaRecorder.ondataavailable = handleDataAvailable;
-  mediaRecorder.start(1000);
+	mediaRecorder.ondataavailable = handleDataAvailable;
+	mediaRecorder.start(1000);
 }
 
 function handleDataAvailable(event) {
-  console.log('handleDataAvailable', event);
-  if (event.data && event.data.size > 0) {
-    socket.emit("receive_recording", event.data);
-  }
+	console.log('handleDataAvailable', event);
+	if (event.data && event.data.size > 0) {
+		socket.emit("receive_recording", event.data);
+	}
 }
 
 function stopRecording() {
-  mediaRecorder.stop();
+	mediaRecorder.stop();
 }
 
 // ----------------------------------------- End Of Video Recording ---------------------------------------
