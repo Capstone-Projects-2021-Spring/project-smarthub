@@ -4,19 +4,20 @@ import {WebView} from 'react-native-webview'
 import axios from 'axios'
 import Toast from 'react-native-toast-message'
 import { getAddressString } from '../../utils/utilities';
+import getToastConfig from '../configurations/toastConfig';
 
 var width : number = Dimensions.get('window').width;
 
-export default class TakePhoto extends Component<{route: any, navigation: any}, {checkStream: boolean, profileId: number, hasStarted: boolean, deviceIP: String, userEmail: String, profileName: String}>{
+export default class TakePhoto extends Component<{route: any, navigation: any}, {checkStream: boolean, profileId: number, deviceIP: String, phoneNumber: String,userEmail: String, profileName: String}>{
 
     constructor(props: any){
         super(props);
         this.state= ({
-            hasStarted: false,
             checkStream: false,
             deviceIP: "",
             profileId: 0,
             userEmail: "",
+            phoneNumber: "",
             profileName: "",
         })
     
@@ -25,15 +26,17 @@ export default class TakePhoto extends Component<{route: any, navigation: any}, 
     }
 
 
-    getDeviceIP = async () => {
+    getDeviceInfo = async () => {
         //console.log(this.props.route);
         let collection: any = {}
         collection.device_id = this.props.route.params.device_id;
         await axios.post(getAddressString() + '/devices/getDeviceInfo', collection).then((response) => {
-            this.setState({deviceIP: response.data.device[0].device_address})
-            this.setState({userEmail: response.data.device[0].user_email})
-            this.setState({profileName: response.data.device[0].profile_name})
-            this.setState({profileId: response.data.device[0].profile_id})
+            this.setState({deviceIP: response.data.device[0].device_address,
+            userEmail: response.data.device[0].user_email,
+            profileName: response.data.device[0].profile_name,
+            profileId: response.data.device[0].profile_id,
+            phoneNumber: response.data.device[0].phone_number})
+            console.log(response.data)
         }, (error) => {
             console.log(error);
         })
@@ -54,7 +57,6 @@ export default class TakePhoto extends Component<{route: any, navigation: any}, 
                     visibilityTime: 5000
                 })
                 setTimeout(() => {
-                    this.setState({hasStarted: true})
                     Toast.show({
                         type: 'success',
                         text1: 'The Stream Is Live!',
@@ -158,23 +160,25 @@ export default class TakePhoto extends Component<{route: any, navigation: any}, 
         })
     }
 
-    checkStream = () => {
-        var url = 'http://' + this.state.deviceIP + ':4000/video/stream_check';
-        axios.post(url).then((response) => {
-            this.setState({checkStream: response.data.streaming})
-        }, (error) => {
-            console.log(error);
-        })
-    }
+
+    // checkStream = () => {
+    //     var url = 'http://' + this.state.deviceIP + ':4000/video/stream_check';
+    //     axios.post(url).then((response) => {
+    //         this.setState({checkStream: response.data.streaming})
+    //     }, (error) => {
+    //         console.log(error);
+    //     })
+    // }
 
     componentDidMount = async() => {
-        await this.getDeviceIP();
-        await this.checkStream();
+        await this.getDeviceInfo();
+       // await this.checkStream();
     }
 
     render(){
         return(
             <View style={{flex:1, backgroundColor: "#222222"}}>
+                <Toast style={{zIndex: 1}} config={getToastConfig()} ref={(ref) => Toast.setRef(ref)} />
                 <WebView
                     style={{
                         flex: 1,

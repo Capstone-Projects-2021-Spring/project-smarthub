@@ -40,7 +40,7 @@ export default class FeatureModal extends Component<{feature: any, route: any},{
                     isCheckedNotification:response.data.device.device_config.notifications,
                     isCheckedRecording: response.data.device.device_config.recording,
                     isCheckedAudio: response.data.device.device_config.audio,
-                    number: 5,
+                    number: response.data.device.device_config.recordingTime,
                 })
             }, (error) => {
                 console.log(error);
@@ -67,7 +67,7 @@ export default class FeatureModal extends Component<{feature: any, route: any},{
                         }
                         console.log(deviceConfig)
                         //below will be the call back given to the modal comp from the recording page
-                        //this.props.feature.checkFeature(deviceConfig) 
+                        this.props.feature.deviceConfigurationCallback(deviceConfig) 
                         // this.setState({
                         //     isToggledFacial: false,
                         //     isCheckedNotification: false,
@@ -96,7 +96,7 @@ export default class FeatureModal extends Component<{feature: any, route: any},{
                         value={this.state.isToggledFacial}
                         onValueChange={(value) => {
                             if(this.state.isToggledMotion) this.setState({isToggledMotion:false})
-                            this.setState({isToggledFacial: value, isCheckedNotification: false, isCheckedRecording: false, isCheckedAudio: false})}
+                            this.setState({isToggledFacial: value, isCheckedNotification: false, isCheckedRecording: false, isCheckedAudio: false, number: 5})}
                         }>
                     </Switch>
                 </View>
@@ -106,7 +106,7 @@ export default class FeatureModal extends Component<{feature: any, route: any},{
                         value={this.state.isToggledMotion}
                         onValueChange={(value) => {
                             if(this.state.isToggledFacial){this.setState({isToggledFacial: false})}
-                            this.setState({isToggledMotion: value, isCheckedNotification: false, isCheckedRecording: false, isCheckedAudio: false})}
+                            this.setState({isToggledMotion: value, isCheckedNotification: false, isCheckedRecording: false, isCheckedAudio: false, number: 5})}
                         }>
                     </Switch>
                 </View>
@@ -170,7 +170,7 @@ export default class FeatureModal extends Component<{feature: any, route: any},{
                             style={{paddingTop: 3}}
                         />
                     </View> */}
-                    <View style={{ flexDirection: "row", paddingLeft:60, paddingBottom: 30}}>
+                    <View style={{ flexDirection: "row", paddingLeft:60, paddingBottom: 35}}>
                         <Text style={{fontSize: 14, fontWeight: "bold", paddingTop: 5, color: "#fff" , paddingRight: 0}}> - Set recording length: </Text>    
                     </View>
                     <View style={{flex: 1,maxHeight: 30, justifyContent: 'center', alignItems: 'center'}}> 
@@ -208,18 +208,20 @@ const styles = StyleSheet.create({
         borderRadius: 30,
         backgroundColor: "#222222",
         shadowRadius: 10,
-        width: screen.width - 80,
+        width: screen.width - 50,
         height: screen.height/2
     },
     buttonStyle: {
         marginLeft: 70,
         marginRight: 70,
+        marginTop: 25,
         height: 40,
         borderRadius: 6,
         backgroundColor: '#FF9900'
     },
     spinner: {
 		flex: 1,	
-        minWidth: 1	
+        minWidth: 1,	
+        marginBottom: 10
 	},
 })

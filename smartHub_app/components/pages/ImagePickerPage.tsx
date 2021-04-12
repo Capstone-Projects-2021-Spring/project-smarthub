@@ -8,7 +8,7 @@ import {getAddressString} from '../../utils/utilities';
 export default async function ImagePickerPage(props: any, routeObject: any, parentFlatList: any){
     let result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true
+        // allowsEditing: true
     });
     
     let email = "";
@@ -46,28 +46,31 @@ export default async function ImagePickerPage(props: any, routeObject: any, pare
                         profile_name: routeObject.params.item.profile_name, 
                         profile_id: routeObject.params.item.profile_id
                     }
-                    Toast.show({
-                        type: 'error',
-                        text1: "Processing Please Wait...",
-                        visibilityTime: 5000
-                    });
+                    // Toast.show({
+                    //     type: 'error',
+                    //     text1: "Processing Please Wait...",
+                    //     visibilityTime: 5000
+                    // });
+                    alert("Processing Please Wait...");
                     axios.post("http://petepicam1234.zapto.org:4000/faces/addFaceImage", collection).then((response) => {
-                        Toast.show({
-                            type: 'success',
-                            text1: response.data,
-                            visibilityTime: 2000
-                        })
+                        // Toast.show({
+                        //     type: 'success',
+                        //     text1: response.data,
+                        //     visibilityTime: 2000
+                        // })
+                        alert(response.data);
                         console.log(response.data)
                         parentFlatList.getDataList();
                         props.refs.facialRecognitionModal.close();
                     }, ({error, response}) : any => {
                         console.log(error)
-                        Toast.show({
-                            type: 'error',
-                            text1: response.data,
-                            text2: 'Please Try again...',
-                            visibilityTime: 2000
-                        });
+                        // Toast.show({
+                        //     type: 'error',
+                        //     text1: response.data,
+                        //     text2: 'Please Try again...',
+                        //     visibilityTime: 2000
+                        // });
+                        alert(response.data);
                     })
                 }
             }},

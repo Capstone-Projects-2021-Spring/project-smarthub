@@ -50,7 +50,7 @@ export class FeaturesList extends Component<{type: number, navigation: any, rout
         let collection: any = {}
         collection.image_type = this.props.type;
         collection.profile_id = this.props.routeObject.params.item.profile_id;
-        
+        console.log(collection);
         await axios.post('http://petepicam1234.zapto.org:4000/images/getImages', collection).then(async (response) => {
             this.setState({featuresList: response.data.images});
         }, (error) => {
@@ -61,7 +61,6 @@ export class FeaturesList extends Component<{type: number, navigation: any, rout
     render(){
        return (
             <View style={{flex: 1, backgroundColor: "#222222", alignItems: 'center', paddingTop: 20}}>
-                {this.props.type === 1  &&
                 <View>
                     <TouchableOpacity
                         style={styles.pillButtonNew}
@@ -76,8 +75,7 @@ export class FeaturesList extends Component<{type: number, navigation: any, rout
                             );
                         }}
                     /> 
-                </View> 
-                }
+                </View>
                 <FacialRecognitionModal ref={'facialRecognitionModal'} routeObject={this.props.routeObject} navigation={this.props.navigation} parentFlatList={this}/>
             </View>
         );
