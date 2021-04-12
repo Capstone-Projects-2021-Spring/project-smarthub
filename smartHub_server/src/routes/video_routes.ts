@@ -14,6 +14,8 @@ const { createFolder, uploadVideo, uploadImage, storeImage, storeRecording, gene
 const { sendSMS } = require('../notifications/twilioPushNotification');
 import { v4 as uuidv4 } from 'uuid';
 
+let isStreaming = false;
+
 let live_browser: any;
 let browserIsLive: boolean = false;
 const PORT = 4000;
@@ -35,7 +37,7 @@ const routes = express.Router({
 		Params: none
 */
 routes.post("/stop_stream", async (req: any, res: any) => {
-
+	isStreaming = false;
 	console.log("stop_stream route: Stream closing...");
 
 	try {
@@ -57,10 +59,22 @@ routes.post("/stop_stream", async (req: any, res: any) => {
 		Params: none
 */
 routes.post("/start_stream", (req: any, res: any) => {
+	isStreaming = true;
 	console.log("start_stream route: Stream starting...");
 	runLive();
 	console.log("start_stream route: Stream started.");
 	return res.status(200).send("Stream Starting.");
+});
+
+routes.post("/stream_check", (req: any, res: any) => {
+
+	if(isStreaming === true) {
+		return res.status(200).send({message: "The stream is already live", streaming: isStreaming});
+	}
+	else {
+		return res.status(200).send({message: "The stream is not live", streaming: isStreaming});
+	}
+
 });
 
 /*
@@ -148,7 +162,7 @@ routes.post("/takeFaceImage", async (req: any, res: any) => {
 		const tensor = await recognizer.loadImage(dataURI);
 
 		const detections = await recognizer.detect(tensor);
-		if(detections.length === 0) {
+		if (detections.length === 0) {
 			return res.status(500).send("No faces detected!");
 		}
 		else if (detections.length !== 1) {
@@ -162,26 +176,26 @@ routes.post("/takeFaceImage", async (req: any, res: any) => {
 		const labeledFaceDescriptors = await recognizer.labelDescriptors(labels, refImages);
 
 		// Add image face data to faces table.
-		Faces.addFace(defaultName, JSON.stringify(labeledFaceDescriptors), profileId).then( (face: any) => {
-			if(!face) {
-					return res.status(500).json({message: "Unable to insert face."});
-				}
-		}).catch( (err: any) => {
-				console.log(err);
-				return res.status(500).json({message: err});
+		Faces.addFace(defaultName, JSON.stringify(labeledFaceDescriptors), profileId).then((face: any) => {
+			if (!face) {
+				return res.status(500).json({ message: "Unable to insert face." });
+			}
+		}).catch((err: any) => {
+			console.log(err);
+			return res.status(500).json({ message: err });
 		});
 
 		const obj = await storeImage(accountName, profileName, componentName, dataURI);
 
 		const imageLink = await generateSignedURL(obj.key);
 
-		Images.addImage(defaultName, imageLink, 1, obj.key, profileId).then( (image: any) => {
-				if(!image) {
-					return res.status(500).json({message: "Unable to insert image."});
-				}
-		}).catch( (err: any) => {
-				console.log(err);
-				return res.status(500).json({message: err});
+		Images.addImage(defaultName, imageLink, 1, obj.key, profileId).then((image: any) => {
+			if (!image) {
+				return res.status(500).json({ message: "Unable to insert image." });
+			}
+		}).catch((err: any) => {
+			console.log(err);
+			return res.status(500).json({ message: err });
 		});
 
 		return res.status(200).send("Face Capture Successful!");
@@ -204,17 +218,17 @@ routes.post('/start_face_reg', async (req: any, res: any) => {
 
 	controller.startFaceReg();
 
-	Faces.getFaces(profileId).then( (faces: any) => {
+	Faces.getFaces(profileId).then((faces: any) => {
 
 		let labeledFaceDescriptors: any = [];
 
 		const objList: any = parseFacesData(faces);
 
-		if(objList.length !== 0) {
-				labeledFaceDescriptors = recognizer.loadDescriptors(objList);
+		if (objList.length !== 0) {
+			labeledFaceDescriptors = recognizer.loadDescriptors(objList);
 		}
 
-		getDetections( function (detections: any, tensor: any) {
+		getDetections(function (detections: any, tensor: any) {
 
 			let matches: any = [];
 			let matchedLabels: any = [];
@@ -244,9 +258,9 @@ routes.post('/start_face_reg', async (req: any, res: any) => {
 
 		}, profileId);
 
-	}).catch( (err: any) => {
-			console.log(err);
-			return res.status(500).json({message: err});
+	}).catch((err: any) => {
+		console.log(err);
+		return res.status(500).json({ message: err });
 	});
 
 	return res.status(200).send("Face Recognition Started.");
@@ -353,12 +367,12 @@ async function processDetections (params: any) {
 }
 
 // Function that starts continous fetching of face images from controller.
-function getDetections (callback: any, profileId: number) {
+function getDetections(callback: any, profileId: number) {
 
 	const newCallback = async function processFaceImage(faceImage: any) {
 		const tensor = await recognizer.loadImage(faceImage);
 		const detections = await recognizer.detect(tensor);
-		if(detections.length !== 0) callback(detections, tensor);
+		if (detections.length !== 0) callback(detections, tensor);
 	}
 	controller.getFaceData(newCallback, profileId + "");
 }
@@ -366,11 +380,12 @@ function getDetections (callback: any, profileId: number) {
 // Function just for parsing the array passed
 function parseFacesData(faces: any) {
 	const objList: any = [];
-	for(var i = 0; i < faces.length; i++) {
+	for (var i = 0; i < faces.length; i++) {
 		objList[i] = faces[i].face_data[0];
 	}
 	return objList;
 }
+
 
 // Function for deleting a local media file.
 function deleteLocalFile(path: string) {
@@ -381,6 +396,35 @@ function deleteLocalFile(path: string) {
 		exec('rm ' + path);
 	}
 }
+
+// =======================================================================================================
+// 												MOTION DETECTION
+// =======================================================================================================
+
+routes.post('/start_motion_detection', async (req: any, res: any) => {
+
+	const profileId: number = req.body.profile_id;
+	const deviceId: number = req.body.device_id;
+
+	controller.startMotionDetection();
+
+	console.log("start motion detection route.");
+	controller.getMotionData(function (data: any) {
+		//DO STUFF FOR MOTION DETECTION!!!!!!
+		console.log("Hey, motion was detected :) ");
+		//process.exit(0);
+	}, profileId + "");
+
+	return res.status(200).send("Motion Detection Started.");
+});
+
+routes.post('/stop_motion_detection', async (req: any, res: any) => {
+
+
+	controller.stopMotionDetection();
+
+	return res.status(200).send("Motion Detection Stopped.");
+});
 
 module.exports = {
 	routes,
