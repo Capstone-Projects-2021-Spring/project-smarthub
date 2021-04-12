@@ -37,7 +37,7 @@ export class FeaturesList extends Component<{type: number, navigation: any, rout
             featuresList: []
         });
     }
-
+    
     launchModal = () => {
         this.refs.facialRecognitionModal.showModal();
     }
@@ -62,19 +62,31 @@ export class FeaturesList extends Component<{type: number, navigation: any, rout
        return (
             <View style={{flex: 1, backgroundColor: "#222222", alignItems: 'center', paddingTop: 20}}>
                 <View>
-                    <TouchableOpacity
-                        style={styles.pillButtonNew}
-                        onPress={this.launchModal}>
-                        <Icon name="ios-add" />
-                    </TouchableOpacity>           
+                    {this.props.type === 1 ?
+                    <View>
+                        <TouchableOpacity
+                            style={styles.pillButtonNew}
+                            onPress={this.launchModal}>
+                            <Icon name="ios-add" />
+                        </TouchableOpacity>           
+                        <FlatList
+                            data={this.state.featuresList}
+                            renderItem={({item, index} : any)=>{
+                                return(
+                                    <FeatureListItem item={item} navigation={this.props.navigation}/>
+                                );
+                            }}
+                        />
+                    </View>
+                    :
                     <FlatList
-                        data={this.state.featuresList}
-                        renderItem={({item, index} : any)=>{
-                            return(
-                                <FeatureListItem item={item} navigation={this.props.navigation}/>
-                            );
-                        }}
-                    /> 
+                    data={this.state.featuresList}
+                    renderItem={({item, index} : any)=>{
+                        return(
+                            <FeatureListItem item={item} navigation={this.props.navigation}/>
+                        );
+                    }}
+                />}
                 </View>
                 <FacialRecognitionModal ref={'facialRecognitionModal'} routeObject={this.props.routeObject} navigation={this.props.navigation} parentFlatList={this}/>
             </View>

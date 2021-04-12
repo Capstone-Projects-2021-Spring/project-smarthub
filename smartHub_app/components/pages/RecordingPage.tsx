@@ -632,6 +632,7 @@ export default class Recording extends Component<{ route: any, navigation: any }
 //--------------------------------------------------FACIAL RECOGNITION STARTS--------------------------------------------------------------
     
     startFaceRec = () => {
+        console.log("Here")
         var collection = {
             user_email: this.state.userEmail,
             profile_name: this.state.profileName,
@@ -682,7 +683,7 @@ export default class Recording extends Component<{ route: any, navigation: any }
             if(this.state.checkStream == false){
                 await this.beginStream();
             }
-            this.startFaceRec();
+            setTimeout(()=>this.startFaceRec(), 15000);;
         }else if(feature === "Motion"){
             if(this.state.checkStream == false){
                 await this.beginStream();
