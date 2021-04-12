@@ -11,6 +11,7 @@ const { routes: profileRoutes } = require('./routes/profile_routes');
 const { routes: deviceRoutes } = require('./routes/device_routes');
 const { routes: faceRoutes } = require('./routes/face_routes');
 const { routes: imageRoutes } = require('./routes/image_db_routes');
+const { routes: recordingRoutes } = require('./routes/recording_db_routes');
 const { routes: awsRoutes } = require('./routes/aws_routes');
 const youauth = require('youauth');
 
@@ -56,6 +57,7 @@ app.use('/profiles', profileRoutes);
 app.use('/devices', deviceRoutes);
 app.use('/faces', faceRoutes);
 app.use('/images', imageRoutes);
+app.use('/recordings', recordingRoutes);
 app.use('/lock', lockRoutes);
 app.use('/light', lightRoutes);
 app.use('/aws', awsRoutes);
