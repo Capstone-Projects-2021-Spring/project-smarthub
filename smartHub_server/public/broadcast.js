@@ -22,17 +22,17 @@ const photoButton = document.getElementById("photo-button");
  * The WebRTC connection here is on localhost, no HTTPS required for device permissions.
  */
 const config = {
-  iceServers: [
-    {
-      urls: 'stun:stun.l.google.com:19302',
-    },
-    {
-      urls: 'stun:stun1.l.google.com:19302',
-    },
-    {
-      urls: 'stun:stun2.l.google.com:19302',
-    },
-  ]
+	iceServers: [
+		{
+			urls: 'stun:stun.l.google.com:19302',
+		},
+		{
+			urls: 'stun:stun1.l.google.com:19302',
+		},
+		{
+			urls: 'stun:stun2.l.google.com:19302',
+		},
+	]
 };
 
 let width = 320;
@@ -80,21 +80,29 @@ socket.on("stop_recording", id => {
 	stopRecording();
 });
 
-socket.on("take_image", () =>{
-  takePicture();
+socket.on("take_image", () => {
+	takePicture();
 });
 
 socket.on("stop_face_reg", async () => {
-  await stopFaceReg();
+	await stopFaceReg();
 });
 
 socket.on("start_face_reg", async () => {
-  await startFaceReg();
+	await startFaceReg();
 })
 
 socket.on("disconnectPeer", id => {
 	peerConnections[id].close();
 	delete peerConnections[id];
+});
+
+socket.on("start_motion_detection", async () => {
+	await startMotionDetection();
+});
+
+socket.on("stop_motion_detection", async () => {
+	await stopMotionDetection();
 });
 
 // ----------------------------------------- End Of Socket Events ---------------------------------------
@@ -104,42 +112,42 @@ socket.on("disconnectPeer", id => {
 // ----------------------------------------- Face Recognition ---------------------------------------
 
 // Load models from face API.
-async function loadModels () {
-  await faceapi.nets.ssdMobilenetv1.loadFromUri('/models');
-  await faceapi.nets.faceLandmark68Net.loadFromUri('/models');
-  await faceapi.nets.faceRecognitionNet.loadFromUri('/models');
+async function loadModels() {
+	await faceapi.nets.ssdMobilenetv1.loadFromUri('/models');
+	await faceapi.nets.faceLandmark68Net.loadFromUri('/models');
+	await faceapi.nets.faceRecognitionNet.loadFromUri('/models');
 }
 
 // Starts face reg.
-async function startFaceReg () {
+async function startFaceReg() {
 
-  const videoCanvas = faceapi.createCanvasFromMedia(videoElement);
-  const displaySize = { width: 320, height: 320 };
-  faceapi.matchDimensions(videoCanvas, displaySize);
+	const videoCanvas = faceapi.createCanvasFromMedia(videoElement);
+	const displaySize = { width: 320, height: 320 };
+	faceapi.matchDimensions(videoCanvas, displaySize);
 
-  if(!faceRegInterval) {
+	if (!faceRegInterval) {
 
-      faceRegInterval = setInterval( async () => {
-          // Use in browser API to only send image back when a face is detected. Avoids sending too many images.
-          const detections = await faceapi.detectAllFaces(videoElement, new faceapi.SsdMobilenetv1Options()).withFaceLandmarks();
-          const resizedDetections = faceapi.resizeResults(detections, displaySize);
+		faceRegInterval = setInterval(async () => {
+			// Use in browser API to only send image back when a face is detected. Avoids sending too many images.
+			const detections = await faceapi.detectAllFaces(videoElement, new faceapi.SsdMobilenetv1Options()).withFaceLandmarks();
+			const resizedDetections = faceapi.resizeResults(detections, displaySize);
 
-          const context = videoCanvas.getContext("2d");
+			const context = videoCanvas.getContext("2d");
 
-          if(resizedDetections.length !== 0){
-            context.drawImage(videoElement, 0, 0);
-            console.log(resizedDetections);
-            socket.emit("face_image", videoCanvas.toDataURL());
-          }
-      }, 100);
-  }
+			if (resizedDetections.length !== 0) {
+				context.drawImage(videoElement, 0, 0);
+				console.log(resizedDetections);
+				socket.emit("face_image", videoCanvas.toDataURL());
+			}
+		}, 100);
+	}
 
 }
 
 // Stops face reg.
-async function stopFaceReg () {
-  console.log("Face Reg Stopped!");
-  clearInterval(faceRegInterval);
+async function stopFaceReg() {
+	console.log("Face Reg Stopped!");
+	clearInterval(faceRegInterval);
 }
 
 // ----------------------------------------- End Of Face Recognition ---------------------------------------
@@ -148,36 +156,36 @@ async function stopFaceReg () {
 
 // ----------------------------------------- Image Taking ---------------------------------------
 
-photoButton.addEventListener('click', function(e){
-  takePicture();
-  e.preventDefault();
-} , false);
+photoButton.addEventListener('click', function (e) {
+	takePicture();
+	e.preventDefault();
+}, false);
 
 //take picture from canvas
 function takePicture() {
-  //create canvas
-  const context = canvas.getContext('2d');
-  //set canvas props
-  canvas.width = width;
-  canvas.height = height;
-  //draw image of the video on the canvas
-  context.drawImage(videoElement, 0, 0,  width, height);
-  //create image from canvas
-  const imgURL = canvas.toDataURL('image/png');
-  // console.log("imgURL is " , imgURL);
-  //create img element
-  const img = document.createElement('img');
-  // console.log("img source is" , img);
-  //set image source
-  img.setAttribute('src', imgURL);
-  //add img to photos
-  photos.src = imgURL;
-  //console.log(photos);
-  handleImages(imgURL);
+	//create canvas
+	const context = canvas.getContext('2d');
+	//set canvas props
+	canvas.width = width;
+	canvas.height = height;
+	//draw image of the video on the canvas
+	context.drawImage(videoElement, 0, 0, width, height);
+	//create image from canvas
+	const imgURL = canvas.toDataURL('image/png');
+	// console.log("imgURL is " , imgURL);
+	//create img element
+	const img = document.createElement('img');
+	// console.log("img source is" , img);
+	//set image source
+	img.setAttribute('src', imgURL);
+	//add img to photos
+	photos.src = imgURL;
+	//console.log(photos);
+	handleImages(imgURL);
 }
 
-function handleImages(data){
-  socket.emit("taken_image" , data);
+function handleImages(data) {
+	socket.emit("taken_image", data);
 }
 // ----------------------------------------- End of Image Taking ---------------------------------------
 
@@ -233,39 +241,39 @@ function stopRecording() {
 
 
 window.onunload = window.onbeforeunload = () => {
-  socket.close();
+	socket.close();
 };
 
 function getStream() {
-  if (window.stream) {
-    window.stream.getTracks().forEach(track => {
-      track.stop();
-    });
-  }
-  const constraints = {
-    video: {
-      width: 320,
-      height: 320
-    }
-  };
-  return navigator.mediaDevices
-    .getUserMedia(constraints)
-    .then(startStream)
-    .catch(handleError);
+	if (window.stream) {
+		window.stream.getTracks().forEach(track => {
+			track.stop();
+		});
+	}
+	const constraints = {
+		video: {
+			width: 320,
+			height: 320
+		}
+	};
+	return navigator.mediaDevices
+		.getUserMedia(constraints)
+		.then(startStream)
+		.catch(handleError);
 }
 
 function startStream(stream) {
-  // Make stream object available to the browser console.
-  window.stream = stream;
-  // Change src of video element to the stream object.
-  videoElement.srcObject = stream;
-  // Emit to all sockets that a broadcaster is ready.
-  socket.emit("broadcaster");
+	// Make stream object available to the browser console.
+	window.stream = stream;
+	// Change src of video element to the stream object.
+	videoElement.srcObject = stream;
+	// Emit to all sockets that a broadcaster is ready.
+	socket.emit("broadcaster");
 }
 
 // Error handler for starting stream.
 function handleError(error) {
-  console.error("Error: ", error);
+	console.error("Error: ", error);
 }
 
 getStream();
