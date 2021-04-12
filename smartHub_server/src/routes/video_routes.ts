@@ -8,7 +8,7 @@ import { VideoController } from '../controllers/VideoController';
 const Faces = require('../db/faces');
 const Images = require('../db/images');
 const Devices = require('../db/devices');
-const Recordings = require('../db/recordings');
+// const Recordings = require('../db/recordings');
 const youauth = require('youauth');
 const { createFolder, uploadVideo, uploadImage, storeImage, storeRecording, generateSignedURL } = require('../aws/amazon_s3');
 const { sendSMS } = require('../notifications/twilioPushNotification');
@@ -68,11 +68,11 @@ routes.post("/start_stream", (req: any, res: any) => {
 
 routes.post("/stream_check", (req: any, res: any) => {
 
-	if(isStreaming === true) {
-		return res.status(200).send({message: "The stream is already live", streaming: isStreaming});
+	if (isStreaming === true) {
+		return res.status(200).send({ message: "The stream is already live", streaming: isStreaming });
 	}
 	else {
-		return res.status(200).send({message: "The stream is not live", streaming: isStreaming});
+		return res.status(200).send({ message: "The stream is not live", streaming: isStreaming });
 	}
 
 });
@@ -343,25 +343,25 @@ async function processDetections (params: any) {
 		});
 	}
 
-	if(deviceConfig.device_config.recording) {
-		controller.startRecording();
+// 	if(deviceConfig.device_config.recording) {
+// 		controller.startRecording();
 
-		setTimeout( async () => {
+// 		setTimeout( async () => {
 
-			controller.stopRecording();
-			const obj = await storeRecording(params.accountName, params.profileName, params.componentName, localStoragePath);
-			deleteLocalFile(localStoragePath);
+// 			controller.stopRecording();
+// 			const obj = await storeRecording(params.accountName, params.profileName, params.componentName, localStoragePath);
+// 			deleteLocalFile(localStoragePath);
 
-			const recordingLink = await generateSignedURL(obj.key);
+// 			const recordingLink = await generateSignedURL(obj.key);
 
-			const response = await Recordings.addRecording(recordingLink, 1, obj.key, params.profileId);
+// 			const response = await Recordings.addRecording(recordingLink, 1, obj.key, params.profileId);
 
-			sendSMS({
-				messageBody: "smartHub new recording available: Face(s) Detected! - " + message,
-				phoneNumber: params.phoneNumber
-			});
+// 			sendSMS({
+// 				messageBody: "smartHub new recording available: Face(s) Detected! - " + message,
+// 				phoneNumber: params.phoneNumber
+// 			});
 
-		}, (30 * 1000) + (deviceConfig.device_config.recordingTime * 1000));
+// 		}, (30 * 1000) + (deviceConfig.device_config.recordingTime * 1000));
 	}
 
 }
@@ -404,14 +404,62 @@ function deleteLocalFile(path: string) {
 routes.post('/start_motion_detection', async (req: any, res: any) => {
 
 	const profileId: number = req.body.profile_id;
+	const accountName: string = req.body.user_email;
+	const profileName: string = req.body.profile_name;
+	const componentName: string = req.body.component_name;
 	const deviceId: number = req.body.device_id;
+	const phoneNumber: string = req.body.phone_number;
 
 	controller.startMotionDetection();
 
+	const deviceConfig: any = await Devices.getConfig(deviceId);
+
 	console.log("start motion detection route.");
-	controller.getMotionData(function (data: any) {
+	controller.getMotionData(async function (data: any) {
 		//DO STUFF FOR MOTION DETECTION!!!!!!
 		console.log("Hey, motion was detected :) ");
+		console.log(accountName);
+		console.log(componentName);
+		console.log(profileName);
+
+		const defaultName: string = "motion_detect_" + uuidv4();
+
+		const obj = await storeImage(accountName, profileName, componentName, data);
+
+		const imageLink = await generateSignedURL(obj.key);
+
+		const response = await Images.addImage(defaultName, imageLink, 3, obj.key, profileId);
+
+		if (deviceConfig.device_config.notifications) {
+			sendSMS({
+				messageBody: "smartHub image: Motion Detected!",
+				phoneNumber: phoneNumber,
+				mediaContent: imageLink
+			});
+		}
+
+		// if (deviceConfig.device_config.recording) {
+		// controller.startRecording();
+
+		// setTimeout(async () => {
+
+		// 	controller.stopRecording();
+		// 	const obj = await storeRecording(accountName, profileName, componentName, localStoragePath);
+		// 	deleteLocalFile(localStoragePath);
+
+		// 	const recordingLink = await generateSignedURL(obj.key);
+
+		// 	const response = await Recordings.addRecording(recordingLink, 1, obj.key, profileId);
+
+		// 	sendSMS({
+		// 		messageBody: "smartHub new recording available: Motion Detected!",
+		// 		phoneNumber: phoneNumber
+		// 	});
+
+		// }, (deviceConfig.device_config.recordingTime + 2) * 1000);
+
+
+
 		//process.exit(0);
 	}, profileId + "");
 
@@ -430,3 +478,13 @@ module.exports = {
 	routes,
 	controller
 };
+
+// Function for deleting a local media file.
+function deleteLocalFile(path: string) {
+	if (process.platform === 'win32') {
+		exec('del ' + path);
+	}
+	else {
+		exec('rm ' + path);
+	}
+}
