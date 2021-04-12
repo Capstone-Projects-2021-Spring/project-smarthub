@@ -175,7 +175,7 @@ class SelectedProfileNavigation extends Component<{route: any, navigation: any}>
           component= {detectedFacialRecognitions} 
         />
 
-        <Drawer.Screen 
+        {/* <Drawer.Screen 
           options={{
           drawerIcon:({color, size}) => (
             <Icon name="person" style={{fontSize: size, color: color}} />
@@ -183,7 +183,7 @@ class SelectedProfileNavigation extends Component<{route: any, navigation: any}>
           }}
           name="Facial Recognition Recordings" 
           component= {savedFacialRecognitionsRecordings} 
-        />
+        /> */}
 
         <Drawer.Screen 
           options={{
@@ -195,7 +195,7 @@ class SelectedProfileNavigation extends Component<{route: any, navigation: any}>
           component= {detectedMotionDetections} 
         />
 
-        <Drawer.Screen 
+        {/* <Drawer.Screen 
           options={{
           drawerIcon:({color, size}) => (
             <Icon name="person" style={{fontSize: size, color: color}} />
@@ -203,7 +203,7 @@ class SelectedProfileNavigation extends Component<{route: any, navigation: any}>
           }}
           name="Motion Detection Recordings" 
           component= {savedMotionDetectionsRecordings} 
-        />
+        /> */}
 
 
       </Drawer.Navigator>
