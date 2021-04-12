@@ -102,6 +102,13 @@ class SelectedProfileNavigation extends Component<{route: any, navigation: any}>
         <FeaturesList type={2} navigation={this.props.navigation} routeObject={this.props.route}/>
       )
     }
+
+    const detectedMotionDetections = () => {
+      //A type of 1 is for UPLOADED_FACE_REGS
+      return(
+        <FeaturesList type={3} navigation={this.props.navigation} routeObject={this.props.route}/>
+      )
+    }
    
     return(
       <Drawer.Navigator drawerContent={props => <CustomDrawerContent {...props} />}>
@@ -151,6 +158,16 @@ class SelectedProfileNavigation extends Component<{route: any, navigation: any}>
           }}
           name="Detected Faces" 
           component= {detectedFacialRecognitions} 
+        />
+
+        <Drawer.Screen 
+          options={{
+          drawerIcon:({color, size}) => (
+            <Icon name="person" style={{fontSize: size, color: color}} />
+          ), 
+          }}
+          name="Motion Captures" 
+          component= {detectedMotionDetections} 
         />
       </Drawer.Navigator>
     );
@@ -248,14 +265,14 @@ export default function App(){
         component= {Streaming} 
       /> */}
       
-      <Stack.Screen 
+     <Stack.Screen 
         options={{
           headerStyle: {
           backgroundColor: '#FF9900'
         }}} 
         name="Live Intercom Devices" 
         component= {LiveIntercomDevices} 
-      />
+      /> 
       
       <Stack.Screen 
         options={{
@@ -266,8 +283,7 @@ export default function App(){
         component= {Intercom} 
       />
 
-
-     <Stack.Screen 
+      <Stack.Screen 
         options={{
           headerStyle: {
           backgroundColor: '#FF9900'
@@ -292,8 +308,8 @@ export default function App(){
         }}} 
         name="Recorded Video Screen" 
         component= {PlayVideos} 
-      /> 
-
+      />  
+      
        <Stack.Screen 
         options={{
           headerStyle: {
