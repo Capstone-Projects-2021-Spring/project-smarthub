@@ -361,7 +361,7 @@
       "requires": {
         "tslib": "^1.11.1"
       },
-      "dependencies": {
+      "dependencies":  {
         "@tensorflow/tfjs-core": {
           "version": "3.3.0",
           "resolved": "https://registry.npmjs.org/@tensorflow/tfjs-core/-/tfjs-core-3.3.0.tgz",
