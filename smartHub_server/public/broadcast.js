@@ -115,7 +115,7 @@ async function startFaceReg () {
           const context = videoCanvas.getContext("2d");
           context.drawImage(videoElement, 0, 0);
           socket.emit("face_image", videoCanvas.toDataURL());
-      }, 100);
+      }, 5000);
   }
 
 }

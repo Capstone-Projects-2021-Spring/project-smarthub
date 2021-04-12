@@ -347,7 +347,7 @@ async function processDetections (params: any) {
 				phoneNumber: params.phoneNumber
 			});
 
-		}, (deviceConfig.device_config.recordingTime + 2) * 1000);
+		}, (30 * 1000) + (deviceConfig.device_config.recordingTime * 1000));
 	}
 
 }
