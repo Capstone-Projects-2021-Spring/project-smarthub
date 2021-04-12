@@ -20,6 +20,7 @@ var scoreThreshold;			// min for an image to be considered significant
 var includeMotionBox;		// flag to calculate and draw motion bounding box
 var includeMotionPixels;	// flag to create object denoting pixels with motion
 
+let nextCallTime = new Date(-8640000000000000);
 
 // incoming options with defaults
 video =  document.getElementById("videoSource");
@@ -66,16 +67,16 @@ motionCanvas.height = diffHeight;
 motionContext = motionCanvas.getContext('2d');
 
 //This is kind of what runs if motion detection should be used. Put this in the broadcast.js obv a lot needs to be changed.
-if(true) {
-	startMotionDetection();
-}
+// if(true) {
+// 	startMotionDetection();
+// }
 
-function startMotionDetection() {
+async function startMotionDetection() {
 	//video.removeEventListener('canplay', startComplete);
 	captureInterval = setInterval(capture, captureIntervalTime);
 }
 
-function stopMotionDetection() {
+async function stopMotionDetection() {
 	clearInterval(captureInterval);
 	motionContext.clearRect(0, 0, diffWidth, diffHeight);
 	isReadyToDiff = false;
@@ -98,11 +99,18 @@ function capture() {
 		
 		var diff = processDiff(diffImageData);
 		
-		if(diff.score > 250 && diff.score < 2000) {
+		if(diff.score > 500 && diff.score < 2000) {
 			//DO SOMETHING HERE BASED ON YOUR CONFIGURATION.
 
-			//This image is distorted. We just need to maintain aspect ratio / resolution web capturing image data from capture context and canvas.
-			var capturedImage = getCaptureUrl(captureImageData);
+			var currentCallTime = new Date();
+            if(currentCallTime >= nextCallTime) {
+				
+				//This image is distorted. We just need to maintain aspect ratio / resolution web capturing image data from capture context and canvas.
+				var capturedImage = getCaptureUrl(captureImageData);
+				socket.emit("motion_detected", capturedImage);
+
+                nextCallTime = new Date(currentCallTime.getTime() + 1 * 5000);
+            }
 
 			//Add back if we want motion boxes. This is a stretch goal...
 			// if (diff.motionBox) {

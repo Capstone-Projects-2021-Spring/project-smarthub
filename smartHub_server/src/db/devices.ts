@@ -81,7 +81,6 @@ function getConfig(deviceId: number) {
         });
 }
 
-
 module.exports = {
     addDevice,
     getDevices,
