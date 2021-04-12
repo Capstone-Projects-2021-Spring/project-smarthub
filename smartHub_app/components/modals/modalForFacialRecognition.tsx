@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import {StyleSheet, Text, Dimensions, Platform, TouchableOpacity} from 'react-native';
 import Modal from 'react-native-modalbox';
+import Toast from 'react-native-toast-message';
+import getToastConfig from '../configurations/toastConfig';
 import ImagePickerPage from '../pages/ImagePickerPage';
 
 var screen = Dimensions.get('window');
@@ -31,6 +33,7 @@ export default class FacialRecognitionModal extends Component<PropVariables, Sta
     render(){
       
         return(
+            
             <Modal
                 ref={"facialRecognitionModal"} 
                 style={styles.modalStyling}

@@ -98,7 +98,6 @@ export default class Recording extends Component<{ route: any, navigation: any }
         //Motion
         this.startMotionDetection = this.startMotionDetection.bind(this);
         this.stopMotionDetection = this.stopMotionDetection.bind(this);
-        this.handleMotion = this.handleMotion.bind(this);
 
         //Facial Recognition
         this.startFaceRec = this.startFaceRec.bind(this);
@@ -430,7 +429,7 @@ export default class Recording extends Component<{ route: any, navigation: any }
                 {
                     this.stopMotionDetection();
                 }
-                else{
+                else if(this.state.featureType == "Facial"){
                     this.stopFaceRec();
                 }
                 
