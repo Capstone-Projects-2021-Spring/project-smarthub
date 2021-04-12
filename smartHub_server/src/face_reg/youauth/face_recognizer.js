@@ -218,7 +218,7 @@ FaceRecognizer.prototype.loadImage = async function loadImage(image){
 /* Draw matches on image. Takes matches from getMatches() and results from detect().
    The output is a tensor.
    Handy for seeing the outcome of the detection results. REQUIRES CANVAS. */
-FaceRecognizer.prototype.drawFaceDetections = async function drawFaceDetections(matches, results, tensor){
+FaceRecognizer.prototype.drawFaceDetections = async function drawFaceDetections(matches, results, tensor, isReturnDataUri){
   // Obtain Uint8Array from tensor.
   const data = await tf.node.encodeJpeg(tensor);
   var buf = Buffer.from(data, 'base64');
@@ -248,6 +248,10 @@ FaceRecognizer.prototype.drawFaceDetections = async function drawFaceDetections(
   });
   // Get dataURI of image.
   const dataURL = newCanvas.toDataURL();
+
+  if(isReturnDataUri){
+    return dataURL;
+  }
   // Convert to tensor using loadImageData function.
   return this.loadImage(dataURL);
 }
