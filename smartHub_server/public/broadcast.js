@@ -103,34 +103,18 @@ socket.on("disconnectPeer", id => {
 
 // ----------------------------------------- Face Recognition ---------------------------------------
 
-// Load models from face API.
-async function loadModels () {
-  await faceapi.nets.ssdMobilenetv1.loadFromUri('/models');
-  await faceapi.nets.faceLandmark68Net.loadFromUri('/models');
-  await faceapi.nets.faceRecognitionNet.loadFromUri('/models');
-}
-
 // Starts face reg.
 async function startFaceReg () {
 
-  const videoCanvas = faceapi.createCanvasFromMedia(videoElement);
-  const displaySize = { width: 320, height: 320 };
-  faceapi.matchDimensions(videoCanvas, displaySize);
+  const videoCanvas = document.createElement("canvas");
+  videoCanvas.width = 320;
+  videoCanvas.height = 320;
 
   if(!faceRegInterval) {
-
       faceRegInterval = setInterval( async () => {
-          // Use in browser API to only send image back when a face is detected. Avoids sending too many images.
-          const detections = await faceapi.detectAllFaces(videoElement, new faceapi.SsdMobilenetv1Options()).withFaceLandmarks();
-          const resizedDetections = faceapi.resizeResults(detections, displaySize);
-
           const context = videoCanvas.getContext("2d");
-
-          if(resizedDetections.length !== 0){
-            context.drawImage(videoElement, 0, 0);
-            console.log(resizedDetections);
-            socket.emit("face_image", videoCanvas.toDataURL());
-          }
+          context.drawImage(videoElement, 0, 0);
+          socket.emit("face_image", videoCanvas.toDataURL());
       }, 100);
   }
 
@@ -269,4 +253,3 @@ function handleError(error) {
 }
 
 getStream();
-loadModels();
