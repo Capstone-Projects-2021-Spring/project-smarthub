@@ -21,6 +21,7 @@ import TakePhoto from './components/pages/TakePhotoPage';
 import Intercom from './components/pages/IntercomPage';
 import Toast from 'react-native-toast-message';
 import getToastConfig from './components/configurations/toastConfig';
+import { FeaturesRecordingsList } from './components/lists/FeaturesRecordingsList';
 
 //App.tsx handles the navigation of the application
 
@@ -103,10 +104,24 @@ class SelectedProfileNavigation extends Component<{route: any, navigation: any}>
       )
     }
 
+    const savedFacialRecognitionsRecordings = () => {
+      //A type of 1 is for UPLOADED_FACE_REGS
+      return(
+        <FeaturesRecordingsList type={1} navigation={this.props.navigation} routeObject={this.props.route}/>
+      )
+    }
+
     const detectedMotionDetections = () => {
       //A type of 1 is for UPLOADED_FACE_REGS
       return(
         <FeaturesList type={3} navigation={this.props.navigation} routeObject={this.props.route}/>
+      )
+    }
+
+    const savedMotionDetectionsRecordings = () => {
+      //A type of 1 is for UPLOADED_FACE_REGS
+      return(
+        <FeaturesRecordingsList type={2} navigation={this.props.navigation} routeObject={this.props.route}/>
       )
     }
    
@@ -166,9 +181,31 @@ class SelectedProfileNavigation extends Component<{route: any, navigation: any}>
             <Icon name="person" style={{fontSize: size, color: color}} />
           ), 
           }}
+          name="Facial Recognition Recordings" 
+          component= {savedFacialRecognitionsRecordings} 
+        />
+
+        <Drawer.Screen 
+          options={{
+          drawerIcon:({color, size}) => (
+            <Icon name="person" style={{fontSize: size, color: color}} />
+          ), 
+          }}
           name="Motion Captures" 
           component= {detectedMotionDetections} 
         />
+
+        <Drawer.Screen 
+          options={{
+          drawerIcon:({color, size}) => (
+            <Icon name="person" style={{fontSize: size, color: color}} />
+          ), 
+          }}
+          name="Motion Detection Recordings" 
+          component= {savedMotionDetectionsRecordings} 
+        />
+
+
       </Drawer.Navigator>
     );
   }

@@ -4,6 +4,7 @@ import {WebView} from 'react-native-webview'
 import axios from 'axios'
 import Toast from 'react-native-toast-message'
 import { getAddressString } from '../../utils/utilities';
+import getToastConfig from '../configurations/toastConfig';
 
 var width : number = Dimensions.get('window').width;
 
@@ -175,6 +176,7 @@ export default class TakePhoto extends Component<{route: any, navigation: any}, 
     render(){
         return(
             <View style={{flex:1, backgroundColor: "#222222"}}>
+                <Toast style={{zIndex: 1}} config={getToastConfig()} ref={(ref) => Toast.setRef(ref)} />
                 <WebView
                     style={{
                         flex: 1,

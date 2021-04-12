@@ -4,6 +4,7 @@ import { WebView } from 'react-native-webview'
 import axios from 'axios'
 import Toast, { BaseToast } from 'react-native-toast-message'
 import { getAddressString } from '../../utils/utilities';
+import {Icon} from 'native-base';
 
 import {
     RTCPeerConnection,
@@ -19,22 +20,29 @@ import {
 var width: number = Dimensions.get('window').width;
 
 import * as socketio from "socket.io-client";
+import FeatureModal from '../modals/modalForFeatureToggle';
 const io = require("socket.io-client");
 
-export default class Recording extends Component<{ route: any, navigation: any }, { responseText: String, deviceIP: String, recordingResponseText: any, userEmail: String, profileName: String, remoteAudioStream: any, remoteVideoStream: any, audioSocket: any, videoSocket: any, peerAudioConnection: any, peerVideoConnection: any }>{
+export default class Recording extends Component<{ route: any, navigation: any }, { checkStream: Boolean, responseText: String, phoneNumber: String, profileId: number, deviceIP: String, recordingResponseText: any, userEmail: String, profileName: String, remoteAudioStream: any, remoteVideoStream: any, audioSocket: any, videoSocket: any, peerAudioConnection: any, peerVideoConnection: any, featureType: String}>{
 
     constructor(props: any) {
         super(props);
         this.state = ({
+            checkStream: false,
             responseText: "",
             recordingResponseText: "",
             deviceIP: "",
+            phoneNumber: "",
+            profileId: 0,
             userEmail: "",
             profileName: "",
             remoteAudioStream: { toURL: () => null },
             remoteVideoStream: { toURL: () => null },
             audioSocket: null,
             videoSocket: null,
+
+            featureType: "",
+
             peerAudioConnection: new RTCPeerConnection({
                 iceServers: [
                     {
@@ -86,20 +94,34 @@ export default class Recording extends Component<{ route: any, navigation: any }
         //Needed for react to update state.
         this.setAudioRemoteStream = this.setAudioRemoteStream.bind(this);
         this.setVideoRemoteStream = this.setVideoRemoteStream.bind(this);
+
+        //Motion
+        this.startMotionDetection = this.startMotionDetection.bind(this);
+        this.stopMotionDetection = this.stopMotionDetection.bind(this);
+        this.handleMotion = this.handleMotion.bind(this);
+
+        //Facial Recognition
+        this.startFaceRec = this.startFaceRec.bind(this);
+        this.stopFaceRec = this.stopFaceRec.bind(this);
     }
 
-    getDeviceIP = async () => {
+    getDeviceInfo = async () => {
         //console.log(this.props.route);
         let collection: any = {}
         collection.device_id = this.props.route.params.device_id;
         await axios.post(getAddressString() + '/devices/getDeviceInfo', collection).then((response) => {
-            this.setState({ deviceIP: response.data.device[0].device_address })
-            this.setState({ userEmail: response.data.device[0].user_email })
-            this.setState({ profileName: response.data.device[0].profile_name })
+            this.setState({deviceIP: response.data.device[0].device_address,
+            userEmail: response.data.device[0].user_email,
+            profileName: response.data.device[0].profile_name,
+            profileId: response.data.device[0].profile_id,
+            phoneNumber: response.data.device[0].phone_number})
+            console.log(response.data)
         }, (error) => {
             console.log(error);
         })
     }
+
+    
 
     // ---------------------------------------- Audio Socket Handling Functions ----------------------------------------
     async handleAudioOffer(id: any, description: any) {
@@ -320,38 +342,46 @@ export default class Recording extends Component<{ route: any, navigation: any }
 
         // Code to stop audio.
     }
+    
+    checkStream = () => {
+        var url = 'http://' + this.state.deviceIP + ':4000/video/stream_check';
+        console.log(url)
+        axios.post(url).then((response) => {
+            this.setState({checkStream: response.data.streaming})
+        }, (error) => {
+            console.log(error);
+        })
+    }
 
-    beginStream = () => {
-        var url = 'http://' + this.state.deviceIP + ':4000/video/start_stream';
-        if (this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net") {
-            alert(this.props.route.params.device_name + ' not compatible for live streaming.')
-            return;
-        }
-        if (this.state.responseText !== 'Stream Starting.') {
-            //console.log(this.state.deviceIP)
-            axios.post(url).then((response) => {
-                console.log(response.status)
+    beginStream = async () => {
+        if(!this.state.checkStream){
+            var url = 'http://' + this.state.deviceIP + ':4000/video/start_stream';
+            // if(this.state.deviceIP !== 'lukessmarthub.ddns.net' &&  this.state.deviceIP !== "petepicam1234.zapto.org" && this.state.deviceIP !== "leohescamera.ddns.net"){
+            //     alert(this.props.route.params.device_name + ' not compatible for live streaming.')
+            //     return;
+            // }
+            await axios.post(url).then((response) => {
+                this.setState({checkStream: true});
                 Toast.show({
                     type: 'success',
                     text1: 'Processing Request Please Wait...',
                     visibilityTime: 5000
                 })
                 setTimeout(() => {
-                    this.setState({ responseText: response.data })
                     Toast.show({
                         type: 'success',
                         text1: 'The Stream Is Live!',
                         text2: 'Enjoy!',
-                        visibilityTime: 2000
+                        visibilityTime: 4000
                     })
                 }
-                    ,
-                    5000);
+                ,
+                5000);
                 this.beginAudio();
             }, (error) => {
                 console.log(error);
             })
-        } else {
+        }else if(this.state.checkStream){
             Toast.show({
                 type: 'success',
                 text1: 'The Stream Is Already Live!',
@@ -359,7 +389,6 @@ export default class Recording extends Component<{ route: any, navigation: any }
                 visibilityTime: 2000
             })
         }
-
 
         // New url for audio. Set to socket namespace called audio.
         var url = 'http://' + this.state.deviceIP + ':4000/video';
@@ -382,27 +411,33 @@ export default class Recording extends Component<{ route: any, navigation: any }
     }
 
     stopStream = () => {
-        var url = 'http://' + this.state.deviceIP + ':4000/video/stop_stream';
-        if (this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net") {
-            alert(this.props.route.params.device_name + ' not compatible for live streaming.')
-            return;
-        }
-        if (this.state.responseText !== 'Stream Closing.') {
+        if(this.state.checkStream){
+            var url = 'http://' + this.state.deviceIP + ':4000/video/stop_stream';
+            // if(this.state.deviceIP !== 'lukessmarthub.ddns.net' && this.state.deviceIP !== "leohescamera.ddns.net"){
+            //     alert(this.props.route.params.device_name + ' not compatible for live streaming.')
+            //     return;
+            // }
             axios.post(url).then((response) => {
-                this.setState({ responseText: response.data })
+                this.setState({checkStream: false})
                 Toast.show({
                     type: 'error',
                     text1: 'Stop Stream Clicked!',
                     text2: 'The stream is no longer live.',
                     visibilityTime: 2000
                 });
-                this.setVideoRemoteStream({ toURL: () => null });
                 this.stopAudio();
-                console.log(response.data);
+                if(this.state.featureType == "Motion")
+                {
+                    this.stopMotionDetection();
+                }
+                else{
+                    this.stopFaceRec();
+                }
+                
             }, (error) => {
                 console.log(error);
             })
-        } else {
+        }else{
             Toast.show({
                 type: 'success',
                 text1: 'The Stream has already stopped!',
@@ -440,28 +475,12 @@ export default class Recording extends Component<{ route: any, navigation: any }
 
     }
 
-    stopStreamOnBackClick = () => {
-        this.stopAudio();
-        var url = 'http://' + this.state.deviceIP + ':4000/video/stop_stream';
-        if (this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net") {
-            return;
-        }
-        if (this.state.responseText !== 'Stream Closing.') {
-            axios.post(url).then((response) => {
-                this.setState({ responseText: response.data })
-                console.log(response.data)
-            }, (error) => {
-                console.log(error);
-            })
-        }
-    }
-
     startRecord = () => {
         var url = 'http://' + this.state.deviceIP + ':4000/video/start_recording';
-        if (this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net") {
-            alert(this.props.route.params.device_name + ' not compatible for recording.')
-            return;
-        }
+        // if (this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net") {
+        //     alert(this.props.route.params.device_name + ' not compatible for recording.')
+        //     return;
+        // }
 
         if (this.state.recordingResponseText !== 'Recording Starting.') {
             axios.post(url).then((response) => {
@@ -488,10 +507,10 @@ export default class Recording extends Component<{ route: any, navigation: any }
 
     stopRecord = () => {
         var url = 'http://' + this.state.deviceIP + ':4000/video/stop_recording';
-        if (this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net") {
-            alert(this.props.route.params.device_name + ' not compatible for recording.')
-            return;
-        }
+        // if (this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net") {
+        //     alert(this.props.route.params.device_name + ' not compatible for recording.')
+        //     return;
+        // }
         //console.log(url);
         let collection: any = {}
         collection.user_email = this.state.userEmail;
@@ -523,10 +542,10 @@ export default class Recording extends Component<{ route: any, navigation: any }
 
     takePhoto = () => {
         var url = 'http://' + this.state.deviceIP + ':4000/video/take_image';
-        if (this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net") {
-            alert(this.props.route.params.device_name + ' not compatible for photo taking.')
-            return;
-        }
+        // if (this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net") {
+        //     alert(this.props.route.params.device_name + ' not compatible for photo taking.')
+        //     return;
+        // }
 
         if (this.state.responseText != 'Stream Starting.') {
             alert("Please Begin the Stream First!");
@@ -553,18 +572,144 @@ export default class Recording extends Component<{ route: any, navigation: any }
         })
     }
 
-    componentDidMount = () => {
-        this.props.navigation.setOptions({
-            headerTitle: this.props.route.params.device_name,
-            headerLeft: () =>
-                <View>
-                    <TouchableOpacity
-                        onPress={() => { this.stopStreamOnBackClick(); this.props.navigation.navigate('Live Recording Devices') }}>
-                        <Text style={{ paddingLeft: 20, paddingBottom: 10, fontSize: 15, fontWeight: 'bold' }}>Back</Text>
-                    </TouchableOpacity>
-                </View>
+//--------------------------------------------------MOTION HANDLING STARTS--------------------------------------------------------------
+    getConfig = async() => {
+        var collection = {
+            device_id: this.props.route.params.device_id
+        }
+        console.log("device id");
+        console.log(collection.device_id);
+        var url = 'http://lukessmarthub.ddns.net:4000/devices/getConfig';
+        await axios.post(url, collection).then((response: any) => {
+            this.setState({
+                featureType: response.data.device.device_config.type
+            })
+            console.log(this.state.featureType);
+            
+            
+        }, (error) => {
+            console.log("getting device config failed");
+            console.log(error);
         })
-        this.getDeviceIP();
+    }
+
+    startMotionDetection = () => {
+        var collection = {
+            user_email: this.state.userEmail,
+            profile_name: this.state.profileName,
+            component_name: "Motion",
+            profile_id: this.state.profileId,
+            device_id: this.props.route.params.device_id,
+            phone_number: this.state.phoneNumber
+        }
+        console.log(collection)
+        var url = 'http://' + this.state.deviceIP + ':4000/video/start_motion_detection';
+        axios.post(url, collection).then((response: any) => {
+            console.log("motion detection starting");
+            console.log(response.status);
+        }, (error) => {
+            console.log("error starting motion detection");
+            console.log(error);
+        })
+    }
+
+    stopMotionDetection = () => {
+        // var collection = {
+        //     profile_id: this.props.route.params.profile_id,
+        //     device_id: this.props.route.params.device_id
+        // }
+        var url = 'http://' + this.state.deviceIP + ':4000/video/stop_motion_detection';
+        axios.post(url).then((response: any) => {
+            console.log("motion detection stopping");
+            console.log(response.status);
+
+        }, (error) => {
+            console.log("error stopping motion detection");
+            console.log(error);
+        })
+    }
+//--------------------------------------------------MOTION HANDLING ENDS--------------------------------------------------------------
+
+//--------------------------------------------------FACIAL RECOGNITION STARTS--------------------------------------------------------------
+    
+    startFaceRec = () => {
+        var collection = {
+            user_email: this.state.userEmail,
+            profile_name: this.state.profileName,
+            component_name: "Faces",
+            profile_id: this.state.profileId,
+            device_id: this.props.route.params.device_id,
+            phone_number: this.state.phoneNumber
+        }
+        console.log(collection)
+        var url = 'http://' + this.state.deviceIP + ':4000/video/start_face_reg';
+        axios.post(url, collection).then((response) => {
+            console.log(response.data);
+        }, ({error, response}) => {
+            console.log(error);
+            console.log(response)
+        })
+
+    }
+
+    stopFaceRec = () => {        
+        var url = 'http://' + this.state.deviceIP + ':4000/video//stop_face_reg';
+        axios.post(url).then((response) => {
+            console.log(response.data);
+        }, ({error, response}) => {
+            console.log(error);
+            console.log(response)
+        })
+
+    }
+//--------------------------------------------------FACIAL RECOGNITION ENDS--------------------------------------------------------------
+
+    deviceConfigurationCallback = async (deviceConfig : any) => {
+        console.log(deviceConfig);
+        var url = 'http://' + this.state.deviceIP + ':4000/devices/updateConfig';
+        var collection = {
+            device_config: deviceConfig,
+            device_id: this.props.route.params.device_id
+        }
+        axios.post(url, collection).then((response) => {
+        console.log(response.data)
+        }, (error) => {
+        console.log(error);
+        })
+        
+        var feature = deviceConfig.type === "None" ? "None" : deviceConfig.type === "Facial" ? "Facial" : "Motion";
+    
+        if(feature === "Facial"){
+            if(this.state.checkStream == false){
+                await this.beginStream();
+            }
+            this.startFaceRec();
+        }else if(feature === "Motion"){
+            if(this.state.checkStream == false){
+                await this.beginStream();
+            }
+            this.startMotionDetection();
+        }
+    }
+
+    launchModal = () => {
+        this.refs.featureModal.showModal();
+    }
+
+    componentDidMount = async () => {
+        await this.getDeviceInfo();
+        await this.checkStream();
+        this.getConfig();
+         this.props.navigation.setOptions({
+            headerTitle: this.props.route.params.device_name,
+            headerRight: () => (
+                <TouchableOpacity
+                style={{marginRight: 10}}
+                onPress={this.launchModal}>
+                <Icon name="ios-add" />
+                </TouchableOpacity>  
+              )
+        })
     }
 
     render() {
@@ -649,14 +794,14 @@ export default class Recording extends Component<{ route: any, navigation: any }
                         }>
                         <Text style={{ fontSize: 20 }}>Stop Stream</Text>
                     </TouchableOpacity>
-                </View>
+                </View>                
                 <View style={{ alignItems: 'center' }}>
                     <TouchableOpacity
                         style={styles.photoButton}
                         onPress={this.takePhoto}>
                         <Text style={{ fontSize: 20 }}>Take Photo</Text>
                     </TouchableOpacity>
-                </View>
+                </View>                
                 <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingTop: 30, paddingBottom: 80 }}>
                     <TouchableOpacity
                         style={styles.pillButton}
@@ -669,6 +814,7 @@ export default class Recording extends Component<{ route: any, navigation: any }
                         <Text style={{ fontSize: 20 }}>Stop Recording</Text>
                     </TouchableOpacity>
                 </View>
+                <FeatureModal ref="featureModal" route={this.props.route.params} feature={this}/>
             </View>
         );
     }
