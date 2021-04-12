@@ -7,12 +7,13 @@ import { getAddressString } from '../../utils/utilities';
 
 var width : number = Dimensions.get('window').width;
 
-export default class TakePhoto extends Component<{route: any, navigation: any}, {profileId: number, hasStarted: boolean, deviceIP: String, userEmail: String, profileName: String}>{
+export default class TakePhoto extends Component<{route: any, navigation: any}, {checkStream: boolean, profileId: number, hasStarted: boolean, deviceIP: String, userEmail: String, profileName: String}>{
 
     constructor(props: any){
         super(props);
         this.state= ({
             hasStarted: false,
+            checkStream: false,
             deviceIP: "",
             profileId: 0,
             userEmail: "",
@@ -39,34 +40,34 @@ export default class TakePhoto extends Component<{route: any, navigation: any}, 
     }
     
     beginStream = () => {
-        var url = 'http://' + this.state.deviceIP + ':4000/video/start_stream';
-        if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
-            alert(this.props.route.params.device_name + ' not compatible for live streaming.')
-            return;
-        }
-        if(!this.state.hasStarted){
-            //console.log(this.state.deviceIP)
+        if(!this.state.checkStream){
+            var url = 'http://' + this.state.deviceIP + ':4000/video/start_stream';
+            if(this.state.deviceIP !== 'lukessmarthub.ddns.net' &&  this.state.deviceIP !== "petepicam1234.zapto.org" && this.state.deviceIP !== "leohescamera.ddns.net"){
+                alert(this.props.route.params.device_name + ' not compatible for live streaming.')
+                return;
+            }
             axios.post(url).then((response) => {
+                this.setState({checkStream: true});
                 Toast.show({
                     type: 'success',
                     text1: 'Processing Request Please Wait...',
                     visibilityTime: 5000
                 })
                 setTimeout(() => {
-                        this.setState({hasStarted: true})
-                        Toast.show({
-                            type: 'success',
-                            text1: 'The Stream Is Live!',
-                            text2: 'Enjoy!',
-                            visibilityTime: 4000
-                        })
-                    }
+                    this.setState({hasStarted: true})
+                    Toast.show({
+                        type: 'success',
+                        text1: 'The Stream Is Live!',
+                        text2: 'Enjoy!',
+                        visibilityTime: 4000
+                    })
+                }
                 ,
                 5000);
             }, (error) => {
-             console.log(error);
-         })
-        }else{
+                console.log(error);
+            })
+        }else if(this.state.checkStream){
             Toast.show({
                 type: 'success',
                 text1: 'The Stream Is Already Live!',
@@ -77,14 +78,14 @@ export default class TakePhoto extends Component<{route: any, navigation: any}, 
     }
     
     stopStream = () => {
-        var url = 'http://' + this.state.deviceIP + ':4000/video/stop_stream';
-        if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
-            alert(this.props.route.params.device_name + ' not compatible for live streaming.')
-            return;
-        }
-        if(this.state.hasStarted){
+        if(this.state.checkStream){
+            var url = 'http://' + this.state.deviceIP + ':4000/video/stop_stream';
+            if(this.state.deviceIP !== 'lukessmarthub.ddns.net' &&  this.state.deviceIP !== "petepicam1234.zapto.org" && this.state.deviceIP !== "leohescamera.ddns.net"){
+                alert(this.props.route.params.device_name + ' not compatible for live streaming.')
+                return;
+            }
             axios.post(url).then((response) => {
-                this.setState({hasStarted: false})
+                this.setState({checkStream: false})
                 Toast.show({
                     type: 'error',
                     text1: 'Stop Stream Clicked!',
@@ -103,28 +104,28 @@ export default class TakePhoto extends Component<{route: any, navigation: any}, 
         }
     }
 
-    stopStreamOnBackClick = () => {
-        var url = 'http://' + this.state.deviceIP + ':4000/video/stop_stream';
-        if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
-            return;
-        }
-        if(this.state.hasStarted){
-            axios.post(url).then((response) => {
-                this.setState({hasStarted: false})
-            }, (error) => {
-                console.log(error);
-            })
-        }
-    }
+    // stopStreamOnBackClick = () => {
+    //     var url = 'http://' + this.state.deviceIP + ':4000/video/stop_stream';
+    //     if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
+    //         return;
+    //     }
+    //     if(this.state.hasStarted){
+    //         axios.post(url).then((response) => {
+    //             this.setState({hasStarted: false})
+    //         }, (error) => {
+    //             console.log(error);
+    //         })
+    //     }
+    // }
 
     takePhoto = () => {
         var url = 'http://' + this.state.deviceIP + ':4000/video/takeFaceImage';
-        if(this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"){
+        if(this.state.deviceIP !== 'lukessmarthub.ddns.net' &&  this.state.deviceIP !== "petepicam1234.zapto.org" && this.state.deviceIP !== "leohescamera.ddns.net"){
             alert(this.props.route.params.device_name + ' not compatible for photo taking.')
             return;
         }
 
-        if(!this.state.hasStarted){
+        if(!this.state.checkStream){
             alert("You must begin the stream first");
             return;
         }
@@ -154,21 +155,21 @@ export default class TakePhoto extends Component<{route: any, navigation: any}, 
                 text2: "Please Try Again.",
                 visibilityTime: 3000
             });
-            console.log(response.data);
         })
     }
 
-    componentDidMount = () => {
-        this.props.navigation.setOptions({
-            headerLeft: () => 
-            <View>
-                <TouchableOpacity
-                    onPress={()=>{this.stopStreamOnBackClick(); this.props.navigation.navigate('Image Capture Devices')}}>
-                    <Text style={{paddingLeft: 20, paddingTop: 8, paddingBottom: 10, fontSize:15, fontWeight: 'bold'}}>Back</Text>
-                </TouchableOpacity>
-            </View>
+    checkStream = () => {
+        var url = 'http://' + this.state.deviceIP + ':4000/video/stream_check';
+        axios.post(url).then((response) => {
+            this.setState({checkStream: response.data.streaming})
+        }, (error) => {
+            console.log(error);
         })
-        this.getDeviceIP();
+    }
+
+    componentDidMount = async() => {
+        await this.getDeviceIP();
+        await this.checkStream();
     }
 
     render(){

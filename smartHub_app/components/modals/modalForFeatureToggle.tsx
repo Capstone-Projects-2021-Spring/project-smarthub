@@ -8,7 +8,7 @@ import InputSpinner from "react-native-input-spinner";
 import axios from 'axios';
 var screen = Dimensions.get('window');
 
-export default class FeatureModal extends Component<{feature: any, route: any},{number: number, isCheckedRecording: boolean, isCheckedAudio: boolean, recordingLength: number, isToggledFacial: boolean, isCheckedNotification: boolean,  isToggledMotion: boolean, wasSaved: boolean}>{
+export default class FeatureModal extends Component<{feature: any, route: any},{number: number, isCheckedRecording: boolean, isCheckedAudio: boolean, isToggledFacial: boolean, isCheckedNotification: boolean,  isToggledMotion: boolean, wasSaved: boolean}>{
     constructor(props: any){
         super(props);
         this.state = ({
@@ -16,7 +16,6 @@ export default class FeatureModal extends Component<{feature: any, route: any},{
             isCheckedNotification: false,
             isCheckedRecording: false,
             isCheckedAudio: false,
-            recordingLength: 0,
             isToggledMotion: false,
             number: 5,
             wasSaved: false,
@@ -150,7 +149,7 @@ export default class FeatureModal extends Component<{feature: any, route: any},{
                             style={{paddingTop: 3}}
                         />
                     </View>
-                    <View style={{ flexDirection: "row", paddingLeft:60, paddingBottom: 10}}>
+                    {/* <View style={{ flexDirection: "row", paddingLeft:60, paddingBottom: 10}}>
                         <Text style={{fontSize: 14, fontWeight: "bold", paddingTop: 5, color: "#fff" , paddingRight: 0}}> - w/audio? </Text>    
                         <CheckBox
                             onClick={() => {
@@ -170,7 +169,7 @@ export default class FeatureModal extends Component<{feature: any, route: any},{
                             uncheckCheckBoxColor = "#222222"
                             style={{paddingTop: 3}}
                         />
-                    </View>
+                    </View> */}
                     <View style={{ flexDirection: "row", paddingLeft:60, paddingBottom: 30}}>
                         <Text style={{fontSize: 14, fontWeight: "bold", paddingTop: 5, color: "#fff" , paddingRight: 0}}> - Set recording length: </Text>    
                     </View>
@@ -187,7 +186,7 @@ export default class FeatureModal extends Component<{feature: any, route: any},{
                         />
                     </View>
                 </View>
-                <View style={{ marginBottom: 30, marginTop: 20}}>
+                <View style={{ marginBottom: 45, marginTop: 20}}>
                     <Button
                         style={{paddingTop: 8, fontSize: 18, color: '#000'}}
                         containerStyle={styles.buttonStyle}
