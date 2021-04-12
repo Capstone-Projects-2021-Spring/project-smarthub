@@ -9,18 +9,29 @@ const { routes: lockRoutes } = require('./routes/lock_routes');
 const { routes: lightRoutes } = require('./routes/light_routes');
 const { routes: profileRoutes } = require('./routes/profile_routes');
 const { routes: deviceRoutes } = require('./routes/device_routes');
+const { routes: faceRoutes } = require('./routes/face_routes');
+const { routes: imageRoutes } = require('./routes/image_db_routes');
+const { routes: recordingRoutes } = require('./routes/recording_db_routes');
 const { routes: awsRoutes } = require('./routes/aws_routes');
+const youauth = require('youauth');
+
+async function loadYouAuth() {
+	await youauth.loadModels();
+}
+
+loadYouAuth();
 
 const app = express();
 // Express built-in middleware function static allows serving static files.
 app.use(express.static('public'));
 
 app.use(bodyParser.urlencoded({
+  limit: '50mb',
   extended: true
 }));
 
 // Ensure incoming data has json format.
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: '50mb'}));
 
 //Allows any address to interact with our server
 app.use(function (req : any, res : any, next : any) {
@@ -44,6 +55,9 @@ app.use('/video', videoRoutes);
 app.use('/audio', audioRoutes);
 app.use('/profiles', profileRoutes);
 app.use('/devices', deviceRoutes);
+app.use('/faces', faceRoutes);
+app.use('/images', imageRoutes);
+app.use('/recordings', recordingRoutes);
 app.use('/lock', lockRoutes);
 app.use('/light', lightRoutes);
 app.use('/aws', awsRoutes);

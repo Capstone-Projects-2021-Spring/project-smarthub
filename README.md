@@ -1,18 +1,25 @@
-# Overview
+# Welcome to SmartHub!
 
-SmartHub is a mobile application that is used as an accessory for home security. Through smartHub, users can not only control the functionality of several devices within their household, but also receive notifications/alerts from them. SmartHub makes it easy to toggle between devices and let’s the user have the luxury of being able to access them all from within one application. From toggling light switches to monitoring security footage, users can feel confident that their home is secured.
+### Everything you need to know about SmartHub
+SmartHub is comprised of two pieces of software. The first piece being the SmartHub Server, which acts as the _smartHub_ for your connected IoT devices on a single profile. Users may have multiple raspberry pi's running a smartHub anywhere in the world. Whether it be rooms in your house, your workplace, or anywhere else, SmartHub will keep you connected.
 
-The use of IoT devices to automate the home is becoming more and more popular. In order to monitor and control all these devices, a central smart home hub is necessary. The issue comes with the accessibility and adaptability of the hub. To ensure accessibility, smartHub will have an easy to use user interface and cross platform capabilities through the use of React Native. To ensure adaptability, smartHub makes use of its own server software that can be installed on a simple raspberry pi. Users can then connect compatible devices to that raspberry pi to create a fully functioning IoT device.
+The second piece of software is the SmartHub Mobile App. This app allows you to communicate with and control all of your SmartHub IoT devices from anywhere in the world. Within the mobile app, you can create profiles for all of your smarthub's, and add devices to each profile to fit whatever needs you may have.
 
-SmartHub will allow control over its various compatible devices. Users can adjust the brightness of lights using a slider, turn on and off locks or lights with a touch of a button, see the video stream from their camera and speak through an intercom from their phones. These functionalities can be grouped together through the app and allow the user to simultaneously send a request to multiple devices. An example of this would be a button in the app that would both toggle the light on as well as begin a video stream all in one request. Not only that, the smart device can also send responses/signals back to the user, in the form of a notification/alert. To increase flexibility, users can also remotely connect to their home from far away through the internet over a secure connection. 
+## Usage
+### SmartHub Server
+* smartHub devices are fully configurable and will run with any and all supported devices you'd like. To add a new feature to smartHub, all you need to do is connect the necessary physical device. For example, if you'd like to use your smartHub as a security camera, all you have to do is plug a camera into your rasberry pi. 
 
-The SmartHub system will also enable the user to create multiple accounts. With this, if the user resides in multiple locations, they have the flexibility to control exactly which devices they would want present in that specified account. This enhances the idea of security not only from intruders breaking into the household, but also to the extent the user has if they have multiple locations they want to monitor. In terms of receiving notifications from multiple accounts, the user will be given the notification along with the specified account name, to ensure differentiation.  
+### SmartHub Mobile App
+1. Sign In / Sign Up by following the on screen instructions after your first launch of the app.
+2. Once logged in, create a new profile. A profile represents a location, typically a building or room. _(Ex. Luke's Home or Luke's Front Door)_
+3. Navigate inside of that profile and choose what device you would like to add. Click the plus button to add a new device. Choose a unique device name and enter the device domain presented to you during the smartHub installation.
+4. Your device is now ready to use.
 
 # Contributors
 
-* Johnny Gangoo
-* Leo He
-* Luke Dependahl
 * Peter Zheng
-* Rabia Tanveer
+* Johnny Gangoo
+* Luke Dependahl
 * Shravanth Surapaneni
+* Leo
+* Rabia

@@ -5,18 +5,25 @@ import { PlayVideos } from './lists/SavedRecordings';
 import { SavedRecordingsList } from './lists/SavedRecordingsList';
 import { SavedImagesList } from './lists/SavedImagesList';
 
-// export class LiveStreamingDevices extends Component<{route: any, navigation: any}>{
-//     render(){
-//         return (
-//             <DevicesList routeObject={this.props.route.params} stackScreen={'Streaming Devices'} navigation={this.props.navigation}/>
-//         )
-//     }
-// }
-
 export class LiveRecordingDevices extends Component<{route: any, navigation: any}>{
     render(){
         return (
             <DevicesList routeObject={this.props.route.params} stackScreen={'Recording Devices'} navigation={this.props.navigation}/>
+        )
+    }
+}
+export class LiveIntercomDevices extends Component<{route: any, navigation: any}>{
+    render(){
+        return (
+            <DevicesList routeObject={this.props.route.params} stackScreen={'Intercom Devices'} navigation={this.props.navigation}/>
+        )
+    }
+}
+
+export class ImageCaptureDevices extends Component<{route: any, navigation: any}>{
+    render(){
+        return (
+            <DevicesList routeObject={this.props.route.params} stackScreen={'Take Photo'} navigation={this.props.navigation}/>
         )
     }
 }
@@ -25,7 +32,6 @@ export class SavedRecordings extends Component<{routeObject: any, navigation: an
     render(){
         return (
             <SavedRecordingsList routeObject={this.props.routeObject.params} navigation={this.props.navigation}/>
-            // <PlayVideos routeObject={this.props.routeObject.params} stackScreen={'Saved Recordings'} navigation={this.props.navigation}/>
         );
     }
 }
