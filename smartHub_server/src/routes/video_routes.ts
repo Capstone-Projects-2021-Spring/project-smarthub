@@ -8,8 +8,10 @@ import { VideoController } from '../controllers/VideoController';
 const Faces = require('../db/faces');
 const Images = require('../db/images');
 const Devices = require('../db/devices');
+const Recordings = require('../db/recordings');
 const youauth = require('youauth');
-const { createFolder, uploadVideo, uploadImage, storeImage, generateSignedURL } = require('../aws/amazon_s3');
+const { createFolder, uploadVideo, uploadImage, storeImage, storeRecording, generateSignedURL } = require('../aws/amazon_s3');
+const { sendSMS } = require('../notifications/twilioPushNotification');
 import { v4 as uuidv4 } from 'uuid';
 
 let isStreaming = false;
@@ -18,14 +20,13 @@ let live_browser: any;
 let browserIsLive: boolean = false;
 const PORT = 4000;
 
-const OSplatform = process.platform;
 const localStoragePath = path.resolve(__dirname, "../output/output.webm");
 const imageLocalStoragePath = path.resolve(__dirname, "../output/output.png");
 
 const controller = new VideoController();
 const recognizer = new youauth.FaceRecognizer();
 
-let faceCoolDownTimer;
+let nextCallTime: Date = new Date(-8640000000000000);
 
 const routes = express.Router({
 	mergeParams: true
@@ -109,12 +110,7 @@ routes.post('/stop_recording', async (req: any, res: any) => {
 
 	console.log("stop_recording route: recording stopping...");
 
-	if (OSplatform === 'win32') {
-		exec('del ' + localStoragePath);
-	}
-	else {
-		exec('rm ' + localStoragePath);
-	}
+	deleteLocalFile(localStoragePath);
 
 	console.log("stop_recording_route: cleaned local storage.");
 
@@ -141,12 +137,7 @@ routes.post('/take_image', async (req: any, res: any) => {
 
 	console.log("take_image route: image taken...");
 
-	if (OSplatform === 'win32') {
-		exec('del ' + imageLocalStoragePath);
-	}
-	else {
-		exec('rm ' + imageLocalStoragePath);
-	}
+	deleteLocalFile(imageLocalStoragePath);
 
 	console.log("take_image route: cleaned local storage.");
 
@@ -219,7 +210,11 @@ routes.post("/takeFaceImage", async (req: any, res: any) => {
 routes.post('/start_face_reg', async (req: any, res: any) => {
 
 	const profileId: number = req.body.profile_id;
+	const accountName: string = req.body.user_email;
+	const profileName: string = req.body.profile_name;
+	const componentName: string = req.body.component_name;
 	const deviceId: number = req.body.device_id;
+	const phoneNumber: string = req.body.phone_number;
 
 	controller.startFaceReg();
 
@@ -235,19 +230,32 @@ routes.post('/start_face_reg', async (req: any, res: any) => {
 
 		getDetections(function (detections: any, tensor: any) {
 
-			// If there are faces to detect.
-			if (labeledFaceDescriptors.length !== 0) {
+			let matches: any = [];
+			let matchedLabels: any = [];
 
-				let matches: any = recognizer.getMatches(detections, labeledFaceDescriptors);
-				let matchedLabels: any = recognizer.getMatchedLabels(matches);
-				// If something is detected. Matched labels is an array that contains the names detected.
-				// Example: ["fred", "ashley"]
-				processDetections(matches, matchedLabels, detections, tensor, profileId, deviceId);
+			// If there are faces to detect.
+			if(labeledFaceDescriptors.length !== 0) {
+					matches = recognizer.getMatches(detections, labeledFaceDescriptors);
+					matchedLabels = recognizer.getMatchedLabels(matches);
 			}
-			else {
-				// Alert user with image that face was detected on.
-				processDetections(null, null, detections, tensor, profileId, deviceId);
+
+			const currentCallTime: Date = new Date();
+			if(currentCallTime >= nextCallTime) {
+				processDetections( {
+					"matches": matches,
+					"matchedLabels": matchedLabels,
+					"detections": detections,
+					"image": tensor,
+					"profileId": profileId,
+					"accountName": accountName,
+					"profileName": profileName,
+					"componentName": componentName,
+					"phoneNumber": phoneNumber,
+					"deviceId": deviceId
+				});
+				nextCallTime = new Date(currentCallTime.getTime() + 1 * 60000);
 			}
+
 		}, profileId);
 
 	}).catch((err: any) => {
@@ -311,36 +319,49 @@ async function runLive() {
 	}
 }
 
-// Throttler for function calling.
-// function throttle(func: any, timeFrame: number) {
-//   var lastTime: number = 0;
-//   return function () {
-//       var now: Date = new Date();
-//       if (now - lastTime >= timeFrame) {
-//           func();
-//           lastTime = now;
-//       }
-//   };
-// }
+async function processDetections (params: any) {
 
-async function processDetections(matches: any, matchedLabels: any, detections: any, tensor: any, profileID: number, deviceID: number) {
+	const deviceConfig: any = await Devices.getConfig(params.deviceId);
 
-	const deviceConfig: any = await Devices.getConfig(deviceID);
+	const dataURI = await recognizer.drawFaceDetections(params.matches, params.detections, params.image, true);
 
-	const dataURI = await recognizer.drawFaceDetections(matches, detections, tensor, true);
+	const defaultName: string = "face_detect_" + uuidv4();
 
-	console.log(matchedLabels);
-	console.log(profileID);
+	const obj = await storeImage(params.accountName, params.profileName, params.componentName, dataURI);
 
-	if (deviceConfig.notifications) {
+	const imageLink = await generateSignedURL(obj.key);
 
+	const response = await Images.addImage(defaultName, imageLink, 2, obj.key, params.profileId);
+
+	const message = params.matchedLabels.toString() || "unknown face(s)";
+
+	if(deviceConfig.device_config.notifications) {
+		sendSMS({
+			messageBody: "smartHub image: Face(s) Detected! - " + message,
+			phoneNumber: params.phoneNumber,
+			mediaContent: imageLink
+		});
 	}
 
-	if (matches && matchedLabels) {
+	if(deviceConfig.device_config.recording) {
+		controller.startRecording();
 
-	}
-	else {
+		setTimeout( async () => {
 
+			controller.stopRecording();
+			const obj = await storeRecording(params.accountName, params.profileName, params.componentName, localStoragePath);
+			deleteLocalFile(localStoragePath);
+
+			const recordingLink = await generateSignedURL(obj.key);
+
+			const response = await Recordings.addRecording(recordingLink, 1, obj.key, params.profileId);
+
+			sendSMS({
+				messageBody: "smartHub new recording available: Face(s) Detected! - " + message,
+				phoneNumber: params.phoneNumber
+			});
+
+		}, (30 * 1000) + (deviceConfig.device_config.recordingTime * 1000));
 	}
 
 }
@@ -363,6 +384,17 @@ function parseFacesData(faces: any) {
 		objList[i] = faces[i].face_data[0];
 	}
 	return objList;
+}
+
+
+// Function for deleting a local media file.
+function deleteLocalFile(path: string) {
+	if (process.platform === 'win32') {
+		exec('del ' + path);
+	}
+	else {
+		exec('rm ' + path);
+	}
 }
 
 // =======================================================================================================
@@ -393,7 +425,6 @@ routes.post('/stop_motion_detection', async (req: any, res: any) => {
 
 	return res.status(200).send("Motion Detection Stopped.");
 });
-
 
 module.exports = {
 	routes,

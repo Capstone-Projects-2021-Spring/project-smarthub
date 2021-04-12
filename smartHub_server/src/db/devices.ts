@@ -24,7 +24,7 @@ function addDevice(deviceAddress: string, deviceName: string, deviceType: string
         })
         .returning("*")
         .then((rows: any) => {
-            return rows[0]; 
+            return rows[0];
         });
 }
 
@@ -54,7 +54,7 @@ function getDevices(profileId: number, deviceType: string) {
 
 function getDeviceInfo(deviceId: number) {
     return knex({d: "devices"})
-        .select("p.profile_id", "device_address", "profile_name", "user_email",)
+        .select("p.profile_id", "u.phone_number", "device_address", "profile_name", "user_email")
         .join({p: "profiles"}, "d.profile_id", "=", "p.profile_id")
         .join({u: "users"}, "p.user_id", "=", "u.user_id")
         .where("device_id", deviceId)

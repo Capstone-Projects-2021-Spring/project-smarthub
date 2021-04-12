@@ -89,6 +89,26 @@ async function getFile (key: String) {
   return response;
 }
 
+module.exports.storeRecording = async function (accountName : String, profileName : String, componentName: String, filePath : any) {
+
+  const fileContent = fs.readFileSync(filePath);
+
+  const key = (accountName + "/" + profileName + "/" + componentName + "/" + "vid_" + uuidv4()).replace(/\s/g, "_");
+
+  const params = {
+    Bucket: envVars.S3_BUCKET,
+    Key: key,
+    Body: fileContent,
+    ContentType: "video/webm"
+  };
+
+  const response = await s3.upload(params).promise();
+
+  console.log("File V2 Vid Upload Complete.");
+
+  return response;
+};
+
 module.exports.storeImage = async function storeImage (accountName : String, profileName : String, componentName: String, dataURI: String) {
 
   var buf = Buffer.from(dataURI.replace(/^data:image\/\w+;base64,/, ""), 'base64');
