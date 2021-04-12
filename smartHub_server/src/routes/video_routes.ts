@@ -362,7 +362,7 @@ async function processDetections (params: any) {
 // 			});
 
 // 		}, (30 * 1000) + (deviceConfig.device_config.recordingTime * 1000));
-	}
+	//}
 
 }
 
@@ -478,13 +478,3 @@ module.exports = {
 	routes,
 	controller
 };
-
-// Function for deleting a local media file.
-function deleteLocalFile(path: string) {
-	if (process.platform === 'win32') {
-		exec('del ' + path);
-	}
-	else {
-		exec('rm ' + path);
-	}
-}
