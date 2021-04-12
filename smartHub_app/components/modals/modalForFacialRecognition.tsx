@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text, Dimensions, Platform} from 'react-native';
+import {StyleSheet, Text, Dimensions, Platform, TouchableOpacity} from 'react-native';
 import Modal from 'react-native-modalbox';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import ImagePickerPage from '../pages/ImagePickerPage';
 
 var screen = Dimensions.get('window');
