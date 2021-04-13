@@ -7,7 +7,7 @@ The second piece of software is the SmartHub Mobile App. This app allows you to 
 
 ## Usage
 ### SmartHub Testing Document 
-* Download the ![SmartHub.Acceptance.QA.Testing.doc.xlsx](https://github.com/Capstone-Projects-2021-Spring/project-smarthub/blob/bde0680e4175e7ba4d0d8bad042b1a42fae7cabc/SmartHub%20Acceptance%20QA%20Testing%20doc.xlsx) for directions to explore, test, and use all SmartHub features.
+* Download the [SmartHub.Acceptance.QA.Testing.doc.xlsx](https://github.com/Capstone-Projects-2021-Spring/project-smarthub/blob/bde0680e4175e7ba4d0d8bad042b1a42fae7cabc/SmartHub%20Acceptance%20QA%20Testing%20doc.xlsx) for directions to explore, test, and use all SmartHub features.
 
 ### SmartHub Server
 * smartHub devices are fully configurable and will run with any and all supported devices you'd like. To add a new feature to smartHub, all you need to do is connect the necessary physical device. For example, if you'd like to use your smartHub as a security camera, all you have to do is plug a camera into your rasberry pi. 
