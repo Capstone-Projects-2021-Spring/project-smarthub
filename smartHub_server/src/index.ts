@@ -78,7 +78,13 @@ async function startBrowser() {
 
 	await page.goto("http://localhost:" + PORT + "/main.html", {waitUntil: 'load'});
 
-	page.on('console', (consoleObj: any) => console.log( "Browser Console: " + consoleObj.text()));
+	page.on('console', async (consoleObj: any) => {
+		const args = await Promise.all(consoleObj.args.map( (arg: any) => arg.executionContext().evaluate( (arg: any) => {
+			if(arg instanceof Error) return arg.message;
+			return arg;
+		}, arg)));
+		console.log(...args);
+	});
 
 	console.log("Chromium is live.");
 
