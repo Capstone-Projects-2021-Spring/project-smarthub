@@ -3,8 +3,9 @@ import http = require("http");
 import bodyParser from 'body-parser';
 import puppeteer from 'puppeteer-core';
 import * as socketio from "socket.io";
-const { routes: videoRoutes, controller: videoController } = require('./routes/video_routes');
-const { routes: audioRoutes, controller: audioController } = require('./routes/audio_routes');
+// const { routes: videoRoutes, controller: videoController } = require('./routes/video_routes');
+// const { routes: audioRoutes, controller: audioController } = require('./routes/audio_routes');
+const { routes: streamRoutes, controller: streamController } = require('./routes/stream_routes');
 const { routes: lockRoutes } = require('./routes/lock_routes');
 const { routes: lightRoutes } = require('./routes/light_routes');
 const { routes: profileRoutes } = require('./routes/profile_routes');
@@ -47,12 +48,15 @@ const io = require("socket.io")(httpServer);
 
 const PORT = 4000;
 
-videoController.setNameSpace(io);
-audioController.setNameSpace(io);
+streamController.setSocketServer(io);
+
+// videoController.setNameSpace(io);
+// audioController.setNameSpace(io);
 
 //Telling express to use the routes found in /video/video_routes.ts (Access these routes by http using /video/startStream, /video/startRecord etc...)
-app.use('/video', videoRoutes);
-app.use('/audio', audioRoutes);
+// app.use('/video', videoRoutes);
+// app.use('/audio', audioRoutes);
+app.use('/stream', streamRoutes);
 app.use('/profiles', profileRoutes);
 app.use('/devices', deviceRoutes);
 app.use('/faces', faceRoutes);
@@ -61,6 +65,26 @@ app.use('/recordings', recordingRoutes);
 app.use('/lock', lockRoutes);
 app.use('/light', lightRoutes);
 app.use('/aws', awsRoutes);
+
+async function startBrowser() {
+	const browser: any = await puppeteer.launch({
+		executablePath: 'chromium-browser',
+		headless: true,
+		args: ['--use-fake-ui-for-media-stream']
+	});
+	// Create a new page in the browser.
+	const page = await browser.newPage();
+
+	await page.goto("http://localhost:" + PORT + "/main.html");
+
+	console.log("Chromium is live.");
+
+	browser._process.once('close', () => {
+		console.log("Browser has closed.");
+	});
+}
+
+//startBrowser();
 
 httpServer.listen(PORT, () => {
   console.log('Server running on http://localhost:' + PORT);

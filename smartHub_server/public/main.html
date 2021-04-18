@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <style>
+	    canvas {
+		    width: 320px;
+		    height: 320px;
+	    }
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <video id="localVideo" playsinline autoplay muted></video>
+      <audio id="localAudio" playsinline autoplay muted></audio>
+      <audio id="remoteAudio" playsinline autoplay></audio>
+      <button id="photoButton">Take Photo</button>
+    </div>
+    <canvas id="canvas"></canvas>
+    <div>
+      <img id="photoOutput"></img>
+    </div>
+    <script src="socket.io/socket.io.min.js"></script>
+    <script src="main.js"></script>
+    <script src="motion-detection.js"></script>
+  </body>
+</html>

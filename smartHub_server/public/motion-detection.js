@@ -23,7 +23,7 @@ var includeMotionPixels;	// flag to create object denoting pixels with motion
 let nextCallTime = new Date(-8640000000000000);
 
 // incoming options with defaults
-video =  document.getElementById("videoSource");
+video =  document.getElementById("localVideo");
 motionCanvas = document.createElement("canvas");
 //document.getElementById("canvas").appendChild(motionCanvas);
 
@@ -83,28 +83,28 @@ async function stopMotionDetection() {
 }
 
 function capture() {
-	
+
 	//Draws video to the canvas context.
 	captureContext.drawImage(video, 0, 0, captureWidth, captureHeight);
 	//Captures full resolution image data (Completely raw data, not an image.) at every check for motion (Remember this code runs on an interval.)
 	var captureImageData = captureContext.getImageData(0, 0, captureWidth, captureHeight);
-	
-	// diff current capture over previous capture, leftover from last time		
+
+	// diff current capture over previous capture, leftover from last time
 	diffContext.globalCompositeOperation = 'difference';
 	diffContext.drawImage(video, 0, 0, diffWidth, diffHeight);
 	//Captures the image after the image difference overlay was applied.
 	var diffImageData = diffContext.getImageData(0, 0, diffWidth, diffHeight);
 
 	if (isReadyToDiff) {
-		
+
 		var diff = processDiff(diffImageData);
-		
+
 		if(diff.score > 500 && diff.score < 2000) {
 			//DO SOMETHING HERE BASED ON YOUR CONFIGURATION.
 
 			var currentCallTime = new Date();
             if(currentCallTime >= nextCallTime) {
-				
+
 				//This image is distorted. We just need to maintain aspect ratio / resolution web capturing image data from capture context and canvas.
 				var capturedImage = getCaptureUrl(captureImageData);
 				socket.emit("motion_detected", capturedImage);
