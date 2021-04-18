@@ -70,12 +70,15 @@ async function startBrowser() {
 	const browser: any = await puppeteer.launch({
 		executablePath: 'chromium-browser',
 		headless: true,
-		args: ['--use-fake-ui-for-media-stream']
+		args: ['--use-fake-ui-for-media-stream'],
+		ignoreDefaultArgs:['--mute-audio']
 	});
 	// Create a new page in the browser.
 	const page = await browser.newPage();
 
-	await page.goto("http://localhost:" + PORT + "/main.html");
+	await page.goto("http://localhost:" + PORT + "/main.html", {waitUntil: 'load'});
+
+	page.on('console', consoleObj => console.log( "Browser Console: " + consoleObj.text()));
 
 	console.log("Chromium is live.");
 
