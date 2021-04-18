@@ -252,12 +252,22 @@ async function init(constraints, callback) {
 }
 
 function stopStream() {
-	localVideo.srcObject.getTracks()[0].stop();
-	localAudio.srcObject.getTracks()[0].stop();
-	remoteAudio.srcObject.getTracks()[0].stop();
-	localVideo.srcObject = null;
-	localAudio.srcObject = null;
-	remoteAudio.srcObject = null;
+	
+	if(localVideo.srcObject) {
+		localVideo.srcObject.getTracks()[0].stop();
+		localVideo.srcObject = null;
+	}
+
+	if(localAudio.srcObject) {
+		localAudio.srcObject.getTracks()[0].stop();
+		localAudio.srcObject = null;
+	}
+
+	if(remoteAudio.srcObject) {
+		remoteAudio.srcObject.getTracks()[0].stop();
+		remoteAudio.srcObject = null;
+	}
+
 	for(let i = 0; i < peerConnections.length; i++) {
 		peerConnections[i].close();
 		delete peerConnection[i];
