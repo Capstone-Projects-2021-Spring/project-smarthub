@@ -2,7 +2,7 @@ import express from 'express' ;
 import http = require("http");
 import bodyParser from 'body-parser';
 import * as socketio from "socket.io";
-import { spawn } from 'child_process';
+import { spawn, ChildProcess } from 'child_process';
 // const { routes: videoRoutes, controller: videoController } = require('./routes/video_routes');
 // const { routes: audioRoutes, controller: audioController } = require('./routes/audio_routes');
 const { routes: streamRoutes, controller: streamController } = require('./routes/stream_routes');
@@ -67,14 +67,13 @@ app.use('/lock', lockRoutes);
 app.use('/light', lightRoutes);
 app.use('/aws', awsRoutes);
 
+// Starts a browser instance for WebRTC communication.
 async function startBrowser() {
 	if(process.platform === 'linux') {
-		const browser: any = spawn('chromium-browser', ['--app=', 'http://localhost:4000/main.html']);
-		browser.stderr.on('data', (data: any) => {
-  		console.error(`stderr: ${data}`);
-		});
+		const url: string = "http://localhost:" + PORT + "/main.html";
+		const browser: ChildProcess = spawn('chromium-browser', ['--app=' + url, '--use-fake-ui-for-media-stream'], { env: {DISPLAY: ':0'} });
 		browser.on('close', (code: any) => {
-  		console.log(`child process exited with code ${code}`);
+  		console.log(`browser process exited with code ${code}`);
 		});
 	}
 }
