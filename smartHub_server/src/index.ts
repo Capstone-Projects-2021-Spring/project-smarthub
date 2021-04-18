@@ -1,8 +1,8 @@
 import express from 'express' ;
 import http = require("http");
 import bodyParser from 'body-parser';
-import puppeteer from 'puppeteer-core';
 import * as socketio from "socket.io";
+import { spawn } from 'child_process';
 // const { routes: videoRoutes, controller: videoController } = require('./routes/video_routes');
 // const { routes: audioRoutes, controller: audioController } = require('./routes/audio_routes');
 const { routes: streamRoutes, controller: streamController } = require('./routes/stream_routes');
@@ -15,6 +15,7 @@ const { routes: imageRoutes } = require('./routes/image_db_routes');
 const { routes: recordingRoutes } = require('./routes/recording_db_routes');
 const { routes: awsRoutes } = require('./routes/aws_routes');
 const youauth = require('youauth');
+
 
 async function loadYouAuth() {
 	await youauth.loadModels();
@@ -67,33 +68,18 @@ app.use('/light', lightRoutes);
 app.use('/aws', awsRoutes);
 
 async function startBrowser() {
-	const browser: any = await puppeteer.launch({
-		executablePath: 'chromium-browser',
-		headless: true,
-		args: ['--use-fake-ui-for-media-stream'],
-		ignoreDefaultArgs:['--mute-audio']
-	});
-	// Create a new page in the browser.
-	const page = await browser.newPage();
-
-	await page.goto("http://localhost:" + PORT + "/main.html", {waitUntil: 'load'});
-
-	page.on('console', async (consoleObj: any) => {
-		const args = await Promise.all(consoleObj.args.map( (arg: any) => arg.executionContext().evaluate( (arg: any) => {
-			if(arg instanceof Error) return arg.message;
-			return arg;
-		}, arg)));
-		console.log(...args);
-	});
-
-	console.log("Chromium is live.");
-
-	browser._process.once('close', () => {
-		console.log("Browser has closed.");
-	});
+	if(process.platform === 'linux') {
+		const browser: any = spawn('chromium-browser', ['--app=', 'http://localhost:4000/main.html']);
+		browser.stderr.on('data', (data: any) => {
+  		console.error(`stderr: ${data}`);
+		});
+		browser.on('close', (code: any) => {
+  		console.log(`child process exited with code ${code}`);
+		});
+	}
 }
 
-//startBrowser();
+startBrowser();
 
 httpServer.listen(PORT, () => {
   console.log('Server running on http://localhost:' + PORT);
