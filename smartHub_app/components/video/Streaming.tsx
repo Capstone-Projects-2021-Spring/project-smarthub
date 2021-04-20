@@ -1,5 +1,5 @@
 import axios from 'axios';
-import Toast from 'react-native-toast-message'
+import Toast, { BaseToast } from 'react-native-toast-message'
 import { WebView } from 'react-native-webview'
 import React, { Component } from 'react';
 import {StyleSheet, View, Text, TouchableOpacity, Dimensions} from 'react-native';
@@ -16,12 +16,13 @@ import Record from './Recording';
 import ImageCapture from './ImageCapture';
 import {startFaceRec, stopFaceRec} from './FacialRecognition'
 import { startMotionDetection, stopMotionDetection } from './MotionDetection';
+import { getAddressString } from '../../utils/utilities';
 
 const io = require("socket.io-client");
 var width: number = Dimensions.get('window').width;
 
 
-export default class Stream extends Component<{type: number, userEmail: String, profileName: String, phoneNumber: String, profileId: number, deviceIP: String, deviceId: String, navigation: any},{featureType: String, checkStream: boolean, remoteVideoStream: any, videoSocket: any, peerVideoConnection: any, remoteAudioStream: any, audioSocket: any, peerAudioConnection: any}>{
+export default class Stream extends Component<{type: number, deviceId: number, navigation: any},{profileId: number, phoneNumber: String, deviceIP: String, userEmail: String, profileName: String, featureType: String, checkStream: boolean, remoteVideoStream: any, videoSocket: any, peerVideoConnection: any, remoteAudioStream: any, audioSocket: any, peerAudioConnection: any}>{
 
     constructor(props: any) {
         super(props);
@@ -29,6 +30,11 @@ export default class Stream extends Component<{type: number, userEmail: String, 
             checkStream: false,
             videoSocket: null,
             featureType: "",
+            deviceIP: "",
+            userEmail: "",
+            profileName: "",
+            phoneNumber: "",
+            profileId: 0,
             remoteVideoStream: { toURL: () => null },
             remoteAudioStream: { toURL: () => null },
             audioSocket: null,
@@ -62,7 +68,7 @@ export default class Stream extends Component<{type: number, userEmail: String, 
     }
 
     checkStream = async() => {
-        var url = 'http://' + this.props.deviceIP + ':4000/video/stream_check';
+        var url = 'http://' + this.state.deviceIP + ':4000/video/stream_check';
         console.log(url)
         await axios.post(url).then((response) => {
             console.log(response.data)
@@ -77,7 +83,7 @@ export default class Stream extends Component<{type: number, userEmail: String, 
         var collection = {
             device_id: this.props.deviceId
         }
-        var url = 'http://' + this.props.deviceIP + ':4000/devices/getConfig';
+        var url = 'http://' + this.state.deviceIP + ':4000/devices/getConfig';
         await axios.post(url, collection).then((response: any) => {
             this.setState({
                 featureType: response.data.device.device_config.type
@@ -89,10 +95,25 @@ export default class Stream extends Component<{type: number, userEmail: String, 
         })
     }
 
+    getDeviceInfo = async () => {
+        //console.log(this.props.route);
+        let collection: any = {}
+        collection.device_id = this.props.deviceId;
+        await axios.post(getAddressString() + '/devices/getDeviceInfo', collection).then((response) => {
+            this.setState({deviceIP: response.data.device[0].device_address,
+                userEmail: response.data.device[0].user_email,
+                profileName: response.data.device[0].profile_name,
+                profileId: response.data.device[0].profile_id,
+                phoneNumber: response.data.device[0].phone_number})
+        }, (error) => {
+            console.log(error);
+        })
+    }
+
     beginStream = async () => {
         await this.checkStream();
         if(!this.state.checkStream){
-            var url = 'http://' + this.props.deviceIP + ':4000/video/start_stream';
+            var url = 'http://' + this.state.deviceIP + ':4000/video/start_stream';
             // if(this.state.deviceIP !== 'lukessmarthub.ddns.net' &&  this.state.deviceIP !== "petepicam1234.zapto.org" && this.state.deviceIP !== "leohescamera.ddns.net"){
             //     alert(this.props.route.params.device_name + ' not compatible for live streaming.')
             //     return;
@@ -128,7 +149,7 @@ export default class Stream extends Component<{type: number, userEmail: String, 
          }
 
         // New url for audio. Set to socket namespace called audio.
-        var url = 'http://' + this.props.deviceIP + ':4000/video';
+        var url = 'http://' + this.state.deviceIP + ':4000/video';
 
         const videoSocket = io.connect(url);
 
@@ -145,7 +166,7 @@ export default class Stream extends Component<{type: number, userEmail: String, 
     stopStream = async() => {
         await this.checkStream();
         if(this.state.checkStream){
-            var url = 'http://' + this.props.deviceIP + ':4000/video/stop_stream';
+            var url = 'http://' + this.state.deviceIP + ':4000/video/stop_stream';
             // if(this.state.deviceIP !== 'lukessmarthub.ddns.net' && this.state.deviceIP !== "leohescamera.ddns.net"){
             //     alert(this.props.route.params.device_name + ' not compatible for live streaming.')
             //     return;
@@ -163,11 +184,11 @@ export default class Stream extends Component<{type: number, userEmail: String, 
                 if(this.state.featureType == "Motion")
                 {
                     console.log("stopping motion")
-                    stopMotionDetection(this.props.deviceIP);
+                    stopMotionDetection(this.state.deviceIP);
                 }
                 else if(this.state.featureType == "Facial"){
                     console.log("stopping facial")
-                    stopFaceRec(this.props.deviceIP);
+                    stopFaceRec(this.state.deviceIP);
                 }
                 
             }, (error) => {
@@ -325,7 +346,7 @@ export default class Stream extends Component<{type: number, userEmail: String, 
 
     beginAudio = async () => {
         // New url for audio. Set to audioSocket namespace called audio.
-        var url = 'http://' + this.props.deviceIP + ':4000/audio/start_intercom';
+        var url = 'http://' + this.state.deviceIP + ':4000/audio/start_intercom';
 
         await axios.post(url).then((response) => {
             console.log(response.data)
@@ -338,7 +359,7 @@ export default class Stream extends Component<{type: number, userEmail: String, 
         //     return;
         // }
 
-        url = 'http://' + this.props.deviceIP + ':4000/audio'
+        url = 'http://' + this.state.deviceIP + ':4000/audio'
 
         const audioSocket = io.connect(url);
 
@@ -368,7 +389,7 @@ export default class Stream extends Component<{type: number, userEmail: String, 
     }
 
     stopAudio = async() => {
-        var url = 'http://' + this.props.deviceIP + ':4000/audio/stop_intercom';
+        var url = 'http://' + this.state.deviceIP + ':4000/audio/stop_intercom';
         
         await axios.post(url).then((response) => {
             console.log(response.data);
@@ -417,7 +438,7 @@ export default class Stream extends Component<{type: number, userEmail: String, 
 
      deviceConfigurationCallback = async (deviceConfig: any) => {
         console.log(deviceConfig);
-        var url = 'http://' + this.props.deviceIP + ':4000/devices/updateConfig';
+        var url = 'http://' + this.state.deviceIP + ':4000/devices/updateConfig';
         var collection = {
             device_config: deviceConfig,
             device_id: this.props.deviceId
@@ -435,54 +456,96 @@ export default class Stream extends Component<{type: number, userEmail: String, 
                 await this.beginStream();
             }
             var params = {
-                user_email: this.props.userEmail,
-                profile_name: this.props.profileName,
-                profile_id: this.props.profileId,
+                user_email: this.state.userEmail,
+                profile_name: this.state.profileName,
+                profile_id: this.state.profileId,
                 device_id: this.props.deviceId,
-                phone_number: this.props.phoneNumber,
-                device_ip: this.props.deviceIP
+                phone_number: this.state.phoneNumber,
+                device_ip: this.state.deviceIP
             }
-            setTimeout(startFaceRec(params), 15000);
+            setTimeout(()=>startFaceRec(params), 15000);
 
         }else if(feature === "Motion"){
             if(!this.state.checkStream){
                 await this.beginStream();
             }
             var params = {
-                user_email: this.props.userEmail,
-                profile_name: this.props.profileName,
-                profile_id: this.props.profileId,
+                user_email: this.state.userEmail,
+                profile_name: this.state.profileName,
+                profile_id: this.state.profileId,
                 device_id: this.props.deviceId,
-                phone_number: this.props.phoneNumber,
-                device_ip: this.props.deviceIP
+                phone_number: this.state.phoneNumber,
+                device_ip: this.state.deviceIP
             }
-            setTimeout(startMotionDetection(params), 15000);
+            setTimeout(()=>startMotionDetection(params), 15000);
         }
 
     }
     //------------------------------------End of Config modal----------------------------------------------
 
-    componentDidMount = () => {
-        this.props.navigation.setOptions({
-        headerRight: () => (
-            <TouchableOpacity
-            style={{marginRight: 10}}
-            onPress={this.launchModal}>
-            <Icon name="ios-add" />
-            </TouchableOpacity>  
-          )
-        })
+    componentDidMount = async() => {
+        await this.getDeviceInfo();
+        if(this.props.type === 1){
+            this.props.navigation.setOptions({
+            headerRight: () => (
+                <TouchableOpacity
+                style={{marginRight: 10}}
+                onPress={this.launchModal}>
+                <Icon name="ios-add" />
+                </TouchableOpacity>  
+            )
+            })
+        }
     }
 
     render(){
+        const toastConfig = {
+            success: ({ text1, text2, ...rest } : any) => (
+              <BaseToast
+                {...rest}
+                style={{ borderLeftColor: '#FF9900', backgroundColor: "#fff" }}
+                contentContainerStyle={{ paddingHorizontal: 15 }}
+                text1Style={{
+                  fontSize: 18,
+                  fontWeight: 'bold'
+                }}
+                text2Style={{
+                    color: "#000",
+                    fontSize: 12
+                }}
+                text1={text1}
+                text2={text2}
+              />
+            ),
+
+            error: ({ text1, text2, ...rest } : any) => (
+                <BaseToast
+                  {...rest}
+                  style={{ borderLeftColor: '#FF9900', backgroundColor: "#fff" }}
+                  contentContainerStyle={{ paddingHorizontal: 15 }}
+                  text1Style={{
+                    fontSize: 18,
+                    fontWeight: 'bold'
+                  }}
+                  text2Style={{
+                      color: "#000",
+                      fontSize: 10
+                  }}
+                  text1={text1}
+                  text2={text2}
+                />
+              )
+        }
         return(
             <View style={{flex: 1}}>
+                <Toast style={{zIndex: 1}} config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
+                <FeatureModal ref="featureModal" deviceIP={this.state.deviceIP} deviceId={this.props.deviceId} feature={this}/>                
                 {this.props.type === 1 || this.props.type === 3 ?
                 <View style={styles.videoContainer}>
                     <WebView
                         style={{flex: 1,}}
                         originWhitelist={['*']}
-                        source={{html: '<iframe style="box-sizing: border-box; width: 100%; height: 100%; border: 15px solid #FF9900; background-color: #222222"; src="http://' + this.props.deviceIP + ':4000/watch.html" frameborder="0" allow="autoplay encrypted-media" allowfullscreen></iframe>'}} 
+                        source={{html: '<iframe style="box-sizing: border-box; width: 100%; height: 100%; border: 15px solid #FF9900; background-color: #222222"; src="http://' + this.state.deviceIP + ':4000/watch.html" frameborder="0" allow="autoplay encrypted-media" allowfullscreen></iframe>'}} 
                         mediaPlaybackRequiresUserAction={false}
                     />
                     <RTCView streamURL={this.state.remoteAudioStream.toURL()} />    
@@ -498,11 +561,10 @@ export default class Stream extends Component<{type: number, userEmail: String, 
                             <Text style={{ fontSize: 20 }}>Stop Stream</Text>
                         </TouchableOpacity>
                     </View>
-                    <ImageCapture userEmail={this.props.userEmail} profileName={this.props.profileName} deviceIP={this.props.deviceIP} />
+                    <ImageCapture userEmail={this.state.userEmail} profileName={this.state.profileName} deviceIP={this.state.deviceIP} />
                 {this.props.type === 1 &&
                     <View>
-                        <Record userEmail={this.props.userEmail} profileName={this.props.profileName} deviceIP={this.props.deviceIP} />
-                        <FeatureModal ref="featureModal" deviceIP={this.props.deviceIP} deviceId={this.props.deviceId} feature={this}/>
+                        <Record userEmail={this.state.userEmail} profileName={this.state.profileName} deviceIP={this.state.deviceIP} />
                     </View>
                 }
                 </View>
@@ -520,8 +582,7 @@ export default class Stream extends Component<{type: number, userEmail: String, 
                     </TouchableOpacity>
                 </View>
             }
-            </View>
-            
+            </View>           
         );
     }
 }
