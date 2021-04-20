@@ -8,7 +8,7 @@ import InputSpinner from "react-native-input-spinner";
 import axios from 'axios';
 var screen = Dimensions.get('window');
 
-export default class FeatureModal extends Component<{feature: any, route: any},{number: number, isCheckedRecording: boolean, isCheckedAudio: boolean, isToggledFacial: boolean, isCheckedNotification: boolean,  isToggledMotion: boolean, wasSaved: boolean}>{
+export default class FeatureModal extends Component<{deviceIP: String, feature: any, deviceId: any,},{number: number, isCheckedRecording: boolean, isCheckedAudio: boolean, isToggledFacial: boolean, isCheckedNotification: boolean,  isToggledMotion: boolean, wasSaved: boolean}>{
     constructor(props: any){
         super(props);
         this.state = ({
@@ -22,34 +22,31 @@ export default class FeatureModal extends Component<{feature: any, route: any},{
         })
     }
 
-    showModal = () => {
-        this.refs.featureModal.open(); 
+    showModal = async() => {
+        await this.getConfig(); 
+        this.refs.featureModal.open();
     }
 
     getConfig = async() => {
         var collection = {
-            device_id: this.props.route.device_id
+            device_id: this.props.deviceId
         }
-        console.log(this.props.route.device_id)
-        var url = 'http://lukessmarthub.ddns.net:4000/devices/getConfig';
-           await axios.post(url, collection).then((response: any) => {
-               console.log(response.data)
-               this.setState({isToggledFacial: response.data.device.device_config.type === "Facial" ? true : false,
-               isToggledMotion: response.data.device.device_config.type === "Motion" ? true : false})
-               this.setState({
-                    isCheckedNotification:response.data.device.device_config.notifications,
-                    isCheckedRecording: response.data.device.device_config.recording,
-                    isCheckedAudio: response.data.device.device_config.audio,
-                    number: response.data.device.device_config.recordingTime,
-                })
-            }, (error) => {
-                console.log(error);
+        var url = 'http://' + this.props.deviceIP + ':4000/devices/getConfig';
+        console.log(url)
+        await axios.post(url, collection).then((response: any) => {
+            console.log(response.data)
+            this.setState({isToggledFacial: response.data.device.device_config.type === "Facial" ? true : false,
+            isToggledMotion: response.data.device.device_config.type === "Motion" ? true : false})
+            this.setState({
+                isCheckedNotification:response.data.device.device_config.notifications,
+                isCheckedRecording: response.data.device.device_config.recording,
+                isCheckedAudio: response.data.device.device_config.audio,
+                number: response.data.device.device_config.recordingTime,
             })
+        }, (error) => {
+            console.log(error);
+        })
    }
-   
-   componentDidMount= () => {
-     this.getConfig();
-    }
 
     render(){
         return(
@@ -65,7 +62,6 @@ export default class FeatureModal extends Component<{feature: any, route: any},{
                             type: !this.state.isToggledFacial && !this.state.isToggledMotion ? "None" :
                             this.state.isToggledFacial ? "Facial" : "Motion"
                         }
-                        console.log(deviceConfig)
                         //below will be the call back given to the modal comp from the recording page
                         this.props.feature.deviceConfigurationCallback(deviceConfig) 
                         // this.setState({
@@ -173,7 +169,7 @@ export default class FeatureModal extends Component<{feature: any, route: any},{
                     <View style={{ flexDirection: "row", paddingLeft:60, paddingBottom: 35}}>
                         <Text style={{fontSize: 14, fontWeight: "bold", paddingTop: 5, color: "#fff" , paddingRight: 0}}> - Set recording length: </Text>    
                     </View>
-                    <View style={{flex: 1,maxHeight: 30, justifyContent: 'center', alignItems: 'center'}}> 
+                    <View style={{flex: 1,maxHeight: 30,  justifyContent: 'center', alignItems: 'center'}}> 
                         <InputSpinner max={15} min={5}
                             value={this.state.number}
                             style={styles.spinner}
@@ -186,7 +182,7 @@ export default class FeatureModal extends Component<{feature: any, route: any},{
                         />
                     </View>
                 </View>
-                <View style={{ marginBottom: 45, marginTop: 20}}>
+                <View style={{ marginBottom: 10}}>
                     <Button
                         style={{paddingTop: 8, fontSize: 18, color: '#000'}}
                         containerStyle={styles.buttonStyle}
@@ -204,12 +200,14 @@ export default class FeatureModal extends Component<{feature: any, route: any},{
 const styles = StyleSheet.create({
     
     modalStyling: {
+        position: 'absolute',
         justifyContent: 'center',
+        top: 0,
         borderRadius: 30,
         backgroundColor: "#222222",
         shadowRadius: 10,
         width: screen.width - 50,
-        height: screen.height/2
+        height: screen.height/2 + 10 
     },
     buttonStyle: {
         marginLeft: 70,

@@ -16,7 +16,7 @@ import SmartLight from './components/pages/SmartLightsPage';
 import { showImage } from './components/pages/SavedImagePage';
 import { SmartLockDevices } from './components/LockComponent';
 import SmartLock from './components/pages/SmartLockPage';
-import { FeaturesList } from './components/lists/FeaturesList';
+import { FeaturesList } from './components/lists/FeaturesImageList';
 import TakePhoto from './components/pages/TakePhotoPage';
 import Intercom from './components/pages/IntercomPage';
 import Toast from 'react-native-toast-message';
