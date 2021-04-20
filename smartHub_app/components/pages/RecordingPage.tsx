@@ -4,6 +4,7 @@ import { WebView } from 'react-native-webview'
 import axios from 'axios'
 import Toast, { BaseToast } from 'react-native-toast-message'
 import { getAddressString } from '../../utils/utilities';
+import streamingbottomsheet from '../bottomsheets/streamingbottomsheet'
 
 import {
     RTCPeerConnection,
@@ -17,8 +18,10 @@ import {
 } from 'react-native-webrtc';
 
 var width: number = Dimensions.get('window').width;
+var height: number = Dimensions.get('window').height;
 
 import * as socketio from "socket.io-client";
+import BottomSheet from '../bottomsheets/streamingbottomsheet';
 const io = require("socket.io-client");
 
 export default class Recording extends Component<{ route: any, navigation: any }, { responseText: String, deviceIP: String, recordingResponseText: any, userEmail: String, profileName: String, remoteAudioStream: any, remoteVideoStream: any, audioSocket: any, videoSocket: any, peerAudioConnection: any, peerVideoConnection: any }>{
@@ -322,11 +325,12 @@ export default class Recording extends Component<{ route: any, navigation: any }
     }
 
     beginStream = () => {
+        console.log("TESTING BEGIN STREAM!");
         var url = 'http://' + this.state.deviceIP + ':4000/video/start_stream';
-        if (this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net") {
-            alert(this.props.route.params.device_name + ' not compatible for live streaming.')
-            return;
-        }
+        // if (this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net") {
+        //     alert(this.props.route.params.device_name + ' not compatible for live streaming.')
+        //     return;
+        // }
         if (this.state.responseText !== 'Stream Starting.') {
             //console.log(this.state.deviceIP)
             axios.post(url).then((response) => {
@@ -383,10 +387,10 @@ export default class Recording extends Component<{ route: any, navigation: any }
 
     stopStream = () => {
         var url = 'http://' + this.state.deviceIP + ':4000/video/stop_stream';
-        if (this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net") {
-            alert(this.props.route.params.device_name + ' not compatible for live streaming.')
-            return;
-        }
+        // if (this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net") {
+        //     alert(this.props.route.params.device_name + ' not compatible for live streaming.')
+        //     return;
+        // }
         if (this.state.responseText !== 'Stream Closing.') {
             axios.post(url).then((response) => {
                 this.setState({ responseText: response.data })
@@ -443,9 +447,9 @@ export default class Recording extends Component<{ route: any, navigation: any }
     stopStreamOnBackClick = () => {
         this.stopAudio();
         var url = 'http://' + this.state.deviceIP + ':4000/video/stop_stream';
-        if (this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net") {
-            return;
-        }
+        // if (this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net") {
+        //     return;
+        // }
         if (this.state.responseText !== 'Stream Closing.') {
             axios.post(url).then((response) => {
                 this.setState({ responseText: response.data })
@@ -458,10 +462,10 @@ export default class Recording extends Component<{ route: any, navigation: any }
 
     startRecord = () => {
         var url = 'http://' + this.state.deviceIP + ':4000/video/start_recording';
-        if (this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net") {
-            alert(this.props.route.params.device_name + ' not compatible for recording.')
-            return;
-        }
+        // if (this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net") {
+        //     alert(this.props.route.params.device_name + ' not compatible for recording.')
+        //     return;
+        // }
 
         if (this.state.recordingResponseText !== 'Recording Starting.') {
             axios.post(url).then((response) => {
@@ -488,10 +492,10 @@ export default class Recording extends Component<{ route: any, navigation: any }
 
     stopRecord = () => {
         var url = 'http://' + this.state.deviceIP + ':4000/video/stop_recording';
-        if (this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net") {
-            alert(this.props.route.params.device_name + ' not compatible for recording.')
-            return;
-        }
+        // if (this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net") {
+        //     alert(this.props.route.params.device_name + ' not compatible for recording.')
+        //     return;
+        // }
         //console.log(url);
         let collection: any = {}
         collection.user_email = this.state.userEmail;
@@ -523,10 +527,10 @@ export default class Recording extends Component<{ route: any, navigation: any }
 
     takePhoto = () => {
         var url = 'http://' + this.state.deviceIP + ':4000/video/take_image';
-        if (this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net") {
-            alert(this.props.route.params.device_name + ' not compatible for photo taking.')
-            return;
-        }
+        // if (this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net") {
+        //     alert(this.props.route.params.device_name + ' not compatible for photo taking.')
+        //     return;
+        // }
 
         if (this.state.responseText != 'Stream Starting.') {
             alert("Please Begin the Stream First!");
@@ -618,9 +622,12 @@ export default class Recording extends Component<{ route: any, navigation: any }
                     source={{html: '<iframe style="box-sizing: border-box; width: 100%; height: 100%; border: 15px solid #FF9900; background-color: #222222"; src="http://' + this.state.deviceIP + ':4000/watch.html" frameborder="0" allow="autoplay encrypted-media" allowfullscreen></iframe>'}} 
                     mediaPlaybackRequiresUserAction={false}
                 /> */}
+                {/* <View style={{width: width, height: height}}>
+                    <Text>TESTING</Text>
+                    <BottomSheet></BottomSheet>
+                </View> */}
                 <View style={styles.videoContainer}>
                     <View style={[styles.videos, styles.remoteVideos]}>
-                        <Text>Friends Video</Text>
                         <RTCView
                             streamURL={this.state.remoteVideoStream.toURL()}
                             style={styles.remoteVideo}
@@ -669,6 +676,7 @@ export default class Recording extends Component<{ route: any, navigation: any }
                         <Text style={{ fontSize: 20 }}>Stop Recording</Text>
                     </TouchableOpacity>
                 </View>
+                
             </View>
         );
     }
@@ -708,7 +716,7 @@ const styles = StyleSheet.create({
 
     videoContainer: {
         flex: 1,
-        minHeight: 450,
+        minHeight: 600,
     },
     videos: {
         width: '100%',
