@@ -108,6 +108,15 @@ export default class Stream extends Component<{type: number, deviceId: number, n
         }, (error) => {
             console.log(error);
         })
+
+        await this.checkStream();
+        var url = 'http://' + this.state.deviceIP + ':4000/video';
+        const videoSocket = io.connect(url);
+        videoSocket.on("offer", (id: any, description: any) => this.handleVideoOffer(id, description));
+        videoSocket.on("candidate", (id: any, description: any) => this.handleVideoCandidate(id, description));
+        videoSocket.on("broadcaster", () => this.handleVideoOrigin());
+        this.setState({ videoSocket: videoSocket })
+        if(this.state.checkStream) this.state.videoSocket.emit("watcher");
     }
 
     beginStream = async () => {
@@ -148,19 +157,8 @@ export default class Stream extends Component<{type: number, deviceId: number, n
             })
          }
 
-        // New url for audio. Set to socket namespace called audio.
-        var url = 'http://' + this.state.deviceIP + ':4000/video';
+         if(!this.state.checkStream) this.state.videoSocket.emit("watcher");
 
-        const videoSocket = io.connect(url);
-
-        videoSocket.on("offer", (id: any, description: any) => this.handleVideoOffer(id, description));
-        videoSocket.on("candidate", (id: any, description: any) => this.handleVideoCandidate(id, description));
-        videoSocket.on("broadcaster", () => this.handleVideoOrigin());
-
-        this.setState({ videoSocket: videoSocket }, () => {
-            console.log("Yeeyee");
-            this.state.videoSocket.emit("watcher");
-        });
     }
 
     stopStream = async() => {
@@ -198,11 +196,11 @@ export default class Stream extends Component<{type: number, deviceId: number, n
             alert("The stream is no longer live.")
         }
 
-        if (this.state.videoSocket !== null) {
-            this.state.videoSocket.disconnect();
-        }
+        // if (this.state.videoSocket !== null) {
+        //     this.state.videoSocket.disconnect();
+        // }
 
-        this.setState({ videoSocket: null });
+        // this.setState({ videoSocket: null });
 
         this.state.peerVideoConnection.close();
         console.log("Stop intercom success");
@@ -225,6 +223,7 @@ export default class Stream extends Component<{type: number, deviceId: number, n
         });
 
         this.setState({ remoteAudioStream: { toURL: () => null } });
+        this.setVideoRemoteStream({ toURL: () => null });
     }
 
     //--------------------------------- Stream Handling ----------------------
@@ -542,12 +541,19 @@ export default class Stream extends Component<{type: number, deviceId: number, n
                 <FeatureModal ref="featureModal" deviceIP={this.state.deviceIP} deviceId={this.props.deviceId} feature={this}/>                
                 {this.props.type === 1 || this.props.type === 3 ?
                 <View style={styles.videoContainer}>
-                    <WebView
+                     <View style={[styles.videos, styles.remoteVideos]}>
+                        <RTCView
+                            streamURL={this.state.remoteVideoStream.toURL()}
+                            style={styles.remoteVideo}
+                            objectFit={'cover'}
+                        />
+                    </View>
+                    {/* <WebView
                         style={{flex: 1,}}
                         originWhitelist={['*']}
                         source={{html: '<iframe style="box-sizing: border-box; width: 100%; height: 100%; border: 15px solid #FF9900; background-color: #222222"; src="http://' + this.state.deviceIP + ':4000/watch.html" frameborder="0" allow="autoplay encrypted-media" allowfullscreen></iframe>'}} 
                         mediaPlaybackRequiresUserAction={false}
-                    />
+                    /> */}
                     <RTCView streamURL={this.state.remoteAudioStream.toURL()} />    
                     <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', padding: 50, paddingBottom: 30, marginBottom: 0}}>
                         <TouchableOpacity
@@ -645,7 +651,7 @@ localVideo: {
 remoteVideo: {
     backgroundColor: '#f2f2f2',
     height: '100%',
-    width: width,
+    width: '100%',
 },
 
 })
