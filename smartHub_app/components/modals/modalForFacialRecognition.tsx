@@ -41,7 +41,7 @@ export default class FacialRecognitionModal extends Component<PropVariables, Sta
                 backdrop={true}   
             >
                 <Text style={{
-                    fontSize: 20,
+                    fontSize: screen.width/20,
                     fontWeight: 'bold',
                     textAlign: 'center',
                     paddingBottom: 15,
@@ -50,12 +50,12 @@ export default class FacialRecognitionModal extends Component<PropVariables, Sta
                 <TouchableOpacity 
                     style={styles.buttonStyle}
                     onPress={() => ImagePickerPage(this, this.props.routeObject, this.props.parentFlatList)}>
-                    <Text style={{ paddingTop: 2, textAlign: 'center', fontWeight: 'bold', fontSize: 15, color: '#fff'}}>Upload from Camera Roll</Text>
+                    <Text style={{ paddingTop: 2, textAlign: 'center', fontWeight: 'bold', fontSize: screen.width/26, color: '#fff'}}>Upload from Camera Roll</Text>
                 </TouchableOpacity>
                 <TouchableOpacity 
                     style={styles.buttonStyle}
                     onPress={() => this.props.navigation.navigate('Image Capture Devices', this.props.routeObject)}>
-                <Text style={{ paddingTop: 2, textAlign: 'center', fontWeight: 'bold', fontSize: 15, color: '#fff'}}>Take Photo</Text>
+                <Text style={{ paddingTop: 2, textAlign: 'center', fontWeight: 'bold', fontSize: screen.width/26, color: '#fff'}}>Take Photo</Text>
                 </TouchableOpacity>
             </Modal>
         );

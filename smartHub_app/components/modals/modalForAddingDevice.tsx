@@ -44,7 +44,7 @@ export default class DeviceModal extends Component<PropVariables, StateVariables
                 backdrop={true}   
             >
                 <Text style={{
-                    fontSize: 20,
+                    fontSize: screen.width/18,
                     fontWeight: 'bold',
                     textAlign: 'center',
                     color: "#fff"
@@ -64,7 +64,7 @@ export default class DeviceModal extends Component<PropVariables, StateVariables
                 value={this.state.DeviceIP}
                 />
                 <Button
-                    style={{ fontSize: 18, color: '#fff'}}
+                    style={{ fontSize: screen.width/20, color: '#fff'}}
                     containerStyle={styles.buttonStyle}
                     onPress={() => {
                         //handles empty device name
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     
     buttonStyle: {
         padding: 8,
-        marginTop: 10,
+        marginTop: 30,
         marginLeft: 70,
         marginRight: 70,
         height: 40,
@@ -134,6 +134,7 @@ const styles = StyleSheet.create({
         marginTop: 20,
         marginBottom: 10,
         borderBottomWidth: 1,
+        fontSize: screen.width/27,
         color: "#fff"
     },
 

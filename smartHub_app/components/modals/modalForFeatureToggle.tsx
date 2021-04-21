@@ -80,14 +80,14 @@ export default class FeatureModal extends Component<{deviceIP: String, feature: 
                 backdrop={true}   
             >
                 <Text style={{
-                    fontSize: 22,
+                    fontSize: screen.width/20,
                     paddingTop:20,
                     color: "#fff",
                     fontWeight: 'bold',
                     textAlign: 'center',
                 }}>Choose a feature below: </Text>
                 <View style={{flexDirection: "row", paddingLeft: 20, paddingTop: 20, paddingBottom: 20}}>
-                    <Text style={{fontSize: 18, fontWeight: "bold", paddingTop: 5, color: "#fff", paddingLeft: 20, paddingRight: 30}}>Facial Recognition: </Text>    
+                    <Text style={{fontSize: screen.width/21, fontWeight: "bold", paddingTop: 5, color: "#fff", paddingLeft: 20, paddingRight: 30}}>Facial Recognition: </Text>    
                     <Switch
                         value={this.state.isToggledFacial}
                         onValueChange={(value) => {
@@ -97,7 +97,7 @@ export default class FeatureModal extends Component<{deviceIP: String, feature: 
                     </Switch>
                 </View>
                 <View style={{flexDirection: "row", paddingLeft: 10, paddingBottom: 20}}>
-                    <Text style={{fontSize: 18, fontWeight: "bold",  paddingLeft: 30, color: "#fff", paddingRight: 40}}>Motion Detection: </Text>    
+                    <Text style={{fontSize: screen.width/21, fontWeight: "bold",  paddingLeft: 30, color: "#fff", paddingRight: 40}}>Motion Detection: </Text>    
                     <Switch
                         value={this.state.isToggledMotion}
                         onValueChange={(value) => {
@@ -108,7 +108,7 @@ export default class FeatureModal extends Component<{deviceIP: String, feature: 
                 </View>
                 <View style={{flex:1, flexDirection: "column", paddingTop: 0, marginTop: 0}}>
                     <View style={{flexDirection: "row", paddingLeft:25,  paddingBottom: 10, paddingTop: 0}}>
-                        <Text style={{fontSize: 16, fontWeight: "bold", paddingTop: 5, color: "#fff", paddingLeft: 15, paddingRight: 0}}>Enable Push Notifications? </Text>    
+                        <Text style={{fontSize: screen.width/23, fontWeight: "bold", paddingTop: 5, color: "#fff", paddingLeft: 15, paddingRight: 0}}>Enable Push Notifications? </Text>    
                         <CheckBox
                             onClick={() => {
                                 if(!this.state.isToggledFacial && !this.state.isToggledMotion){
@@ -184,7 +184,7 @@ export default class FeatureModal extends Component<{deviceIP: String, feature: 
                 </View>
                 <View style={{ marginBottom: 10}}>
                     <Button
-                        style={{paddingTop: 8, fontSize: 18, color: '#fff'}}
+                        style={{paddingTop: 8, fontSize: screen.width/20, color: '#fff'}}
                         containerStyle={styles.buttonStyle}
                         onPress={()=>{
                             this.setState({wasSaved: true}); 

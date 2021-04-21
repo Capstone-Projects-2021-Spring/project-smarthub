@@ -39,7 +39,7 @@ export default class ProfileModal extends Component<PropVariables, StateVariable
          
             >
                 <Text style={{
-                    fontSize: 21,
+                    fontSize: screen.width/18,
                     fontWeight: 'bold',
                     textAlign: 'center',
                     color: '#fff',
@@ -57,7 +57,7 @@ export default class ProfileModal extends Component<PropVariables, StateVariable
                     value={this.state.newProfileName}
                     />
                 <Button
-                    style={{ fontSize: 18, justifyContent: 'center', color: '#fff'}}
+                    style={{ fontSize: screen.width/20, justifyContent: 'center', color: '#fff'}}
                     containerStyle={styles.buttonStyle}
                     onPress={() => {
                         //handles empty profile name
@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
         marginLeft: 35,
         marginRight: 35, 
         marginBottom: 50,
-        fontSize: 15,
+        fontSize: screen.width/25,
         borderBottomWidth: 1,
     },
 
