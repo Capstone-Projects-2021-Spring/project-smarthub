@@ -1,8 +1,8 @@
 import express from 'express' ;
 import http = require("http");
 import bodyParser from 'body-parser';
-import puppeteer from 'puppeteer-core';
 import * as socketio from "socket.io";
+import { spawn, ChildProcess } from 'child_process';
 const { routes: videoRoutes, controller: videoController } = require('./routes/video_routes');
 const { routes: audioRoutes, controller: audioController } = require('./routes/audio_routes');
 const { routes: lockRoutes } = require('./routes/lock_routes');
@@ -61,6 +61,17 @@ app.use('/recordings', recordingRoutes);
 app.use('/lock', lockRoutes);
 app.use('/light', lightRoutes);
 app.use('/aws', awsRoutes);
+
+// Starts a browser instance for WebRTC communication.
+async function startBrowser() {
+	if(process.platform === 'linux') {
+		const url: string = "http://localhost:" + PORT + "/main.html";
+		const browser: ChildProcess = spawn('chromium-browser', ['--app=' + url, '--use-fake-ui-for-media-stream'], { env: {DISPLAY: ':0'} });
+		browser.on('close', (code: any) => {
+  		console.log(`browser process exited with code ${code}`);
+		});
+	}
+}
 
 httpServer.listen(PORT, () => {
   console.log('Server running on http://localhost:' + PORT);

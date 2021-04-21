@@ -1,13 +1,12 @@
-
 import * as socketio from "socket.io";
 import fs from "fs";
 import path from 'path';
 // Fetch the socket.io Server class.
 const io = require("socket.io");
 
-// Hold a function type that accept a string (params) and returns nothing (void).
+// Hold a function type that accept a string or boolean (params) and returns nothing (void).
 interface CallbackType {
-	(data: string): void;
+	(data: string | boolean): void;
 }
 
 // Associative array type for callbacks.
@@ -25,19 +24,22 @@ class VideoController {
 
 	// Holds namespace of socketio server.
 	private namespace: SocketIO.Namespace | null;
-	// The socket id of the socket at which the audio channel is first opened.
+	// The socket id of the socket at which the video stream is broadcasted from.
 	private broadcaster: string;
 	// Stores callbacks to send image data back.
 	private imageCallbacks: CallbackType[];
+	// Stores callbacks to send stream status.
+	private statusCallbacks: CallbackType[];
 	// Stores callbacks to send face data back.
 	private faceCallbacks: AssociativeType;
-
+	// Stores callbacks for motion detections.
 	private motionCallbacks: AssociativeType;
 
 	constructor() {
 		this.namespace = null;
 		this.broadcaster = "";
 		this.imageCallbacks = [];
+		this.statusCallbacks = [];
 		this.faceCallbacks = {};
 		this.motionCallbacks = {};
 	}
@@ -52,107 +54,95 @@ class VideoController {
 	// Handler for all socket events. Calls their appropriate methods.
 	// **** NOTE: Everything is in the scope of the socket. ****
 	private handleEvents(socket: SocketIO.Socket) {
+
+		const controller = this;
+
 		// This event will be emitted by the broadcaster.
 		socket.on("broadcaster", () => {
-			this.handleBroadcast(socket);
+			controller.broadcaster = socket.id;
+			socket.broadcast.emit("broadcaster");
 		});
+
 		// This event will be emitted by the watcher.
 		socket.on("watcher", () => {
-			this.handleWatch(socket);
-		});
-		socket.on("offer", (id: any, message: any) => {
-			this.handleOffer(socket, id, message);
-		});
-		socket.on("answer", (id: any, message: any) => {
-			this.handleAnswer(socket, id, message);
-		});
-		socket.on("candidate", (id: any, message: any) => {
-			this.handleCandidate(socket, id, message);
+			socket.to(controller.broadcaster).emit("watcher", socket.id);
 		});
 
-		socket.on("receive_recording", (data: any) => {
-			this.handleReceiveRecording(data);
+		socket.on("offer", (id: any, description: any) => {
+			socket.to(id).emit("offer", socket.id, description);
 		});
 
-		socket.on("taken_image", (data: any) => {
-			this.sendImageData(data);
-			this.handleImage(data);
+		socket.on("answer", (id: any, description: any) => {
+			socket.to(id).emit("answer", socket.id, description);
 		});
 
-		socket.on("face_image", (data: any) => {
-			this.sendFaceData(data);
+		socket.on("candidate", (id: any, candidate: any) => {
+			socket.to(id).emit("candidate", socket.id, candidate);
 		});
 
 		socket.on("disconnect", () => {
-			this.handleDisconnect(socket);
+			socket.to(controller.broadcaster).emit("disconnect_peer", socket.id);
 		});
 
-		// MOTION DETECTION
+		socket.on("video_stream_status", (status: boolean) => {
+		 	for(let i = 0; i < controller.statusCallbacks.length; i++) {
+			 	controller.statusCallbacks[i](status);
+		 	}
+		 	controller.statusCallbacks = [];
+	 	});
+
+		socket.on("receive_recording", (data: any) => {
+			const filePath = path.resolve(__dirname, "../output/output.webm");
+			const fileStream = fs.createWriteStream(filePath, { flags: 'a' });
+			fileStream.write(Buffer.from(new Uint8Array(data)));
+		});
+
+		socket.on("taken_image", (data: any) => {
+			for (var i = 0; i < controller.imageCallbacks.length; i++) {
+				controller.imageCallbacks[i](data);
+			}
+			controller.imageCallbacks = [];
+		});
+
+		socket.on("face_image", (data: any) => {
+			for (var key in controller.faceCallbacks) {
+				controller.faceCallbacks[key](data);
+			}
+		});
+
 		socket.on("motion_detected", (data: any) => {
-			this.sendMotionData(data);
+			for (var key in controller.motionCallbacks) {
+				controller.motionCallbacks[key](data);
+			}
 		});
 	}
 
-	private handleBroadcast(socket: SocketIO.Socket) {
-		this.broadcaster = socket.id;
-		socket.broadcast.emit("broadcaster");
+	// ======================================================================================================
+ 	//											STREAM
+ 	// ======================================================================================================
+
+	public getStreamStatus(callback: any) {
+	 	this.statusCallbacks.push(callback);
+	 	if(this.namespace !== null) {
+		 	this.namespace.to(this.broadcaster).emit("get_video_stream_status");
+	 	}
+ 	}
+
+	public startStream() {
+		if(this.namespace !== null) {
+		 	this.namespace.to(this.broadcaster).emit("start_video_stream");
+	 	}
 	}
 
-	private handleWatch(socket: SocketIO.Socket) {
-		socket.to(this.broadcaster).emit("watcher", socket.id);
+	public stopStream() {
+		if(this.namespace !== null) {
+		 	this.namespace.to(this.broadcaster).emit("stop_video_stream");
+	 	}
 	}
 
-	private handleOffer(socket: SocketIO.Socket, id: any, message: any) {
-		socket.to(id).emit("offer", socket.id, message);
-	}
-
-	private handleAnswer(socket: SocketIO.Socket, id: any, message: any) {
-		socket.to(id).emit("answer", socket.id, message);
-	}
-
-	private handleCandidate(socket: SocketIO.Socket, id: any, message: any) {
-		socket.to(id).emit("candidate", socket.id, message);
-	}
-
-	private handleReceiveRecording(data: any) {
-		const filePath = path.resolve(__dirname, "../output/output.webm");
-		const fileStream = fs.createWriteStream(filePath, { flags: 'a' });
-		fileStream.write(Buffer.from(new Uint8Array(data)));
-	}
-
-	private handleImage(data: any) {
-		// strip off the data: url prefix to get just the base64-encoded bytes
-		data = data.replace(/^data:image\/\w+;base64,/, "");
-		var buf = Buffer.from(data, 'base64');
-		const filePath = path.resolve(__dirname, "../output/output.png");
-		const fileStream = fs.createWriteStream(filePath);
-		fileStream.write(buf);
-	}
-
-	private handleDisconnect(socket: SocketIO.Socket) {
-		socket.to(this.broadcaster).emit("disconnectPeer", socket.id);
-	}
-
-	public async getFaceData(callback: any, key: string) {
-		this.faceCallbacks[key] = callback;
-	}
-
-	public removeCallback(key: string) {
-		delete this.faceCallbacks[key];
-	}
-
-	public sendFaceData(data: string) {
-		for (var key in this.faceCallbacks) {
-			this.faceCallbacks[key](data);
-		}
-	}
-
-	public sendImageData(data: string) {
-		for (var i = 0; i < this.imageCallbacks.length; i++) {
-			this.imageCallbacks[i](data);
-		}
-		this.imageCallbacks = [];
-	}
+	// ======================================================================================================
+	//											RECORDING
+	// ======================================================================================================
 
 	// Start the recording.
 	public startRecording() {
@@ -168,18 +158,27 @@ class VideoController {
 		}
 	}
 
-	// Take a picture of the current stream.
-	public takePicture() {
-		if (this.namespace !== null) {
-			this.namespace.to(this.broadcaster).emit("take_image");
-		}
-	}
+	// ======================================================================================================
+	//											TAKE IMAGE
+	// ======================================================================================================
 
 	public getPicture(callback: any) {
 		this.imageCallbacks.push(callback);
 		if (this.namespace !== null) {
 			this.namespace.to(this.broadcaster).emit("take_image");
 		}
+	}
+
+	// ======================================================================================================
+	//											FACIAL RECOGNITION
+	// ======================================================================================================
+
+	public async getFaceData(callback: any, key: string) {
+		this.faceCallbacks[key] = callback;
+	}
+
+	public removeFaceCallback(key: string) {
+		delete this.faceCallbacks[key];
 	}
 
 	public startFaceReg() {
@@ -211,20 +210,12 @@ class VideoController {
 	}
 
 	public async getMotionData(callback: any, key: string) {
-		console.log("in get motion detection.");
 		this.motionCallbacks[key] = callback;
 	}
 
 	public removeMotionCallback(key: string) {
 		delete this.motionCallbacks[key];
 	}
-
-	public sendMotionData(data: any) {
-		for (var key in this.motionCallbacks) {
-			this.motionCallbacks[key](data);
-		}
-	}
-	
 
 }
 
