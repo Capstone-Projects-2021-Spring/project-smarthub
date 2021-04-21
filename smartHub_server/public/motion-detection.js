@@ -107,7 +107,7 @@ function capture() {
 
 				//This image is distorted. We just need to maintain aspect ratio / resolution web capturing image data from capture context and canvas.
 				var capturedImage = getCaptureUrl(captureImageData);
-				socket.emit("motion_detected", capturedImage);
+				videoSocket.emit("motion_detected", capturedImage);
 
                 nextCallTime = new Date(currentCallTime.getTime() + 1 * 5000);
             }

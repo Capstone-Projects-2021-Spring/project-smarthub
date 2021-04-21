@@ -212,6 +212,7 @@ routes.post('/start_face_reg', async (req: any, res: any) => {
 	const phoneNumber: string = req.body.phone_number;
 
 	controller.startFaceReg();
+	console.log("Start facial recognition route.");
 
 	Faces.getFaces(profileId).then((faces: any) => {
 
@@ -348,13 +349,13 @@ routes.post('/start_motion_detection', async (req: any, res: any) => {
 
 	const deviceConfig: any = await Devices.getConfig(deviceId);
 
-	console.log("start motion detection route.");
+	console.log("Start motion detection route.");
 	controller.getMotionData(async function (data: any) {
 
-		console.log("Hey, motion was detected :) ");
-		console.log(accountName);
-		console.log(componentName);
-		console.log(profileName);
+		// console.log("Hey, motion was detected :) ");
+		// console.log(accountName);
+		// console.log(componentName);
+		// console.log(profileName);
 
 		const defaultName: string = "motion_detect_" + uuidv4();
 

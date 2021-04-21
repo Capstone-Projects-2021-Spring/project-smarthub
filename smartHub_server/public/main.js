@@ -188,7 +188,7 @@ async function startFaceReg() {
       faceRegInterval = setInterval( async () => {
           const context = videoCanvas.getContext("2d");
           context.drawImage(localVideo, 0, 0);
-          socket.emit("face_image", videoCanvas.toDataURL());
+          videoSocket.emit("face_image", videoCanvas.toDataURL());
       }, 5000);
   }
 }
@@ -315,7 +315,7 @@ audioSocket.on("candidate", (id, candidate) => {
 
 audioSocket.on("disconnect_peer", id => {
   audioPeerConnections[id].close();
-  delete audioPeerConnections[i];
+  delete audioPeerConnections[id];
 });
 
 audioSocket.on("start_audio_stream", id => {
