@@ -200,7 +200,7 @@ async function stopFaceReg() {
 // ----------------------------------------- Image Taking Function ---------------------------------------
 
 photoButton.addEventListener('click', function (e) {
-	takePicture();
+	takeImage();
 	e.preventDefault();
 }, false);
 
@@ -212,7 +212,7 @@ function takeImage() {
 	canvas.width = width;
 	canvas.height = height;
 	//draw image of the video on the canvas
-	context.drawImage(videoElement, 0, 0, width, height);
+	context.drawImage(localVideo, 0, 0, width, height);
 	//create image from canvas
 	const imgURL = canvas.toDataURL('image/png');
 	//add img to photos
@@ -222,7 +222,7 @@ function takeImage() {
 }
 
 function handleImage(data) {
-	socket.emit("taken_image", data);
+	videoSocket.emit("taken_image", data);
 }
 
 // ----------------------------------------- Video Recording Functions ---------------------------------------
