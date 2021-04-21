@@ -590,11 +590,11 @@ export default class Stream extends Component<{type: number, deviceId: number, n
                 {this.props.type === 1 ?
                     <View>
                         <Record userEmail={this.state.userEmail} profileName={this.state.profileName} deviceIP={this.state.deviceIP} />
-                        <ImageCapture type="Regular Capture" userEmail={this.state.userEmail} profileName={this.state.profileName} deviceIP={this.state.deviceIP} />
+                        <ImageCapture type="Regular Capture" profileId={this.state.profileId} userEmail={this.state.userEmail} profileName={this.state.profileName} deviceIP={this.state.deviceIP} />
                     </View>
                 : this.props.type === 3 &&
                     <View>
-                        <ImageCapture type="Face Capture" userEmail={this.state.userEmail} profileName={this.state.profileName} deviceIP={this.state.deviceIP} />
+                        <ImageCapture type="Face Capture" profileId={this.state.profileId} userEmail={this.state.userEmail} profileName={this.state.profileName} deviceIP={this.state.deviceIP} />
                     </View>
                 }
                 </View>
