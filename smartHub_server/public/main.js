@@ -65,8 +65,10 @@ videoSocket.on("watcher", id => {
 	const peerConnection = new RTCPeerConnection(config);
 	videoPeerConnections[id] = peerConnection;
 
-	let stream = localVideo.srcObject;
-	stream.getTracks().forEach(track => peerConnection.addTrack(track, stream));
+	if(localVideo.srcObject) {
+		let stream = localVideo.srcObject;
+		stream.getTracks().forEach(track => peerConnection.addTrack(track, stream));
+	}
 
 	peerConnection.onicecandidate = event => {
 		if (event.candidate) {
@@ -262,7 +264,7 @@ function startRecording() {
 function handleDataAvailable(event) {
 	console.log('handleDataAvailable', event);
 	if (event.data && event.data.size > 0) {
-		socket.emit("receive_recording", event.data);
+		videoSocket.emit("receive_recording", event.data);
 	}
 }
 
@@ -278,9 +280,12 @@ function stopRecording() {
 audioSocket.on("audio_join", id => {
 
   const peerConnection = new RTCPeerConnection(config);
- 	audioPeerConnections[i] = peerConnection;
+ 	audioPeerConnections[id] = peerConnection;
 
-  localAudioStream.getTracks().forEach(track => peerConnection.addTrack(track, stream));
+	if(localAudio.srcObject) {
+		let stream = localAudio.srcObject;
+		stream.getTracks().forEach(track => peerConnection.addTrack(track, stream));
+	}
 
   peerConnection.ontrack = event => {
     remoteAudio.srcObject = event.streams[0];
@@ -301,15 +306,15 @@ audioSocket.on("audio_join", id => {
 });
 
 audioSocket.on("answer", (id, description) => {
-  audioPeerConnections[i].setRemoteDescription(description);
+  audioPeerConnections[id].setRemoteDescription(description);
 });
 
 audioSocket.on("candidate", (id, candidate) => {
-  audioPeerConnections[i].addIceCandidate(new RTCIceCandidate(candidate));
+  audioPeerConnections[id].addIceCandidate(new RTCIceCandidate(candidate));
 });
 
 audioSocket.on("disconnect_peer", id => {
-  audioPeerConnections[i].close();
+  audioPeerConnections[id].close();
   delete audioPeerConnections[i];
 });
 
@@ -334,11 +339,9 @@ function startLocalAudioStream() {
   navigator.mediaDevices.getUserMedia(constraints)
     .then( function (stream) {
 
-      window.stream = stream;
-
       localAudio.srcObject = stream;
 
-      socket.emit("audio_origin");
+      audioSocket.emit("audio_origin");
 
     }).catch( function (err)  {
       console.log(err);
@@ -355,3 +358,8 @@ function stopAudioStream() {
 		remoteAudio.srcObject = null;
 	}
 }
+
+// -------------------------------------------------------------
+
+videoSocket.emit("broadcaster");
+audioSocket.emit("audio_origin");

@@ -66,12 +66,15 @@ app.use('/aws', awsRoutes);
 async function startBrowser() {
 	if(process.platform === 'linux') {
 		const url: string = "http://localhost:" + PORT + "/main.html";
-		const browser: ChildProcess = spawn('chromium-browser', ['--app=' + url, '--use-fake-ui-for-media-stream'], { env: {DISPLAY: ':0'} });
+		const browser: ChildProcess = spawn('chromium-browser', ['--app=' + url, '--use-fake-ui-for-media-stream',
+				'--cast-initial-screen-width=420', '--cast-initial-screen-height=420'], { env: {DISPLAY: ':0'} });
 		browser.on('close', (code: any) => {
   		console.log(`browser process exited with code ${code}`);
 		});
 	}
 }
+
+startBrowser();
 
 httpServer.listen(PORT, () => {
   console.log('Server running on http://localhost:' + PORT);
