@@ -15,6 +15,7 @@ const { routes: recordingRoutes } = require('./routes/recording_db_routes');
 const { routes: awsRoutes } = require('./routes/aws_routes');
 const youauth = require('youauth');
 
+// Load the facial recognition models (provided by face-api.js).
 async function loadYouAuth() {
 	await youauth.loadModels();
 }
@@ -30,10 +31,10 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
-// Ensure incoming data has json format.
+// Ensure incoming data has json format. 50mb limit for receiving images taken from mobile application.
 app.use(bodyParser.json({limit: '50mb'}));
 
-//Allows any address to interact with our server
+//Allows any address to interact with our server.
 app.use(function (req : any, res : any, next : any) {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -42,15 +43,17 @@ app.use(function (req : any, res : any, next : any) {
 
 // Create a http server object from the express application.
 const httpServer = http.createServer(app);
-
+// Create a socketIO server.
 const io = require("socket.io")(httpServer);
 
+// Port number the server listens on.
 const PORT = 4000;
 
-videoController.setNameSpace(io);
-audioController.setNameSpace(io);
+// Create and set namespaces on the socketIO server.
+videoController.setNameSpace(io, '/video');
+audioController.setNameSpace(io, '/audio');
 
-//Telling express to use the routes found in /video/video_routes.ts (Access these routes by http using /video/startStream, /video/startRecord etc...)
+// Use imported routes.
 app.use('/video', videoRoutes);
 app.use('/audio', audioRoutes);
 app.use('/profiles', profileRoutes);

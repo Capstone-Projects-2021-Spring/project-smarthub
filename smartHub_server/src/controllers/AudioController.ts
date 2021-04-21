@@ -28,8 +28,8 @@ class AudioController {
   }
 
   // Attach an http server to the socket.io server.
-  public setNameSpace(server: SocketIO.Server){
-    this.namespace = server.of('/audio');
+  public setNameSpace(server: SocketIO.Server, namespace: string){
+    this.namespace = server.of(namespace);
     // Setup server side socket events and bind this instance to the function for access in socket namespace.
     this.namespace.on("connection", this.handleEvents.bind(this));
   }

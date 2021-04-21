@@ -2,6 +2,10 @@ export {};
 
 const knex = require('./connection');
 
+/*
+    Use: Adds a recording to the database.
+    Params: signed url, recording type, s3 key, profile id
+*/
 function addRecording(recordingLink: string, recordingType: number, key: string, profileId: number) {
 
   return knex("recordings")
@@ -17,6 +21,10 @@ function addRecording(recordingLink: string, recordingType: number, key: string,
     });
 }
 
+/*
+    Use: Gets recording of a specific type associated with a profile id.
+    Params: recording type, profile id.
+*/
 function getRecordings(recordingType: number, profileId: string) {
 
     return knex("recordings")

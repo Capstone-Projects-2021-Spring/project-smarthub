@@ -28,6 +28,10 @@ function addDevice(deviceAddress: string, deviceName: string, deviceType: string
         });
 }
 
+/*
+    Use: Deletes a device
+    Params: device id
+*/
 function deleteDevice(deviceId: string) {
 
     return knex("devices")
@@ -38,6 +42,10 @@ function deleteDevice(deviceId: string) {
         });
 }
 
+/*
+    Use: Gets a list of device associated with a profile.
+    Params: profile id, device type
+*/
 function getDevices(profileId: number, deviceType: string) {
 
     return knex("devices")
@@ -52,6 +60,10 @@ function getDevices(profileId: number, deviceType: string) {
 
 }
 
+/*
+    Use: Gets information about a device.
+    Params: device id
+*/
 function getDeviceInfo(deviceId: number) {
     return knex({d: "devices"})
         .select("p.profile_id", "u.phone_number", "device_address", "profile_name", "user_email")
@@ -63,6 +75,10 @@ function getDeviceInfo(deviceId: number) {
         });
 }
 
+/*
+    Use: Updates the device configuration for a device.
+    Params: device id, config obj
+*/
 function updateConfig(deviceId: number, config: typeof Object) {
     return knex("devices")
         .where("device_id", deviceId)
@@ -72,6 +88,10 @@ function updateConfig(deviceId: number, config: typeof Object) {
         });
 }
 
+/*
+    Use: Gets the device configuration of a device.
+    Params: device id
+*/
 function getConfig(deviceId: number) {
     return knex("devices")
         .select("device_config")

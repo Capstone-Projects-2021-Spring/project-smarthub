@@ -7,9 +7,9 @@ import { VideoController } from '../controllers/VideoController';
 const Faces = require('../db/faces');
 const Images = require('../db/images');
 const Devices = require('../db/devices');
-// const Recordings = require('../db/recordings');
+const Recordings = require('../db/recordings');
 const youauth = require('youauth');
-const { createFolder, uploadVideo, storeImage, storeRecording, generateSignedURL } = require('../aws/amazon_s3');
+const { createFolder, storeImage, storeRecording, generateSignedURL } = require('../aws/amazon_s3');
 const { sendSMS } = require('../notifications/twilioPushNotification');
 import { v4 as uuidv4 } from 'uuid';
 
@@ -99,7 +99,7 @@ routes.post('/stop_recording', async (req: any, res: any) => {
 
 	console.log("stop_recording route: Starting upload to " + localStoragePath);
 
-	await uploadVideo(accountName, profileName, componentName, localStoragePath);
+	await storeRecording(accountName, profileName, componentName, localStoragePath);
 
 	console.log("stop_recording route: recording stopping...");
 
@@ -115,7 +115,7 @@ routes.post('/stop_recording', async (req: any, res: any) => {
 // ======================================================================================================
 
 /*
-		Use: Takes a picture of the current video stream, then saves it to a file.
+		Use: Takes a picture of the current video stream, then stores the dataURI in the S3.
 		Params: user_email, profile_name, component_name.
 */
 routes.post('/take_image', async (req: any, res: any) => {

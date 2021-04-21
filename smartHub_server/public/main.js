@@ -21,8 +21,6 @@ let mediaRecorder;
 let faceRegInterval;
 
 const canvas = document.getElementById("canvas");
-const photos = document.getElementById("photoOutput");
-const photoButton = document.getElementById("photoButton");
 
 // ----------------------------------------------------- Start of Configuration Options. -----------------------------------------------------
 
@@ -201,11 +199,6 @@ async function stopFaceReg() {
 
 // ----------------------------------------- Image Taking Function ---------------------------------------
 
-photoButton.addEventListener('click', function (e) {
-	takeImage();
-	e.preventDefault();
-}, false);
-
 // take image from canvas
 function takeImage() {
 	//create canvas
@@ -217,9 +210,6 @@ function takeImage() {
 	context.drawImage(localVideo, 0, 0, width, height);
 	//create image from canvas
 	const imgURL = canvas.toDataURL('image/png');
-	//add img to photos
-	photos.src = imgURL;
-	//console.log(photos);
 	handleImage(imgURL);
 }
 
@@ -229,9 +219,12 @@ function handleImage(data) {
 
 // ----------------------------------------- Video Recording Functions ---------------------------------------
 
+// Starts recording with the video device.
 function startRecording() {
 
+	// Recording options for media recorder, which includes mime type.
 	let options = { mimeType: 'video/webm;codecs=vp9,opus' };
+	// Determine the type that is supported for this browser.
 	if (!MediaRecorder.isTypeSupported(options.mimeType)) {
 		console.error(`${options.mimeType} is not supported`);
 		options = { mimeType: 'video/webm;codecs=vp8,opus' };
@@ -245,6 +238,7 @@ function startRecording() {
 		}
 	}
 
+	// Create the new media recorder.
 	try {
 		mediaRecorder = new MediaRecorder(localVideo.srcObject, options);
 	}
@@ -261,6 +255,7 @@ function startRecording() {
 	mediaRecorder.start(1000);
 }
 
+// Handles the recording data generated from mediaRecorder.
 function handleDataAvailable(event) {
 	console.log('handleDataAvailable', event);
 	if (event.data && event.data.size > 0) {
@@ -268,6 +263,7 @@ function handleDataAvailable(event) {
 	}
 }
 
+// Stops the mediaRecorder.
 function stopRecording() {
 	mediaRecorder.stop();
 }

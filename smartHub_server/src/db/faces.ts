@@ -2,6 +2,10 @@ export {};
 
 const knex = require('./connection');
 
+/*
+    Use: Adds face data to the database.
+    Params: name, facial embedding array, profile id
+*/
 function addFace(name: string, faceData: string, profileId: number) {
 
   return knex("faces")
@@ -16,6 +20,10 @@ function addFace(name: string, faceData: string, profileId: number) {
     });
 }
 
+/*
+    Use: Gets face data associated with a profile from the database.
+    Params: profile id.
+*/
 function getFaces(profileId: number) {
     return knex("faces")
         .select("face_data")
