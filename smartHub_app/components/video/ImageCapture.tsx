@@ -6,7 +6,7 @@ import RoundedButton from '../buttons/RoundedButton';
 var width: number = Dimensions.get('window').width;
 
 
-export default class ImageCapture extends Component<{deviceIP: String, userEmail: String, profileName: String}, {checkStream: boolean}>{
+export default class ImageCapture extends Component<{type: String, deviceIP: String, userEmail: String, profileName: String}, {checkStream: boolean}>{
 
     constructor(props: any) {
         super(props);
@@ -60,7 +60,7 @@ export default class ImageCapture extends Component<{deviceIP: String, userEmail
 
     render(){
         return(
-            <View style={{ alignItems: 'center' }}>
+            <View style={{ alignItems: 'center', paddingBottom: 10 }}>
                 <RoundedButton
                     onPress={this.takePhoto}
                     buttonText={"Take Photo"}>

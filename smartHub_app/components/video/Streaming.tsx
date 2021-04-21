@@ -531,12 +531,12 @@ export default class Stream extends Component<{type: number, deviceId: number, n
                 style={{ borderLeftColor: '#FF9900', backgroundColor: "#fff" }}
                 contentContainerStyle={{ paddingHorizontal: 15 }}
                 text1Style={{
-                  fontSize: 18,
+                  fontSize: width/22,
                   fontWeight: 'bold'
                 }}
                 text2Style={{
                     color: "#000",
-                    fontSize: 12
+                    fontSize: width/25
                 }}
                 text1={text1}
                 text2={text2}
@@ -549,12 +549,12 @@ export default class Stream extends Component<{type: number, deviceId: number, n
                   style={{ borderLeftColor: '#FF9900', backgroundColor: "#fff" }}
                   contentContainerStyle={{ paddingHorizontal: 15 }}
                   text1Style={{
-                    fontSize: 18,
+                    fontSize:width/21,
                     fontWeight: 'bold'
                   }}
                   text2Style={{
                       color: "#000",
-                      fontSize: 10
+                      fontSize: width/26
                   }}
                   text1={text1}
                   text2={text2}
@@ -581,16 +581,20 @@ export default class Stream extends Component<{type: number, deviceId: number, n
                         mediaPlaybackRequiresUserAction={false}
                     /> */}
                     <RTCView streamURL={this.state.remoteAudioStream.toURL()} />    
-                    <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', padding: 20, paddingBottom: 30, marginBottom: 0}}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingTop: 30, paddingBottom: 10 }}>
                         <RoundedButton
                             onPress={this.state.streamFunction}
                             buttonText={this.state.streamText}>
                         </RoundedButton>                        
                     </View>
-                    <ImageCapture userEmail={this.state.userEmail} profileName={this.state.profileName} deviceIP={this.state.deviceIP} />
-                {this.props.type === 1 &&
+                {this.props.type === 1 ?
                     <View>
                         <Record userEmail={this.state.userEmail} profileName={this.state.profileName} deviceIP={this.state.deviceIP} />
+                        <ImageCapture type="Regular Capture" userEmail={this.state.userEmail} profileName={this.state.profileName} deviceIP={this.state.deviceIP} />
+                    </View>
+                : this.props.type === 3 &&
+                    <View>
+                        <ImageCapture type="Face Capture" userEmail={this.state.userEmail} profileName={this.state.profileName} deviceIP={this.state.deviceIP} />
                     </View>
                 }
                 </View>
@@ -619,7 +623,6 @@ pillButton: {
     borderWidth: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    margin: 5,
     width: 175,
     height: 50,
     borderRadius: 20,

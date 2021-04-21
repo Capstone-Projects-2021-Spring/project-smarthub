@@ -105,31 +105,12 @@ export default class Record extends Component<{deviceIP: String, userEmail: Stri
 
     render(){
         return(
-            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingTop: 30, paddingBottom: 80 }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingTop: 30, paddingBottom: 35 }}>
             <RoundedButton
                 onPress={this.state.recordFunction}
                 buttonText={this.state.recordText}>
             </RoundedButton>
         </View>
     );
+    }
 }
-}
-
-const styles = StyleSheet.create({
-
-pillButton: {
-    borderWidth: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    margin: 5,
-    width: 175,
-    height: 50,
-    borderRadius: 20,
-    backgroundColor: '#E0A458',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.5,
-    shadowRadius: 5,
-}
-
-})

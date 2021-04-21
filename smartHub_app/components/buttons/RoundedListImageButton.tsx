@@ -46,14 +46,14 @@ const styles = StyleSheet.create ({
     },
     textStyle: {
         textAlign: 'center',
-        fontSize: 22,
+        fontSize: width/18,
         fontWeight: 'bold',
         color: '#FFFFFF',
     },
 
     ImageStyle: {
-        width: 60,
-        height: 60,
+        width: "20%",
+        height: "90%",
         position: 'absolute',
         left:0,
         marginLeft: 20,

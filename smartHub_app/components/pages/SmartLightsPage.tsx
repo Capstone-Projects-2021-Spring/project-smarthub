@@ -142,15 +142,15 @@ export default class SmartLight extends Component<{navigation: any, route: any},
             success: ({ text1, text2, ...rest } : any) => (
               <BaseToast
                 {...rest}
-                style={{ borderLeftColor: '#E0A458', backgroundColor: "#fff" }}
+                style={{ borderLeftColor: '#FF9900', backgroundColor: "#fff" }}
                 contentContainerStyle={{ paddingHorizontal: 15 }}
                 text1Style={{
-                  fontSize: 18,
+                  fontSize: width/22,
                   fontWeight: 'bold'
                 }}
                 text2Style={{
                     color: "#000",
-                    fontSize: 12
+                    fontSize: width/25
                 }}
                 text1={text1}
                 text2={text2}
@@ -160,15 +160,15 @@ export default class SmartLight extends Component<{navigation: any, route: any},
             error: ({ text1, text2, ...rest } : any) => (
                 <BaseToast
                   {...rest}
-                  style={{ borderLeftColor: '#E0A458', backgroundColor: "#fff" }}
+                  style={{ borderLeftColor: '#FF9900', backgroundColor: "#fff" }}
                   contentContainerStyle={{ paddingHorizontal: 15 }}
                   text1Style={{
-                    fontSize: 18,
+                    fontSize:width/21,
                     fontWeight: 'bold'
                   }}
                   text2Style={{
                       color: "#000",
-                      fontSize: 10
+                      fontSize: width/26
                   }}
                   text1={text1}
                   text2={text2}
