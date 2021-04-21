@@ -47,21 +47,24 @@ export default class DeviceModal extends Component<PropVariables, StateVariables
                     fontSize: 20,
                     fontWeight: 'bold',
                     textAlign: 'center',
+                    color: "#fff"
                 }}>Add a new device: </Text>
                 <TextInput
                     style={styles.textInputStyling}
                     onChangeText={(text) => this.setState({DeviceName : text})}
                     placeholder="Device Name"
+                    placeholderTextColor="#fff"
                     value={this.state.DeviceName}
                     />
                 <TextInput
                 style={styles.textInputStyling}
                 onChangeText={(text) => this.setState({DeviceIP : text})}
                 placeholder="Device Domain Name"
+                placeholderTextColor="#fff"
                 value={this.state.DeviceIP}
                 />
                 <Button
-                    style={{ fontSize: 18, color: '#000'}}
+                    style={{ fontSize: 18, color: '#fff'}}
                     containerStyle={styles.buttonStyle}
                     onPress={() => {
                         //handles empty device name
@@ -120,24 +123,27 @@ const styles = StyleSheet.create({
         marginRight: 70,
         height: 40,
         borderRadius: 6,
-        backgroundColor: '#FF9900'
+        backgroundColor: '#E0A458'
     },
 
     textInputStyling: {
         height: 40,
-        borderBottomColor: 'gray',
+        borderBottomColor: '#E0A458',
         marginLeft: 30,
         marginRight: 30,
         marginTop: 20,
         marginBottom: 10,
-        borderBottomWidth: 1
+        borderBottomWidth: 1,
+        color: "#fff"
     },
 
     modalStyling: {
         justifyContent: 'center',
-        borderRadius: Platform.OS === 'ios' ? 30 : 0,
         shadowRadius: 10,
-        width: screen.width - 80,
-        height: 280
+        width: screen.width - 60,
+        height: screen.height/2.2,
+        backgroundColor: '#1C1D2B',
+        borderColor: '#E0A458',
+        borderWidth: 2,
     }
 })

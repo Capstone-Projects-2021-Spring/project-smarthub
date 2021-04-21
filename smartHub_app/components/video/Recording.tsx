@@ -2,7 +2,7 @@ import axios from 'axios';
 import Toast from 'react-native-toast-message'
 import React, { Component } from 'react';
 import {StyleSheet, View, Text, TouchableOpacity, Dimensions} from 'react-native';
-import RoundedButton from '../RoundedButton';
+import RoundedButton from '../buttons/RoundedButton';
 
 export default class Record extends Component<{deviceIP: String, userEmail: String, profileName: String}, {checkStream: boolean, recordText: string, recordFunction: any}>{
 
@@ -28,6 +28,11 @@ export default class Record extends Component<{deviceIP: String, userEmail: Stri
     }
 
     startRecord = async() => {
+        if (this.props.deviceIP !== 'petepicam1234.zapto.org' && this.props.deviceIP !== "leohescamera.ddns.net"
+            && this.props.deviceIP !== 'lukessmarthub.ddns.net'  && this.props.deviceIP !== '192.168.86.244') {
+            alert('Device not compatible for Recording.')
+            return;
+        }
         var url = 'http://' + this.props.deviceIP + ':4000/video/start_recording';
         // if (this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net") {
         //     alert(this.props.route.params.device_name + ' not compatible for recording.')
@@ -63,6 +68,11 @@ export default class Record extends Component<{deviceIP: String, userEmail: Stri
     }
 
     stopRecord = async() => {
+        if (this.props.deviceIP !== 'petepicam1234.zapto.org' && this.props.deviceIP !== "leohescamera.ddns.net"
+            && this.props.deviceIP !== 'lukessmarthub.ddns.net' && this.props.deviceIP !== '192.168.86.244') {
+            alert('Device not compatible for Recording.')
+            return;
+        }
         var url = 'http://' + this.props.deviceIP + ':4000/video/stop_recording';
         // if (this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net") {
         //     alert(this.props.route.params.device_name + ' not compatible for recording.')
@@ -115,7 +125,7 @@ pillButton: {
     width: 175,
     height: 50,
     borderRadius: 20,
-    backgroundColor: '#FF9900',
+    backgroundColor: '#E0A458',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.5,

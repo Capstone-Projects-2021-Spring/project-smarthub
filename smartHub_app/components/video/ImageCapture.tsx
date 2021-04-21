@@ -2,7 +2,7 @@ import axios from 'axios';
 import Toast from 'react-native-toast-message'
 import React, { Component } from 'react';
 import {StyleSheet, View, Text, TouchableOpacity, Dimensions} from 'react-native';
-import RoundedButton from '../RoundedButton';
+import RoundedButton from '../buttons/RoundedButton';
 var width: number = Dimensions.get('window').width;
 
 
@@ -29,10 +29,11 @@ export default class ImageCapture extends Component<{deviceIP: String, userEmail
 
     takePhoto = async() => {
         var url = 'http://' + this.props.deviceIP + ':4000/video/take_image';
-        // if (this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net") {
-        //     alert(this.props.route.params.device_name + ' not compatible for photo taking.')
-        //     return;
-        // }
+        if (this.props.deviceIP !== 'petepicam1234.zapto.org' && this.props.deviceIP !== "leohescamera.ddns.net"
+            && this.props.deviceIP !== 'lukessmarthub.ddns.net' && this.props.deviceIP !== '192.168.86.244') {
+            alert('Device not compatible for photo taking.')
+            return;
+        }
         let collection: any = {}
         collection.user_email = this.props.userEmail;
         collection.profile_name = this.props.profileName;
@@ -79,7 +80,7 @@ photoButton: {
     width: width - 75,
     height: 50,
     borderRadius: 20,
-    backgroundColor: '#FF9900',
+    backgroundColor: '#E0A458',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.5,

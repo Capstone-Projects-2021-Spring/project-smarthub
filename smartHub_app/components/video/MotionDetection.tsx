@@ -1,6 +1,10 @@
 import axios from 'axios';
 
 export function startMotionDetection(params: any){
+    if (params.device_ip !== 'petepicam1234.zapto.org' && params.device_ip !== "leohescamera.ddns.net"
+        && params.device_ip !== 'lukessmarthub.ddns.net' && params.device_ip !== '192.168.86.244') {
+        return;
+    }
     var collection = {
         user_email: params.user_email,
         profile_name: params.profile_name,
@@ -21,6 +25,10 @@ export function startMotionDetection(params: any){
 }
 
 export function stopMotionDetection(deviceIP: String){
+    if (deviceIP !== 'petepicam1234.zapto.org' && deviceIP !== "leohescamera.ddns.net"
+        && deviceIP !== 'lukessmarthub.ddns.net' && deviceIP !== '192.168.86.244') {
+        return;
+    }
     var url = 'http://' + deviceIP + ':4000/video/stop_motion_detection';
     axios.post(url).then((response: any) => {
         console.log("motion detection stopping");

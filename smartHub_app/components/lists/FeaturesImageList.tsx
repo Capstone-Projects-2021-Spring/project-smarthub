@@ -3,6 +3,7 @@ import {StyleSheet, View, Text, TouchableOpacity, Dimensions, FlatList, Alert, I
 import axios from 'axios';
 import {Icon} from 'native-base'
 import FacialRecognitionModal from '../modals/modalForFacialRecognition';
+import RoundedDeviceListButton from '../buttons/RoundedDeviceListButton';
 
 var width : number = Dimensions.get('window').width;
 var height : number = Dimensions.get('window').height;
@@ -17,12 +18,8 @@ interface PropVariables{
 class FeatureListItem extends Component<PropVariables>{
     render(){
         return(
-            <View style={{backgroundColor:"#222222"}}>
-                <TouchableOpacity
-                    style={styles.pillButton}
-                    onPress={() => this.props.navigation.navigate("Image Screen", this.props.item.image_link)}>
-                    <Text style={{color: '#000', fontSize: 20}}>{this.props.item.image_name}</Text>
-                </TouchableOpacity>
+            <View style={{backgroundColor:"#151621"}}>
+                <RoundedDeviceListButton onPress={() => this.props.navigation.navigate("Image Screen", this.props.item.image_link)} buttonText={this.props.item.image_name}></RoundedDeviceListButton>
             </View>
         );
     }
@@ -60,7 +57,7 @@ export class FeaturesList extends Component<{type: number, navigation: any, rout
 
     render(){
        return (
-            <View style={{flex: 1, backgroundColor: "#222222", alignItems: 'center', paddingTop: 20}}>
+            <View style={{flex: 1, backgroundColor: "#151621", alignItems: 'center', paddingTop: 20}}>
                 <View>
                     {this.props.type === 1 ?
                     <View>
@@ -104,7 +101,7 @@ const styles = StyleSheet.create ({
         width:width-20,
         height:50,        
         borderRadius:20,
-        backgroundColor: '#FF9900',
+        backgroundColor: '#E0A458',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 3 },
         shadowOpacity: 0.5,

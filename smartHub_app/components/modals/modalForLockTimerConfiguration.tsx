@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
         marginRight: 70,
         height: 40,
         borderRadius: 6,
-        backgroundColor: '#FF9900'
+        backgroundColor: '#E0A458'
     },
 
     textInputStyling: {

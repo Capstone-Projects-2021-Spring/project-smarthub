@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, Image, Dimensions, ScrollView} from 'react-native';
+import RoundedListImageButton from '../buttons/RoundedListImageButton';
 
 var width : number = Dimensions.get('window').width;
-var height : number = Dimensions.get('window').height;
 
 export default class ProfilePage extends Component<{navigation: any, routeObject: any}>{
     
@@ -11,30 +11,26 @@ export default class ProfilePage extends Component<{navigation: any, routeObject
             <View style={styles.container}>
                 <Text style={{marginTop: 50, fontSize: 25, fontWeight: 'bold', textAlign: 'center', color: '#fff'}}>SmartHub Services:</Text>
                 <View style={{paddingTop: 20, flexDirection: 'column', justifyContent: 'center'}}>
-                <TouchableOpacity
-                    style={styles.button}
-                    onPress={() => this.props.navigation.navigate('Live Recording Devices', this.props.routeObject)}>
-                    <Text style={{color: "#fff", textAlign: 'center', fontSize: 22}}>Recording</Text>
-                    <Image style={styles.RecordImageStyle} source={{uri: 'https://cdn3.iconfinder.com/data/icons/flat-icons-web/40/Record-512.png'}}/>
-                </TouchableOpacity> 
-                <TouchableOpacity
-                    style={styles.button}
-                    onPress={() => this.props.navigation.navigate('Smart Light Devices', this.props.routeObject)}>
-                    <Text style={{color: "#fff", textAlign: 'center', fontSize: 22}}>Smart Lights</Text>
-                    <Image style={styles.LightImageStyle} source={{uri: 'https://cdn3.iconfinder.com/data/icons/smart-home-71/96/lightbulb_light_lighting_wireless_smartphone_control-512.png'}}/>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={styles.button}
-                    onPress={() => this.props.navigation.navigate('Smart Lock Devices', this.props.routeObject)}>
-                    <Text style={{color: "#fff", textAlign: 'center', fontSize: 22}}>Smart Lock</Text>
-                    <Image style={styles.LightImageStyle} source={{uri: 'https://cdn0.iconfinder.com/data/icons/small-n-flat/24/678129-lock-256.png'}}/>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={styles.button}
-                    onPress={() => this.props.navigation.navigate('Live Intercom Devices', this.props.routeObject)}>
-                    <Text style={{color: "#fff", textAlign: 'center', fontSize: 22}}>Intercom</Text>
-                    <Image style={styles.LightImageStyle} source={{uri: 'https://cdn3.iconfinder.com/data/icons/smart-home-71/96/lightbulb_light_lighting_wireless_smartphone_control-512.png'}}/>
-                </TouchableOpacity>  
+                <RoundedListImageButton
+                    onPress={() => this.props.navigation.navigate('Live Recording Devices', this.props.routeObject)}
+                    buttonText="Recording"
+                    imageLink='https://cdn3.iconfinder.com/data/icons/flat-icons-web/40/Record-512.png'>
+                </RoundedListImageButton> 
+                <RoundedListImageButton
+                    onPress={() => this.props.navigation.navigate('Smart Light Devices', this.props.routeObject)}
+                    buttonText="Smart Lights"
+                    imageLink='https://cdn3.iconfinder.com/data/icons/smart-home-71/96/lightbulb_light_lighting_wireless_smartphone_control-512.png'>
+                </RoundedListImageButton>
+                <RoundedListImageButton
+                    onPress={() => this.props.navigation.navigate('Smart Lock Devices', this.props.routeObject)}
+                    buttonText="Smart Lock"
+                    imageLink='https://cdn0.iconfinder.com/data/icons/small-n-flat/24/678129-lock-256.png'>
+                </RoundedListImageButton>
+                <RoundedListImageButton
+                    onPress={() => this.props.navigation.navigate('Live Intercom Devices', this.props.routeObject)}
+                    buttonText="Intercom"
+                    imageLink='https://cdn3.iconfinder.com/data/icons/smart-home-71/96/lightbulb_light_lighting_wireless_smartphone_control-512.png'>
+                </RoundedListImageButton>  
                 </View>   
             </View>
         );
@@ -45,53 +41,6 @@ const styles = StyleSheet.create ({
 
     container: {
         flex: 1,
-        backgroundColor: '#222222'
+        backgroundColor: '#151621',
     },
-
-    button: {
-        backgroundColor: '#000',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: 90,
-        width: width-20,
-        margin: 10,
-        borderWidth: 2,
-        borderColor: "#ffa31a",
-        shadowOffset: { width: 0, height: 5 },
-        shadowOpacity: 1.00,
-        elevation: 10,
-    },
-
-    RecordImageStyle: {
-        width: 80,
-        height: 80,
-        position: 'absolute',
-        left:0,
-        marginLeft: 10,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#000',
-    },
-
-    LiveImageStyle: {
-        width: 60,
-        height: 60,
-        position: 'absolute',
-        left:0,
-        marginLeft: 20,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#000',
-    },
-
-    LightImageStyle: {
-        width: 60,
-        height: 60,
-        position: 'absolute',
-        left:0,
-        marginLeft: 20,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#000',
-    }
 })

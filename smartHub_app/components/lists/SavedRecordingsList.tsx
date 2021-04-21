@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {StyleSheet, View, Text, TouchableOpacity, Dimensions, FlatList, Alert, Image} from 'react-native';
 import axios from 'axios';
 import {getAddressString} from '../../utils/utilities';
+import RoundedDeviceListButton from '../buttons/RoundedDeviceListButton';
 
 var width : number = Dimensions.get('window').width;
 var height : number = Dimensions.get('window').height;
@@ -17,12 +18,8 @@ class SavedRecordingItem extends Component<PropVariables>{
 
     render(){
         return(
-            <View style={{backgroundColor:"#222222"}}>
-                <TouchableOpacity
-                    style={styles.pillButton}
-                    onPress={() => this.props.navigation.navigate("Recorded Video Screen", this.props.item.url)}>
-                    <Text style={{color: '#000', fontSize: 20}}>{this.props.item.key}</Text>
-                </TouchableOpacity>
+            <View style={{backgroundColor:"#151621"}}>
+                <RoundedDeviceListButton onPress={() => this.props.navigation.navigate("Recorded Video Screen", this.props.item.url)} buttonText={this.props.item.key}></RoundedDeviceListButton>
             </View>
         );
     }
@@ -86,7 +83,7 @@ export class SavedRecordingsList extends Component<{navigation: any, routeObject
 
     render(){
        return (
-            <View style={{flex: 1, backgroundColor: "#222222", alignItems: 'center', paddingTop: 20}}>
+            <View style={{flex: 1, backgroundColor: "#151621", alignItems: 'center', paddingTop: 20}}>
                 <FlatList
                     data={this.state.recordingsList}
                     renderItem={({item, index} : any)=>{
@@ -110,7 +107,7 @@ const styles = StyleSheet.create ({
         width:width-20,
         height:50,        
         borderRadius:20,
-        backgroundColor: '#FF9900',
+        backgroundColor: '#E0A458',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 3 },
         shadowOpacity: 0.5,

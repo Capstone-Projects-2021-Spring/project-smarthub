@@ -6,7 +6,7 @@ import Toast, {BaseToast} from 'react-native-toast-message';
 import axios from 'axios';
 import {getAddressString} from '../../utils/utilities';
 import LockModal from '../modals/modalForLockTimerConfiguration';
-import RoundedButton from '../RoundedButton';
+import RoundedButton from '../buttons/RoundedButton';
 
 var width : number = Dimensions.get('window').width;
 var height : number = Dimensions.get('window').height;
@@ -39,7 +39,7 @@ export default class SmartLock extends Component<{navigation: any, route: any},{
 
     lock = () => {
         if(this.state.deviceIP !== "lukessmarthub.ddns.net"){
-            alert(this.props.route.params.device_name + ' not compatible as a smart light device.')
+            alert(this.props.route.params.device_name + ' not compatible as a smart lock device.')
             return;
         }
 
@@ -53,7 +53,7 @@ export default class SmartLock extends Component<{navigation: any, route: any},{
 
     unlock = () => {
         if(this.state.deviceIP !== "lukessmarthub.ddns.net"){
-            alert(this.props.route.params.device_name + ' not compatible as a smart light device.')
+            alert(this.props.route.params.device_name + ' not compatible as a smart lock device.')
             return;
         }
 
@@ -82,13 +82,6 @@ export default class SmartLock extends Component<{navigation: any, route: any},{
     componentDidMount = () => {
         this.props.navigation.setOptions({
             headerTitle: this.props.route.params.device_name,
-            headerLeft: () => 
-            <View>
-                <TouchableOpacity
-                    onPress={()=>{this.props.navigation.navigate('Smart Lock Devices')}}>
-                <Text style={{paddingLeft: 20, paddingBottom: 10, fontSize:15, fontWeight: 'bold'}}>Back</Text>
-                </TouchableOpacity>
-            </View>
         })
         this.getDeviceIP();
     }
@@ -128,27 +121,3 @@ export default class SmartLock extends Component<{navigation: any, route: any},{
         )
     }
 }
-
-const styles = StyleSheet.create ({
-
-    button: {
-        backgroundColor: '#222222',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: 40,
-        borderRadius: 20,
-        width: width-120,
-        margin: 10,
-        borderWidth: 2,
-        borderColor: "#ffa31a",
-        shadowOffset: { width: 0, height: 5 },
-        shadowOpacity: 1.00,
-        shadowRadius: 10,
-        elevation: 10,
-    },
-
-    text: {
-        color: '#fff',
-        fontSize: 20,
-    }
-})

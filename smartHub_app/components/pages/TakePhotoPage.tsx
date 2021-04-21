@@ -12,7 +12,7 @@ export default class TakePhoto extends Component<{ route: any, navigation: any }
 
     render(){
         return(
-            <View style={{flex:1, backgroundColor: "#222222"}}>
+            <View style={{flex:1, backgroundColor: '#151621'}}>
                 <Stream type={3} deviceId={this.props.route.params.device_id} navigation={this.props.navigation}/>
             </View>
         );

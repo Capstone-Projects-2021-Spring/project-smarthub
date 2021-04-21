@@ -17,7 +17,7 @@ import ImageCapture from './ImageCapture';
 import {startFaceRec, stopFaceRec} from './FacialRecognition'
 import { startMotionDetection, stopMotionDetection } from './MotionDetection';
 import { getAddressString } from '../../utils/utilities';
-import RoundedButton from '../RoundedButton';
+import RoundedButton from '../buttons/RoundedButton';
 
 const io = require("socket.io-client");
 var width: number = Dimensions.get('window').width;
@@ -132,6 +132,11 @@ export default class Stream extends Component<{type: number, deviceId: number, n
     }
 
     beginStream = async () => {
+        if (this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"
+            && this.state.deviceIP !== 'lukessmarthub.ddns.net' && this.state.deviceIP !== '192.168.86.244') {
+            alert('Device not compatible for Streaming.')
+            return;
+        }
         await this.checkStream();
         if(!this.state.checkStream){
             var url = 'http://' + this.state.deviceIP + ':4000/video/start_stream';
@@ -175,6 +180,11 @@ export default class Stream extends Component<{type: number, deviceId: number, n
     }
 
     stopStream = async() => {
+        if (this.state.deviceIP !== 'petepicam1234.zapto.org' && this.state.deviceIP !== "leohescamera.ddns.net"
+            && this.state.deviceIP !== 'lukessmarthub.ddns.net' && this.state.deviceIP !== '192.168.86.244') {
+            alert('Device not compatible for Streaming.')
+            return;
+        }
         await this.checkStream();
         if(this.state.checkStream){
             var url = 'http://' + this.state.deviceIP + ':4000/video/stop_stream';
@@ -403,6 +413,7 @@ export default class Stream extends Component<{type: number, deviceId: number, n
     }
 
     stopAudio = async() => {
+        
         var url = 'http://' + this.state.deviceIP + ':4000/audio/stop_intercom';
         
         await axios.post(url).then((response) => {
@@ -498,7 +509,6 @@ export default class Stream extends Component<{type: number, deviceId: number, n
     //------------------------------------End of Config modal----------------------------------------------
 
     componentDidMount = async() => {
-        await this.getDeviceInfo();
         if(this.props.type === 1){
             this.props.navigation.setOptions({
             headerRight: () => (
@@ -510,6 +520,7 @@ export default class Stream extends Component<{type: number, deviceId: number, n
             )
             })
         }
+        await this.getDeviceInfo();
     }
 
     render(){

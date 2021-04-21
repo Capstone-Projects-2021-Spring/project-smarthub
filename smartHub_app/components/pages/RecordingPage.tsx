@@ -13,7 +13,7 @@ export default class Recording extends Component<{ route: any, navigation: any }
 
     render() {
         return (
-            <View style={{ flex: 1, backgroundColor: "#151621" }}>
+            <View style={{ flex: 1, backgroundColor:'#151621'}}>
                 <Stream type={1} deviceId={this.props.route.params.device_id} navigation={this.props.navigation}/>
             </View>
         );

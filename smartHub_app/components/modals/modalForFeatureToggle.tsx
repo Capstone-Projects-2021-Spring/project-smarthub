@@ -126,7 +126,7 @@ export default class FeatureModal extends Component<{deviceIP: String, feature: 
                             style={{paddingTop: 3}}
                         />
                     </View>
-                    <View style={{flexDirection: "row", paddingLeft:40, paddingBottom: 10}}>
+                    {/* <View style={{flexDirection: "row", paddingLeft:40, paddingBottom: 10}}>
                         <Text style={{fontSize: 16, fontWeight: "bold", paddingTop: 5, color: "#fff", paddingLeft: 0, paddingRight: 0}}>Would you like a recording taken? </Text>    
                         <CheckBox
                             onClick={() => {
@@ -144,7 +144,7 @@ export default class FeatureModal extends Component<{deviceIP: String, feature: 
                             uncheckCheckBoxColor = "#222222"
                             style={{paddingTop: 3}}
                         />
-                    </View>
+                    </View> */}
                     {/* <View style={{ flexDirection: "row", paddingLeft:60, paddingBottom: 10}}>
                         <Text style={{fontSize: 14, fontWeight: "bold", paddingTop: 5, color: "#fff" , paddingRight: 0}}> - w/audio? </Text>    
                         <CheckBox
@@ -166,7 +166,7 @@ export default class FeatureModal extends Component<{deviceIP: String, feature: 
                             style={{paddingTop: 3}}
                         />
                     </View> */}
-                    <View style={{ flexDirection: "row", paddingLeft:60, paddingBottom: 35}}>
+                    {/* <View style={{ flexDirection: "row", paddingLeft:60, paddingBottom: 35}}>
                         <Text style={{fontSize: 14, fontWeight: "bold", paddingTop: 5, color: "#fff" , paddingRight: 0}}> - Set recording length: </Text>    
                     </View>
                     <View style={{flex: 1,maxHeight: 30,  justifyContent: 'center', alignItems: 'center'}}> 
@@ -180,11 +180,11 @@ export default class FeatureModal extends Component<{deviceIP: String, feature: 
                                 this.setState({number: num});
                             }}
                         />
-                    </View>
+                    </View> */}
                 </View>
                 <View style={{ marginBottom: 10}}>
                     <Button
-                        style={{paddingTop: 8, fontSize: 18, color: '#000'}}
+                        style={{paddingTop: 8, fontSize: 18, color: '#fff'}}
                         containerStyle={styles.buttonStyle}
                         onPress={()=>{
                             this.setState({wasSaved: true}); 
@@ -200,22 +200,24 @@ export default class FeatureModal extends Component<{deviceIP: String, feature: 
 const styles = StyleSheet.create({
     
     modalStyling: {
-        position: 'absolute',
         justifyContent: 'center',
         top: 0,
-        borderRadius: 30,
-        backgroundColor: "#222222",
+        backgroundColor: "#1C1D2B",
         shadowRadius: 10,
+        borderColor: '#E0A458',
+        borderWidth: 2,
         width: screen.width - 50,
-        height: screen.height/2 + 10 
+        height: screen.height/2.6
     },
     buttonStyle: {
         marginLeft: 70,
         marginRight: 70,
-        marginTop: 25,
+        marginBottom: 15,
+        marginTop: 40,
         height: 40,
+        width: screen.width/2,
         borderRadius: 6,
-        backgroundColor: '#FF9900'
+        backgroundColor: '#E0A458'
     },
     spinner: {
 		flex: 1,	

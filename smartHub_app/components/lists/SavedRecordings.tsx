@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     container: {
       flex: 1,
       justifyContent: 'center',
-      backgroundColor: '#ecf0f1',
+      backgroundColor: '#151621',
     },
     video: {
       alignSelf: 'center',

@@ -44,17 +44,18 @@ export default class FacialRecognitionModal extends Component<PropVariables, Sta
                     fontSize: 20,
                     fontWeight: 'bold',
                     textAlign: 'center',
-                    paddingBottom: 15
+                    paddingBottom: 15,
+                    color: "#fff"
                 }}>Add a face to be recognized: </Text>
                 <TouchableOpacity 
                     style={styles.buttonStyle}
                     onPress={() => ImagePickerPage(this, this.props.routeObject, this.props.parentFlatList)}>
-                    <Text style={{ paddingTop: 2, textAlign: 'center', fontWeight: 'bold', fontSize: 15, color: '#000'}}>Upload from Camera Roll</Text>
+                    <Text style={{ paddingTop: 2, textAlign: 'center', fontWeight: 'bold', fontSize: 15, color: '#fff'}}>Upload from Camera Roll</Text>
                 </TouchableOpacity>
                 <TouchableOpacity 
                     style={styles.buttonStyle}
                     onPress={() => this.props.navigation.navigate('Image Capture Devices', this.props.routeObject)}>
-                <Text style={{ paddingTop: 2, textAlign: 'center', fontWeight: 'bold', fontSize: 15, color: '#000'}}>Take Photo</Text>
+                <Text style={{ paddingTop: 2, textAlign: 'center', fontWeight: 'bold', fontSize: 15, color: '#fff'}}>Take Photo</Text>
                 </TouchableOpacity>
             </Modal>
         );
@@ -71,7 +72,8 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         height: 40,
         borderRadius: 6,
-        backgroundColor: '#FF9900'
+        width: screen.width/2,
+        backgroundColor: '#E0A458'
     },
 
     textInputStyling: {
@@ -86,9 +88,12 @@ const styles = StyleSheet.create({
 
     modalStyling: {
         justifyContent: 'center',
-        borderRadius: 30,
+        alignItems: 'center',
         shadowRadius: 10,
         width: screen.width - 80,
-        height: 280
+        height: screen.height/3,
+        backgroundColor: '#1C1D2B',
+        borderColor: '#E0A458',
+        borderWidth: 2,
     }
 })
