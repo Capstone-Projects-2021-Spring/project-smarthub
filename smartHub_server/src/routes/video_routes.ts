@@ -3,26 +3,17 @@ import { spawn } from 'child_process';
 import * as socketio from 'socket.io';
 import { exec } from 'child_process';
 import path from 'path';
-import puppeteer from 'puppeteer-core';
 import { VideoController } from '../controllers/VideoController';
 const Faces = require('../db/faces');
 const Images = require('../db/images');
 const Devices = require('../db/devices');
-// const Recordings = require('../db/recordings');
+const Recordings = require('../db/recordings');
 const youauth = require('youauth');
-const { createFolder, uploadVideo, uploadImage, storeImage, storeRecording, generateSignedURL } = require('../aws/amazon_s3');
+const { createFolder, storeImage, storeRecording, generateSignedURL } = require('../aws/amazon_s3');
 const { sendSMS } = require('../notifications/twilioPushNotification');
 import { v4 as uuidv4 } from 'uuid';
 
-let isStreaming = false;
-
-let live_browser: any;
-let browserIsLive: boolean = false;
-const PORT = 4000;
-
 const localStoragePath = path.resolve(__dirname, "../output/output.webm");
-const imageLocalStoragePath = path.resolve(__dirname, "../output/output.png");
-
 const controller = new VideoController();
 const recognizer = new youauth.FaceRecognizer();
 
@@ -32,50 +23,54 @@ const routes = express.Router({
 	mergeParams: true
 });
 
-/*
-		Use: Stops the video stream on the pi.
-		Params: none
-*/
-routes.post("/stop_stream", async (req: any, res: any) => {
-	isStreaming = false;
-	console.log("stop_stream route: Stream closing...");
+// ======================================================================================================
+//											STREAM
+// ======================================================================================================
 
-	try {
-		await live_browser.close();
-	}
-	catch (error) {
-		console.log("stop_stream route error: " + error);
-	}
-	finally {
-		await live_browser.close();
-	}
-
-	console.log("stop_stream route: Stream stopped.");
-	return res.status(200).send("Stream Closing.");
-});
 
 /*
 		Use: Starts the video stream on the pi.
 		Params: none
 */
 routes.post("/start_stream", (req: any, res: any) => {
-	isStreaming = true;
-	console.log("start_stream route: Stream starting...");
-	runLive();
-	console.log("start_stream route: Stream started.");
+
+	console.log("start_stream route: video stream starting...");
+	controller.startStream();
 	return res.status(200).send("Stream Starting.");
 });
 
+/*
+		Use: Stops the video stream on the pi.
+		Params: none
+*/
+routes.post("/stop_stream", async (req: any, res: any) => {
+
+	console.log("stop_stream route: video stream closing...")
+	controller.stopStream();
+	return res.status(200).send("Stream Closing.");
+});
+
+
+/*
+		Use: Checks the video stream status.
+		Params: none
+*/
 routes.post("/stream_check", (req: any, res: any) => {
 
-	if (isStreaming === true) {
-		return res.status(200).send({ message: "The stream is already live", streaming: isStreaming });
-	}
-	else {
-		return res.status(200).send({ message: "The stream is not live", streaming: isStreaming });
-	}
+	controller.getStreamStatus( (status: boolean) => {
+		if(status) {
+			return res.status(200).send({ message: "The stream is already live", streaming: status });
+		}
+		else {
+			return res.status(200).send({ message: "The stream is not live", streaming: status });
+		}
+	});
 
 });
+
+// ======================================================================================================
+//											RECORDING
+// ======================================================================================================
 
 /*
 		Use: Starts recording on the video stream.
@@ -100,13 +95,11 @@ routes.post('/stop_recording', async (req: any, res: any) => {
 
 	controller.stopRecording();
 
-	console.log("stop_recording route: Creating folder...");
-
 	await createFolder(accountName, profileName, componentName);
 
 	console.log("stop_recording route: Starting upload to " + localStoragePath);
 
-	await uploadVideo(accountName, profileName, componentName, localStoragePath);
+	await storeRecording(accountName, profileName, componentName, localStoragePath);
 
 	console.log("stop_recording route: recording stopping...");
 
@@ -117,8 +110,12 @@ routes.post('/stop_recording', async (req: any, res: any) => {
 	return res.status(200).send("Recording Stopping.");
 });
 
+// ======================================================================================================
+//											TAKE PICTURE
+// ======================================================================================================
+
 /*
-		Use: Takes a picture of the current video stream, then saves it to a file.
+		Use: Takes a picture of the current video stream, then stores the dataURI in the S3.
 		Params: user_email, profile_name, component_name.
 */
 routes.post('/take_image', async (req: any, res: any) => {
@@ -127,22 +124,20 @@ routes.post('/take_image', async (req: any, res: any) => {
 	const profileName = req.body.profile_name;
 	const componentName = req.body.component_name;
 
-	controller.takePicture();
+	controller.getPicture( async (data: any) => {
 
-	await createFolder(accountName, profileName, componentName);
+		await createFolder(accountName, profileName, componentName);
+		console.log("take_image route: Uploading Image.");
+		await storeImage(accountName, profileName, componentName, data);
 
-	console.log("take_image route: Starting upload to " + imageLocalStoragePath);
+		return res.status(200).send("Image saved.");
+	});
 
-	await uploadImage(accountName, profileName, componentName, imageLocalStoragePath);
-
-	console.log("take_image route: image taken...");
-
-	deleteLocalFile(imageLocalStoragePath);
-
-	console.log("take_image route: cleaned local storage.");
-
-	return res.status(200).send("Images saved.");
 });
+
+// ======================================================================================================
+//											FACIAL RECOGNITION
+// ======================================================================================================
 
 /*
 		Use: Takes a picture of the current video stream and try to use it as a face image.
@@ -155,9 +150,9 @@ routes.post("/takeFaceImage", async (req: any, res: any) => {
 	const profileName: string = req.body.profile_name;
 	const componentName: string = req.body.component_name;
 
-	controller.getPicture(printData);
+	controller.getPicture(processImage);
 
-	async function printData(dataURI: any) {
+	async function processImage(dataURI: any) {
 
 		const tensor = await recognizer.loadImage(dataURI);
 
@@ -217,6 +212,7 @@ routes.post('/start_face_reg', async (req: any, res: any) => {
 	const phoneNumber: string = req.body.phone_number;
 
 	controller.startFaceReg();
+	console.log("Start facial recognition route.");
 
 	Faces.getFaces(profileId).then((faces: any) => {
 
@@ -285,39 +281,10 @@ routes.post('/stop_face_reg_profile', async (req: any, res: any) => {
 
 	const profileId: number = req.body.profile_id;
 
-	controller.removeCallback(profileId + "");
+	controller.removeFaceCallback(profileId + "");
 
 	return res.status(200).send("Face Recognition Stopped for Profile.");
 });
-
-/*
-		Use: Starts the headless chromium browser to utilize WebRTC.
-		Params: none
-*/
-async function runLive() {
-	// For now some safety to avoid multiple browser processes open.
-	if (!browserIsLive) {
-		// The boolean might be slow to update, but front-end can also control access to the route.
-		browserIsLive = true;
-		// Launch the chromium browser in headless mode.
-		live_browser = await puppeteer.launch({
-			executablePath: 'chromium-browser',
-			headless: true,
-			args: ['--use-fake-ui-for-media-stream', '--mute-audio']
-		});
-		// Create a new page in the browser.
-		const page = await live_browser.newPage();
-
-		await page.goto("http://localhost:" + PORT + "/broadcast.html");
-
-		console.log("Chromium is live.");
-
-		live_browser._process.once('close', () => {
-			console.log("Browser has closed.");
-			browserIsLive = false;
-		});
-	}
-}
 
 async function processDetections (params: any) {
 
@@ -343,27 +310,6 @@ async function processDetections (params: any) {
 		});
 	}
 
-// 	if(deviceConfig.device_config.recording) {
-// 		controller.startRecording();
-
-// 		setTimeout( async () => {
-
-// 			controller.stopRecording();
-// 			const obj = await storeRecording(params.accountName, params.profileName, params.componentName, localStoragePath);
-// 			deleteLocalFile(localStoragePath);
-
-// 			const recordingLink = await generateSignedURL(obj.key);
-
-// 			const response = await Recordings.addRecording(recordingLink, 1, obj.key, params.profileId);
-
-// 			sendSMS({
-// 				messageBody: "smartHub new recording available: Face(s) Detected! - " + message,
-// 				phoneNumber: params.phoneNumber
-// 			});
-
-// 		}, (30 * 1000) + (deviceConfig.device_config.recordingTime * 1000));
-	//}
-
 }
 
 // Function that starts continous fetching of face images from controller.
@@ -386,17 +332,6 @@ function parseFacesData(faces: any) {
 	return objList;
 }
 
-
-// Function for deleting a local media file.
-function deleteLocalFile(path: string) {
-	if (process.platform === 'win32') {
-		exec('del ' + path);
-	}
-	else {
-		exec('rm ' + path);
-	}
-}
-
 // =======================================================================================================
 // 												MOTION DETECTION
 // =======================================================================================================
@@ -414,13 +349,13 @@ routes.post('/start_motion_detection', async (req: any, res: any) => {
 
 	const deviceConfig: any = await Devices.getConfig(deviceId);
 
-	console.log("start motion detection route.");
+	console.log("Start motion detection route.");
 	controller.getMotionData(async function (data: any) {
-		//DO STUFF FOR MOTION DETECTION!!!!!!
-		console.log("Hey, motion was detected :) ");
-		console.log(accountName);
-		console.log(componentName);
-		console.log(profileName);
+
+		// console.log("Hey, motion was detected :) ");
+		// console.log(accountName);
+		// console.log(componentName);
+		// console.log(profileName);
 
 		const defaultName: string = "motion_detect_" + uuidv4();
 
@@ -438,29 +373,6 @@ routes.post('/start_motion_detection', async (req: any, res: any) => {
 			});
 		}
 
-		// if (deviceConfig.device_config.recording) {
-		// controller.startRecording();
-
-		// setTimeout(async () => {
-
-		// 	controller.stopRecording();
-		// 	const obj = await storeRecording(accountName, profileName, componentName, localStoragePath);
-		// 	deleteLocalFile(localStoragePath);
-
-		// 	const recordingLink = await generateSignedURL(obj.key);
-
-		// 	const response = await Recordings.addRecording(recordingLink, 1, obj.key, profileId);
-
-		// 	sendSMS({
-		// 		messageBody: "smartHub new recording available: Motion Detected!",
-		// 		phoneNumber: phoneNumber
-		// 	});
-
-		// }, (deviceConfig.device_config.recordingTime + 2) * 1000);
-
-
-
-		//process.exit(0);
 	}, profileId + "");
 
 	return res.status(200).send("Motion Detection Started.");
@@ -473,6 +385,21 @@ routes.post('/stop_motion_detection', async (req: any, res: any) => {
 
 	return res.status(200).send("Motion Detection Stopped.");
 });
+
+// ======================================================================================================
+//											HELPER FUNCTIONS
+// ======================================================================================================
+
+
+// Function for deleting a local media file.
+function deleteLocalFile(path: string) {
+	if (process.platform === 'win32') {
+		exec('del ' + path);
+	}
+	else {
+		exec('rm ' + path);
+	}
+}
 
 module.exports = {
 	routes,
