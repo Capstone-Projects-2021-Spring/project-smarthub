@@ -2,13 +2,16 @@ import axios from 'axios';
 import Toast from 'react-native-toast-message'
 import React, { Component } from 'react';
 import {StyleSheet, View, Text, TouchableOpacity, Dimensions} from 'react-native';
+import RoundedButton from '../RoundedButton';
 
-export default class Record extends Component<{deviceIP: String, userEmail: String, profileName: String}, {checkStream: boolean}>{
+export default class Record extends Component<{deviceIP: String, userEmail: String, profileName: String}, {checkStream: boolean, recordText: string, recordFunction: any}>{
 
     constructor(props: any) {
         super(props);
         this.state = ({
-            checkStream: false
+            checkStream: false,
+            recordText: "Start Record",
+            recordFunction: this.startRecord,
         })
     }
 
@@ -42,6 +45,8 @@ export default class Record extends Component<{deviceIP: String, userEmail: Stri
                     text2: 'The Recording is live.',
                     visibilityTime: 2000
                 });
+
+                this.setState({recordFunction: this.stopRecord, recordText:"Stop Record"});
             }, (error) => {
                 alert("Error Starting Recording");
                 console.log(error);
@@ -78,6 +83,7 @@ export default class Record extends Component<{deviceIP: String, userEmail: Stri
                     text2: 'The Recording is no longer live.',
                     visibilityTime: 2000
                 });
+                this.setState({recordFunction: this.startRecord, recordText:"Start Record"});
             }, (error) => {
                 alert("Error Stopping Recording");
                 console.log(error);
@@ -90,16 +96,10 @@ export default class Record extends Component<{deviceIP: String, userEmail: Stri
     render(){
         return(
             <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingTop: 30, paddingBottom: 80 }}>
-            <TouchableOpacity
-                style={styles.pillButton}
-                onPress={this.startRecord}>
-                <Text style={{ fontSize: 20 }}>Begin Recording</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-                style={styles.pillButton}
-                onPress={this.stopRecord}>
-                <Text style={{ fontSize: 20 }}>Stop Recording</Text>
-            </TouchableOpacity>
+            <RoundedButton
+                onPress={this.state.recordFunction}
+                buttonText={this.state.recordText}>
+            </RoundedButton>
         </View>
     );
 }

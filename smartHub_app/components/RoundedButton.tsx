@@ -7,17 +7,49 @@ const {width, height} = Dimensions.get("screen");
 
 interface Ibutton {
     onPress: any;
+    // function2: any;
     buttonText: string;
+    // buttonText2: string;
 }
-
+//,{usingText: string, usingFunction: any}
 export default class RoundedButton extends Component<Ibutton>{
     constructor(props: any) {
         super(props);
     }
+
+    // state = {
+    //     usingText: this.props.buttonText1,
+    //     usingFunction: this.props.onPress
+    // }
+
+    // changeButtonText()
+    // {
+    //     // if()
+    //     if(this.state.usingText == this.props.buttonText1)
+    //     {         
+    //         this.props.onPress();   
+    //         var text = this.props.buttonText2;
+    //         this.setState({
+    //             usingText: text,            
+    //         });
+    //     }
+    //     else if(this.state.usingText == this.props.buttonText2)
+    //     {
+    //         this.props.function2();   
+    //         var text = this.props.buttonText1;
+    //         this.setState({
+    //             usingText: text,            
+    //         });
+    //     }
+        
+    //     // this.props.buttonText2: this.changeButtonText;
+    // }
     
     render(){
         return(
-            <TouchableOpacity style={styles.container} onPress={this.props.onPress}>
+            <TouchableOpacity style={styles.container} onPress={this.props.onPress
+                // this.changeButtonText();}
+            }>
                 <Text style={styles.textStyle}>{this.props.buttonText}</Text>
             </TouchableOpacity>
         )
@@ -33,7 +65,7 @@ export default class RoundedButton extends Component<Ibutton>{
 //     return (
         
 //             <TouchableOpacity style={styles.container}>
-//                  <Text style={styles.textStyle}>{props.buttonText}</Text>
+//                  <Text style={styles.textStyle}>{props.buttonText1}</Text>
 //             </TouchableOpacity>
            
         

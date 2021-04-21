@@ -2,6 +2,7 @@ import axios from 'axios';
 import Toast from 'react-native-toast-message'
 import React, { Component } from 'react';
 import {StyleSheet, View, Text, TouchableOpacity, Dimensions} from 'react-native';
+import RoundedButton from '../RoundedButton';
 var width: number = Dimensions.get('window').width;
 
 
@@ -59,11 +60,10 @@ export default class ImageCapture extends Component<{deviceIP: String, userEmail
     render(){
         return(
             <View style={{ alignItems: 'center' }}>
-                <TouchableOpacity
-                    style={styles.photoButton}
-                    onPress={this.takePhoto}>
-                    <Text style={{ fontSize: 20 }}>Take Photo</Text>
-                </TouchableOpacity>
+                <RoundedButton
+                    onPress={this.takePhoto}
+                    buttonText={"Take Photo"}>
+                </RoundedButton>
             </View>      
         );
     }

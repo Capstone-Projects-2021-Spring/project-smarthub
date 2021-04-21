@@ -17,12 +17,13 @@ import ImageCapture from './ImageCapture';
 import {startFaceRec, stopFaceRec} from './FacialRecognition'
 import { startMotionDetection, stopMotionDetection } from './MotionDetection';
 import { getAddressString } from '../../utils/utilities';
+import RoundedButton from '../RoundedButton';
 
 const io = require("socket.io-client");
 var width: number = Dimensions.get('window').width;
 
 
-export default class Stream extends Component<{type: number, deviceId: number, navigation: any},{profileId: number, phoneNumber: String, deviceIP: String, userEmail: String, profileName: String, featureType: String, checkStream: boolean, remoteVideoStream: any, videoSocket: any, peerVideoConnection: any, remoteAudioStream: any, audioSocket: any, peerAudioConnection: any}>{
+export default class Stream extends Component<{type: number, deviceId: number, navigation: any},{profileId: number, phoneNumber: String, deviceIP: String, userEmail: String, profileName: String, featureType: String, checkStream: boolean, remoteVideoStream: any, videoSocket: any, peerVideoConnection: any, remoteAudioStream: any, audioSocket: any, peerAudioConnection: any, streamText: string, streamFunction: any}>{
 
     constructor(props: any) {
         super(props);
@@ -63,7 +64,10 @@ export default class Stream extends Component<{type: number, deviceId: number, n
                         urls: 'stun:stun2.l.google.com:19302',
                     },
                 ]
-            }),  
+            }), 
+            
+            streamFunction: this.beginStream,
+            streamText: "Start Stream",
         })
     }
 
@@ -73,6 +77,14 @@ export default class Stream extends Component<{type: number, deviceId: number, n
         await axios.post(url).then((response) => {
             console.log(response.data)
             this.setState({checkStream: response.data.streaming})
+            if(this.state.checkStream == true)
+            {
+                this.setState({streamFunction: this.stopStream, streamText:"Stop Stream"});
+            }
+            else
+            {
+                this.setState({streamFunction: this.beginStream, streamText:"Start Stream"});
+            }
         }, (error) => {
             console.log(error);
             console.log("we are here error")
@@ -145,6 +157,7 @@ export default class Stream extends Component<{type: number, deviceId: number, n
                 }
                 ,
                 5000);
+                this.setState({streamFunction: this.stopStream, streamText:"Stop Stream"});
                 this.beginAudio();
             }, (error) => {
                 console.log(error);
@@ -188,6 +201,8 @@ export default class Stream extends Component<{type: number, deviceId: number, n
                     console.log("stopping facial")
                     stopFaceRec(this.state.deviceIP);
                 }
+
+                this.setState({streamFunction: this.beginStream, streamText:"Start Stream"});
                 
             }, (error) => {
                 console.log(error);
@@ -556,16 +571,10 @@ export default class Stream extends Component<{type: number, deviceId: number, n
                     /> */}
                     <RTCView streamURL={this.state.remoteAudioStream.toURL()} />    
                     <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', padding: 20, paddingBottom: 30, marginBottom: 0}}>
-                        <TouchableOpacity
-                            style={styles.pillButton}
-                            onPress={this.beginStream}>
-                            <Text style={{ fontSize: 20 }}>Begin Stream</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={styles.pillButton}
-                            onPress={this.stopStream}>
-                            <Text style={{ fontSize: 20 }}>Stop Stream</Text>
-                        </TouchableOpacity>
+                        <RoundedButton
+                            onPress={this.state.streamFunction}
+                            buttonText={this.state.streamText}>
+                        </RoundedButton>                        
                     </View>
                     <ImageCapture userEmail={this.state.userEmail} profileName={this.state.profileName} deviceIP={this.state.deviceIP} />
                 {this.props.type === 1 &&

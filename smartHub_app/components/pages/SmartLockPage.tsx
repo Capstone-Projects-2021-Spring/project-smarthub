@@ -11,14 +11,16 @@ import RoundedButton from '../RoundedButton';
 var width : number = Dimensions.get('window').width;
 var height : number = Dimensions.get('window').height;
 
-export default class SmartLock extends Component<{navigation: any, route: any},{deviceIP: string, device_id: number, selectedSeconds: number}>{
+export default class SmartLock extends Component<{navigation: any, route: any},{deviceIP: string, device_id: number, selectedSeconds: number, lockFunction: any, lockText: string}>{
 
     constructor(props: any){
         super(props);
         this.state = ({
             deviceIP: "",
             device_id: this.props.route.params.device_id,
-            selectedSeconds: 0
+            selectedSeconds: 0,
+            lockFunction: this.unlock,
+            lockText: "Unlock",
         });
         this.launchModal = this.launchModal.bind(this);
 
@@ -43,6 +45,7 @@ export default class SmartLock extends Component<{navigation: any, route: any},{
 
         axios.post('http://' + this.state.deviceIP + ':4000/lock/lock').then((response) => {
             console.log(response.data);
+            this.setState({lockFunction: this.unlock, lockText:"Unlock"});
         }, (error) => {
             console.log(error);
         })
@@ -59,6 +62,7 @@ export default class SmartLock extends Component<{navigation: any, route: any},{
         console.log(collection);
         axios.post('http://' + this.state.deviceIP + ':4000/lock/unlock', collection).then((response) => {
             console.log(response.data);
+            this.setState({lockFunction: this.lock, lockText:"Lock"});
         }, (error) => {
             console.log(error);
         })
@@ -90,6 +94,7 @@ export default class SmartLock extends Component<{navigation: any, route: any},{
     }
 
     render(){
+        console.log(this.state.lockText);
         return(
             <View style={{flex:1, backgroundColor: '#151621', paddingTop: 20, alignItems: 'center'}}>
                 
@@ -100,21 +105,16 @@ export default class SmartLock extends Component<{navigation: any, route: any},{
                 </TouchableOpacity> */}
                 <RoundedButton
                     
-                    onPress={this.lock}
-                    buttonText="Lock"
+                    onPress={this.state.lockFunction}
+                    buttonText={this.state.lockText}
                 >
                     {/* <Text style={styles.text}>Unlock</Text> */}
                 </RoundedButton>
                 <RoundedButton
                     
-                    onPress={this.unlock}
-                    buttonText="Unlock">
-                    {/* <Text style={styles.text}>Unlock</Text> */}
-                </RoundedButton>
-                <RoundedButton
-                    
                     onPress={this.launchModal}
-                    buttonText="Set Time">
+                    buttonText="Set Time"
+                >
                     {/* <Text style={styles.text}>Set Time</Text> */}
                 </RoundedButton>
                
