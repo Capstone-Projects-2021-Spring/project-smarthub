@@ -6,6 +6,7 @@ import Toast, {BaseToast} from 'react-native-toast-message';
 import axios from 'axios';
 import {getAddressString} from '../../utils/utilities';
 import LockModal from '../modals/modalForLockTimerConfiguration';
+import RoundedButton from '../RoundedButton';
 
 var width : number = Dimensions.get('window').width;
 var height : number = Dimensions.get('window').height;
@@ -90,25 +91,40 @@ export default class SmartLock extends Component<{navigation: any, route: any},{
 
     render(){
         return(
-            <View style={{flex:1, backgroundColor: '#222222', paddingTop: 20, alignItems: 'center'}}>
+            <View style={{flex:1, backgroundColor: '#151621', paddingTop: 20, alignItems: 'center'}}>
                 
-                <TouchableOpacity
+                {/* <TouchableOpacity
                     style={styles.button}
                     onPress={this.lock}>
                     <Text style={styles.text}>Lock</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={styles.button}
-                    onPress={this.unlock}>
-                    <Text style={styles.text}>Unlock</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={styles.button}
-                    onPress={this.launchModal}>
-                    <Text style={styles.text}>Set Time</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
+                <RoundedButton
+                    
+                    onPress={this.lock}
+                    buttonText="Lock"
+                >
+                    {/* <Text style={styles.text}>Unlock</Text> */}
+                </RoundedButton>
+                <RoundedButton
+                    
+                    onPress={this.unlock}
+                    buttonText="Unlock">
+                    {/* <Text style={styles.text}>Unlock</Text> */}
+                </RoundedButton>
+                <RoundedButton
+                    
+                    onPress={this.launchModal}
+                    buttonText="Set Time">
+                    {/* <Text style={styles.text}>Set Time</Text> */}
+                </RoundedButton>
+               
+                {/* <CustomButton buttonText="Record">
+
+                </CustomButton> */}
+                
                 <LockModal ref={'LockModal'} lockTime={this} device_id={this.state.device_id}/>
           </View>
+          
         )
     }
 }

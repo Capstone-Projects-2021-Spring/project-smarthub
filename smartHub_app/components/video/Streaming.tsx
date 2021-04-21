@@ -555,7 +555,7 @@ export default class Stream extends Component<{type: number, deviceId: number, n
                         mediaPlaybackRequiresUserAction={false}
                     /> */}
                     <RTCView streamURL={this.state.remoteAudioStream.toURL()} />    
-                    <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', padding: 50, paddingBottom: 30, marginBottom: 0}}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', padding: 20, paddingBottom: 30, marginBottom: 0}}>
                         <TouchableOpacity
                             style={styles.pillButton}
                             onPress={this.beginStream}>
