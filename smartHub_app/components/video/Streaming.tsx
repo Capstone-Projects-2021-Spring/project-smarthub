@@ -23,7 +23,7 @@ const io = require("socket.io-client");
 var width: number = Dimensions.get('window').width;
 
 
-export default class Stream extends Component<{type: number, deviceId: number, navigation: any},{profileId: number, phoneNumber: String, deviceIP: String, userEmail: String, profileName: String, featureType: String, checkStream: boolean, remoteVideoStream: any, videoSocket: any, peerVideoConnection: any, remoteAudioStream: any, audioSocket: any, peerAudioConnection: any, streamText: string, streamFunction: any}>{
+export default class Stream extends Component<{type: number, deviceId: number, navigation: any},{profileId: number, phoneNumber: String, deviceIP: String, userEmail: String, profileName: String, featureType: String, checkStream: boolean, remoteVideoStream: any, videoSocket: any, peerVideoConnection: any, remoteAudioStream: any, audioSocket: any, peerAudioConnection: any, streamText: string, streamFunction: any, intercomText: string, intercomFunction: any}>{
 
     constructor(props: any) {
         super(props);
@@ -68,6 +68,9 @@ export default class Stream extends Component<{type: number, deviceId: number, n
             
             streamFunction: this.beginStream,
             streamText: "Start Stream",
+
+            intercomText: "Talk",
+            intercomFunction: this.beginAudio,
         })
     }
 
@@ -374,6 +377,7 @@ export default class Stream extends Component<{type: number, deviceId: number, n
 
         await axios.post(url).then((response) => {
             console.log(response.data)
+            this.setState({intercomFunction: this.stopAudio, intercomText:"Stop Talking"});
         }, (error) => {
             console.log(error);
         })
@@ -418,6 +422,7 @@ export default class Stream extends Component<{type: number, deviceId: number, n
         
         await axios.post(url).then((response) => {
             console.log(response.data);
+            this.setState({intercomFunction: this.beginAudio, intercomText:"Talk"});
         }, (error) => {
             console.log(error);
         })
@@ -600,16 +605,10 @@ export default class Stream extends Component<{type: number, deviceId: number, n
                 </View>
                 :
                 <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', padding: 50, paddingBottom: 30}}>
-                    <TouchableOpacity
-                        style={styles.pillButton}
-                        onPress= {this.beginAudio}>
-                        <Text style={{fontSize: 20}}>Begin Intercom</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.pillButton}
-                        onPress={this.stopAudio}>
-                        <Text style={{fontSize: 20}}>Stop Intercom</Text>
-                    </TouchableOpacity>
+                    <RoundedButton
+                            onPress={this.state.intercomFunction}
+                            buttonText={this.state.intercomText}>
+                    </RoundedButton> 
                 </View>
             }
             </View>           

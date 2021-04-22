@@ -7,11 +7,12 @@ import axios from 'axios';
 import {getAddressString} from '../../utils/utilities';
 import LockModal from '../modals/modalForLockTimerConfiguration';
 import RoundedButton from '../buttons/RoundedButton';
+import InputSpinner from 'react-native-input-spinner';
 
 var width : number = Dimensions.get('window').width;
 var height : number = Dimensions.get('window').height;
 
-export default class SmartLock extends Component<{navigation: any, route: any},{deviceIP: string, device_id: number, selectedSeconds: number, lockFunction: any, lockText: string}>{
+export default class SmartLock extends Component<{navigation: any, route: any},{deviceIP: string, device_id: number, selectedSeconds: number}>{
 
     constructor(props: any){
         super(props);
@@ -19,21 +20,21 @@ export default class SmartLock extends Component<{navigation: any, route: any},{
             deviceIP: "",
             device_id: this.props.route.params.device_id,
             selectedSeconds: 0,
-            lockFunction: this.unlock,
-            lockText: "Unlock",
+            // lockFunction: this.unlock,
+            // lockText: "Unlock",
         });
-        this.launchModal = this.launchModal.bind(this);
+        // this.launchModal = this.launchModal.bind(this);
 
         
     }
 
-    launchModal = () => {
-        this.refs.LockModal.showModal();
-    }
+    // launchModal = () => {
+    //     this.refs.LockModal.showModal();
+    // }
 
-    getLockTime = (seconds: any) => {
-        this.setState({selectedSeconds: seconds});
-     }
+    // getLockTime = (seconds: any) => {
+    //     this.setState({selectedSeconds: seconds});
+    //  }
   
 
 
@@ -45,7 +46,7 @@ export default class SmartLock extends Component<{navigation: any, route: any},{
 
         axios.post('http://' + this.state.deviceIP + ':4000/lock/lock').then((response) => {
             console.log(response.data);
-            this.setState({lockFunction: this.unlock, lockText:"Unlock"});
+            // this.setState({lockFunction: this.unlock, lockText:"Unlock"});
         }, (error) => {
             console.log(error);
         })
@@ -62,7 +63,7 @@ export default class SmartLock extends Component<{navigation: any, route: any},{
         console.log(collection);
         axios.post('http://' + this.state.deviceIP + ':4000/lock/unlock', collection).then((response) => {
             console.log(response.data);
-            this.setState({lockFunction: this.lock, lockText:"Lock"});
+            // this.setState({lockFunction: this.lock, lockText:"Lock"});
         }, (error) => {
             console.log(error);
         })
@@ -87,7 +88,7 @@ export default class SmartLock extends Component<{navigation: any, route: any},{
     }
 
     render(){
-        console.log(this.state.lockText);
+        // console.log(this.state.lockText);
         return(
             <View style={{flex:1, backgroundColor: '#151621', paddingTop: 20, alignItems: 'center'}}>
                 
@@ -98,18 +99,42 @@ export default class SmartLock extends Component<{navigation: any, route: any},{
                 </TouchableOpacity> */}
                 <RoundedButton
                     
-                    onPress={this.state.lockFunction}
-                    buttonText={this.state.lockText}
+                    onPress={this.unlock}
+                    buttonText={"Unlock"}
                 >
                     {/* <Text style={styles.text}>Unlock</Text> */}
                 </RoundedButton>
+
                 <RoundedButton
+                    
+                    onPress={this.lock}
+                    buttonText={"Lock"}
+                >
+                    {/* <Text style={styles.text}>Unlock</Text> */}
+                </RoundedButton>
+                {/* <RoundedButton
                     
                     onPress={this.launchModal}
                     buttonText="Set Time"
-                >
-                    {/* <Text style={styles.text}>Set Time</Text> */}
-                </RoundedButton>
+                /> */}
+                    
+
+                    <View style={{ flexDirection: "row", paddingBottom: 25}}>
+                        <Text style={{fontSize: 14, fontWeight: "bold", paddingTop: 5, color: "#fff" , paddingRight: 0}}>Set Time</Text>    
+                    </View>
+                    <View style={{flex: 1,maxHeight: 30,  justifyContent: 'center', alignItems: 'center'}}> 
+                    {/* max={15} min={5} */}
+                        <InputSpinner 
+                            value={this.state.selectedSeconds}
+                            style={styles.spinner}
+                            editable={false}
+                            skin="modern"
+                            height={30}           
+                            onChange={(num: number) => {
+                                this.setState({selectedSeconds: num});
+                            }}
+                        />
+                    </View>
                
                 {/* <CustomButton buttonText="Record">
 
@@ -121,3 +146,11 @@ export default class SmartLock extends Component<{navigation: any, route: any},{
         )
     }
 }
+
+const styles = StyleSheet.create({    
+    spinner: {
+		flex: 1,	
+        minWidth: 1,	
+        marginBottom: 10
+	},
+})
