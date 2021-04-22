@@ -54,27 +54,29 @@ export default class DeviceModal extends Component<PropVariables, StateVariables
                     paddingTop:25,
                     color: "#fff"
                 }}>Add a new device: </Text>
-                <View style={{marginTop: 40}}>
-                    <TextInput
+                <View style={{position: 'absolute', top:-32, right:0, left:0, bottom: 40}}>
+                    <View style={{marginTop: 100}}>
+                        <TextInput
+                            style={styles.textInputStyling}
+                            onChangeText={(text) => this.setState({DeviceName : text})}
+                            placeholder="Device Name"
+                            placeholderTextColor="#fff"
+                            value={this.state.DeviceName}
+                            />
+                    </View>
+                    <View  style={{marginTop: 20}}>
+                        <TextInput
                         style={styles.textInputStyling}
-                        onChangeText={(text) => this.setState({DeviceName : text})}
-                        placeholder="Device Name"
+                        onChangeText={(text) => this.setState({DeviceIP : text})}
+                        placeholder="Device Domain Name"
                         placeholderTextColor="#fff"
-                        value={this.state.DeviceName}
+                        value={this.state.DeviceIP}
                         />
                     </View>
-                <View>
-                    <TextInput
-                    style={styles.textInputStyling}
-                    onChangeText={(text) => this.setState({DeviceIP : text})}
-                    placeholder="Device Domain Name"
-                    placeholderTextColor="#fff"
-                    value={this.state.DeviceIP}
-                    />
                 </View>
-                <View style={{alignItems: 'center', justifyContent: 'center'}}>
+                <View style={{alignItems: 'center', justifyContent: 'center', position: 'absolute', bottom:0, left:0, right:0, top: 300, marginBottom: 50}}>
                     <Button
-                        style={{ textAlign: 'center', fontSize: screen.width/20, color: '#fff'}}
+                        style={{ textAlign: 'center', justifyContent: 'center', fontSize: screen.width/20, color: '#fff'}}
                         containerStyle={styles.buttonStyle}
                         onPress={() => {
                             //handles empty device name
@@ -143,7 +145,7 @@ const styles = StyleSheet.create({
         marginLeft: 30,
         marginRight: 30,
         marginTop: 30,
-        marginBottom: 30,
+        marginBottom: 15,
         borderBottomWidth: 1,
         fontSize: screen.width/27,
         color: "#fff"

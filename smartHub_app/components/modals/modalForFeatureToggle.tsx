@@ -87,44 +87,50 @@ export default class FeatureModal extends Component<{deviceIP: String, feature: 
                     textAlign: 'center',
                 }}>Choose a feature below: </Text>
                 <View style={{flexDirection: "row", paddingLeft: 20, paddingTop: 20, paddingBottom: 20}}>
-                    <Text style={{fontSize: screen.width/21, fontWeight: "bold", paddingTop: 5, color: "#fff", paddingLeft: 20, paddingRight: 30}}>Facial Recognition: </Text>    
-                    <Switch
-                        value={this.state.isToggledFacial}
-                        onValueChange={(value) => {
-                            if(this.state.isToggledMotion) this.setState({isToggledMotion:false})
-                            this.setState({isToggledFacial: value, isCheckedNotification: false, isCheckedRecording: false, isCheckedAudio: false, number: 5})}
-                        }>
-                    </Switch>
+                    <Text style={{fontSize: screen.width/21, fontWeight: "bold",  paddingLeft: 20, color: "#fff", paddingRight: 40}}>Facial Recognition: </Text>    
+                    <View style={{position: 'absolute', right: screen.width/20, top: screen.height/50}}>
+                        <Switch
+                            value={this.state.isToggledFacial}
+                            onValueChange={(value) => {
+                                if(this.state.isToggledMotion) this.setState({isToggledMotion:false})
+                                this.setState({isToggledFacial: value, isCheckedNotification: false, isCheckedRecording: false, isCheckedAudio: false, number: 5})}
+                            }>
+                        </Switch>
+                    </View>
                 </View>
                 <View style={{flexDirection: "row", paddingLeft: 10, paddingBottom: 20}}>
-                    <Text style={{fontSize: screen.width/21, fontWeight: "bold",  paddingLeft: 30, color: "#fff", paddingRight: 40}}>Motion Detection: </Text>    
-                    <Switch
-                        value={this.state.isToggledMotion}
-                        onValueChange={(value) => {
-                            if(this.state.isToggledFacial){this.setState({isToggledFacial: false})}
-                            this.setState({isToggledMotion: value, isCheckedNotification: false, isCheckedRecording: false, isCheckedAudio: false, number: 5})}
-                        }>
-                    </Switch>
+                    <Text style={{fontSize: screen.width/21, fontWeight: "bold", paddingLeft: 30, color: "#fff", paddingRight: 40}}>Motion Detection: </Text>    
+                    <View style={{position: 'absolute', right: screen.width/20}}>
+                        <Switch
+                            value={this.state.isToggledMotion}
+                            onValueChange={(value) => {
+                                if(this.state.isToggledFacial){this.setState({isToggledFacial: false})}
+                                this.setState({isToggledMotion: value, isCheckedNotification: false, isCheckedRecording: false, isCheckedAudio: false, number: 5})}
+                            }>
+                        </Switch>
+                    </View>
                 </View>
                 <View style={{flex:1, flexDirection: "column", paddingTop: 0, marginTop: 0}}>
                     <View style={{flexDirection: "row", paddingLeft:25,  paddingTop: 0}}>
                         <Text style={{fontSize: screen.width/23, fontWeight: "bold", paddingTop: 5, color: "#fff", paddingLeft: 15, paddingRight: 0}}>Enable Push Notifications? </Text>    
-                        <CheckBox
-                            onClick={() => {
-                                if(!this.state.isToggledFacial && !this.state.isToggledMotion){
-                                    alert("Please select an feature first.")
-                                }else if(this.state.isCheckedNotification){
-                                    this.setState({isCheckedNotification: false})
-                                }else{
-                                    this.setState({isCheckedNotification: true});
-                                }
-                            }}
-                            isChecked={this.state.isCheckedNotification}
-                            checkBoxColor = "green"
-                            checkedCheckBoxColor = "green"
-                            uncheckCheckBoxColor = "#222222"
-                            style={{paddingTop: 3}}
-                        />
+                        <View style={{position: 'absolute', right: screen.width/11}}>
+                            <CheckBox
+                                onClick={() => {
+                                    if(!this.state.isToggledFacial && !this.state.isToggledMotion){
+                                        alert("Please select an feature first.")
+                                    }else if(this.state.isCheckedNotification){
+                                        this.setState({isCheckedNotification: false})
+                                    }else{
+                                        this.setState({isCheckedNotification: true});
+                                    }
+                                }}
+                                isChecked={this.state.isCheckedNotification}
+                                checkBoxColor = "green"
+                                checkedCheckBoxColor = "green"
+                                uncheckCheckBoxColor = "#222222"
+                                style={{paddingTop: 3}}
+                            />
+                        </View>
                     </View>
                     {/* <View style={{flexDirection: "row", paddingLeft:40, paddingBottom: 10}}>
                         <Text style={{fontSize: 16, fontWeight: "bold", paddingTop: 5, color: "#fff", paddingLeft: 0, paddingRight: 0}}>Would you like a recording taken? </Text>    
@@ -182,7 +188,7 @@ export default class FeatureModal extends Component<{deviceIP: String, feature: 
                         />
                     </View> */}
                 </View>
-                <View style={{ marginBottom:30, justifyContent: 'center', alignItems:'center'}}>
+                <View style={{alignItems: 'center', justifyContent: 'center', marginBottom: 30}}>
                     <Button
                         style={{justifyContent: 'center', fontSize: screen.width/20, color: '#fff'}}
                         containerStyle={styles.buttonStyle}

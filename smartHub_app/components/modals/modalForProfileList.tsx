@@ -55,7 +55,7 @@ export default class ProfileModal extends Component<PropVariables, StateVariable
                     placeholder="Profile Name"
                     placeholderTextColor="#fff"
                     value={this.state.newProfileName}
-                    />
+                />
                 <Button
                     style={{ fontSize: screen.width/20, justifyContent: 'center', color: '#fff'}}
                     containerStyle={styles.buttonStyle}
@@ -114,6 +114,7 @@ const styles = StyleSheet.create({
         marginBottom: 55,
         padding: 10,
         shadowRadius: 20,
+        borderRadius: 6,
         shadowColor: "#000",
         backgroundColor: '#E0A458'
     },

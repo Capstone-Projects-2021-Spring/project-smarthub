@@ -49,19 +49,19 @@ export default class FacialRecognitionModal extends Component<PropVariables, Sta
                     right:0,
                     color: "#fff"
                 }}>Add a face to be recognized: </Text>
-                <View style={{marginTop: 85}}>
-                <TouchableOpacity 
-                    style={styles.buttonStyle}
-                    onPress={() => ImagePickerPage(this, this.props.routeObject, this.props.parentFlatList)}>
-                    <Text style={{textAlign: 'center', fontWeight: 'bold', fontSize: screen.width/26, color: '#fff'}}>Upload from Camera Roll</Text>
-                </TouchableOpacity>
+                <View style={{marginTop: 70, position: 'absolute', top:20, right:0, left:0}}>
+                    <TouchableOpacity 
+                        style={styles.buttonStyle}
+                        onPress={() => ImagePickerPage(this, this.props.routeObject, this.props.parentFlatList)}>
+                        <Text style={{textAlign: 'center', fontWeight: 'bold', fontSize: screen.width/26, color: '#fff'}}>Upload from Camera Roll</Text>
+                    </TouchableOpacity>
                 </View>
-                <View>
-                <TouchableOpacity 
-                    style={styles.buttonStyle}
-                    onPress={() => this.props.navigation.navigate('Image Capture Devices', this.props.routeObject)}>
-                <Text style={{textAlign: 'center', fontWeight: 'bold', fontSize: screen.width/26, color: '#fff'}}>Take Photo</Text>
-                </TouchableOpacity>
+                <View style={{marginTop: 85, position: 'absolute', top:70, right:0, left:0}}>
+                    <TouchableOpacity 
+                        style={styles.buttonStyle}
+                        onPress={() => this.props.navigation.navigate('Image Capture Devices', this.props.routeObject)}>
+                        <Text style={{textAlign: 'center', fontWeight: 'bold', fontSize: screen.width/26, color: '#fff'}}>Take Photo</Text>
+                    </TouchableOpacity>
                 </View>
 
             </Modal>
