@@ -1,8 +1,6 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text, Dimensions, Platform, TouchableOpacity} from 'react-native';
+import {StyleSheet, Text, Dimensions, Platform, View, TouchableOpacity} from 'react-native';
 import Modal from 'react-native-modalbox';
-import Toast from 'react-native-toast-message';
-import getToastConfig from '../configurations/toastConfig';
 import ImagePickerPage from '../pages/ImagePickerPage';
 
 var screen = Dimensions.get('window');
@@ -41,21 +39,31 @@ export default class FacialRecognitionModal extends Component<PropVariables, Sta
                 backdrop={true}   
             >
                 <Text style={{
-                    fontSize: 20,
+                    fontSize: screen.width/20,
                     fontWeight: 'bold',
                     textAlign: 'center',
-                    paddingBottom: 15
+                    paddingTop:25,
+                    position: 'absolute',
+                    top: 0,
+                    left:0,
+                    right:0,
+                    color: "#fff"
                 }}>Add a face to be recognized: </Text>
+                <View style={{marginTop: 85}}>
                 <TouchableOpacity 
                     style={styles.buttonStyle}
                     onPress={() => ImagePickerPage(this, this.props.routeObject, this.props.parentFlatList)}>
-                    <Text style={{ paddingTop: 2, textAlign: 'center', fontWeight: 'bold', fontSize: 15, color: '#000'}}>Upload from Camera Roll</Text>
+                    <Text style={{textAlign: 'center', fontWeight: 'bold', fontSize: screen.width/26, color: '#fff'}}>Upload from Camera Roll</Text>
                 </TouchableOpacity>
+                </View>
+                <View>
                 <TouchableOpacity 
                     style={styles.buttonStyle}
                     onPress={() => this.props.navigation.navigate('Image Capture Devices', this.props.routeObject)}>
-                <Text style={{ paddingTop: 2, textAlign: 'center', fontWeight: 'bold', fontSize: 15, color: '#000'}}>Take Photo</Text>
+                <Text style={{textAlign: 'center', fontWeight: 'bold', fontSize: screen.width/26, color: '#fff'}}>Take Photo</Text>
                 </TouchableOpacity>
+                </View>
+
             </Modal>
         );
     }
@@ -65,30 +73,23 @@ const styles = StyleSheet.create({
     
     buttonStyle: {
         padding: 8,
-        marginTop: 10,
         marginLeft: 70,
         marginRight: 70,
-        marginBottom: 10,
+        marginBottom: 30,
         height: 40,
         borderRadius: 6,
-        backgroundColor: '#FF9900'
-    },
-
-    textInputStyling: {
-        height: 40,
-        borderBottomColor: 'gray',
-        marginLeft: 30,
-        marginRight: 30,
-        marginTop: 20,
-        marginBottom: 10,
-        borderBottomWidth: 1
+        width: screen.width/2,
+        backgroundColor: '#E0A458'
     },
 
     modalStyling: {
         justifyContent: 'center',
-        borderRadius: 30,
+        alignItems: 'center',
         shadowRadius: 10,
-        width: screen.width - 80,
-        height: 280
+        width: screen.width - 90,
+        height: screen.height/4,
+        backgroundColor: '#1C1D2B',
+        borderColor: '#E0A458',
+        borderWidth: 2,
     }
 })

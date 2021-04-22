@@ -6,7 +6,7 @@ export default function getToastConfig(){
         success: ({ text1, text2, ...rest } : any) => (
         <BaseToast
             {...rest}
-            style={{ borderLeftColor: '#FF9900', backgroundColor: "#fff", marginTop: 35}}
+            style={{ borderLeftColor: '#E0A458', backgroundColor: "#fff", marginTop: 25}}
             contentContainerStyle={{ paddingHorizontal: 15 }}
             text1Style={{
             fontSize: 18,
@@ -24,7 +24,7 @@ export default function getToastConfig(){
         error: ({ text1, text2, ...rest } : any) => (
             <BaseToast
             {...rest}
-            style={{ borderLeftColor: '#FF9900', backgroundColor: "#fff", marginTop: 35}}
+            style={{ borderLeftColor: '#E0A458', backgroundColor: "#fff", marginTop: 25}}
             contentContainerStyle={{ paddingHorizontal: 15 }}
             text1Style={{
                 fontSize: 18,

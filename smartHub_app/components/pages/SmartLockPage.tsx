@@ -5,7 +5,8 @@ import hexRgb from 'hex-rgb';
 import Toast, {BaseToast} from 'react-native-toast-message';
 import axios from 'axios';
 import {getAddressString} from '../../utils/utilities';
-import LockModal from '../modals/modalForLockTimerConfiguration';
+import RoundedButton from '../buttons/RoundedButton';
+import InputSpinner from 'react-native-input-spinner';
 
 var width : number = Dimensions.get('window').width;
 var height : number = Dimensions.get('window').height;
@@ -17,31 +18,25 @@ export default class SmartLock extends Component<{navigation: any, route: any},{
         this.state = ({
             deviceIP: "",
             device_id: this.props.route.params.device_id,
-            selectedSeconds: 0
-        });
-        this.launchModal = this.launchModal.bind(this);
-
-        
+            selectedSeconds: 0,
+            // lockFunction: this.unlock,
+            // lockText: "Unlock",
+        });        
     }
 
-    launchModal = () => {
-        this.refs.LockModal.showModal();
-    }
-
-    getLockTime = (seconds: any) => {
-        this.setState({selectedSeconds: seconds});
-     }
+    
   
 
 
     lock = () => {
         if(this.state.deviceIP !== "lukessmarthub.ddns.net"){
-            alert(this.props.route.params.device_name + ' not compatible as a smart light device.')
+            alert(this.props.route.params.device_name + ' not compatible as a smart lock device.')
             return;
         }
 
         axios.post('http://' + this.state.deviceIP + ':4000/lock/lock').then((response) => {
             console.log(response.data);
+            // this.setState({lockFunction: this.unlock, lockText:"Unlock"});
         }, (error) => {
             console.log(error);
         })
@@ -49,7 +44,7 @@ export default class SmartLock extends Component<{navigation: any, route: any},{
 
     unlock = () => {
         if(this.state.deviceIP !== "lukessmarthub.ddns.net"){
-            alert(this.props.route.params.device_name + ' not compatible as a smart light device.')
+            alert(this.props.route.params.device_name + ' not compatible as a smart lock device.')
             return;
         }
 
@@ -58,6 +53,7 @@ export default class SmartLock extends Component<{navigation: any, route: any},{
         console.log(collection);
         axios.post('http://' + this.state.deviceIP + ':4000/lock/unlock', collection).then((response) => {
             console.log(response.data);
+            // this.setState({lockFunction: this.lock, lockText:"Lock"});
         }, (error) => {
             console.log(error);
         })
@@ -77,62 +73,55 @@ export default class SmartLock extends Component<{navigation: any, route: any},{
     componentDidMount = () => {
         this.props.navigation.setOptions({
             headerTitle: this.props.route.params.device_name,
-            headerLeft: () => 
-            <View>
-                <TouchableOpacity
-                    onPress={()=>{this.props.navigation.navigate('Smart Lock Devices')}}>
-                <Text style={{paddingLeft: 20, paddingBottom: 10, fontSize:15, fontWeight: 'bold'}}>Back</Text>
-                </TouchableOpacity>
-            </View>
         })
         this.getDeviceIP();
     }
 
     render(){
         return(
-            <View style={{flex:1, backgroundColor: '#222222', paddingTop: 20, alignItems: 'center'}}>
+            <View style={{flex:1, backgroundColor: '#151621', paddingTop: 20, alignItems: 'center'}}>
                 
-                <TouchableOpacity
-                    style={styles.button}
-                    onPress={this.lock}>
-                    <Text style={styles.text}>Lock</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={styles.button}
-                    onPress={this.unlock}>
-                    <Text style={styles.text}>Unlock</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={styles.button}
-                    onPress={this.launchModal}>
-                    <Text style={styles.text}>Set Time</Text>
-                </TouchableOpacity>
-                <LockModal ref={'LockModal'} lockTime={this} device_id={this.state.device_id}/>
+                <RoundedButton
+                    
+                    onPress={this.unlock}
+                    buttonText={"Unlock"}
+                >
+                </RoundedButton>
+
+                <RoundedButton
+                    
+                    onPress={this.lock}
+                    buttonText={"Lock"}
+                >
+                </RoundedButton>
+                    
+
+                    <View style={{ flexDirection: "row", paddingBottom: 25}}>
+                        <Text style={{fontSize: 14, fontWeight: "bold", paddingTop: 5, color: "#fff" , paddingRight: 0}}>Set Time</Text>    
+                    </View>
+                    <View style={{flex: 1,maxHeight: 30,  justifyContent: 'center', alignItems: 'center'}}> 
+                    {/* max={15} min={5} */}
+                        <InputSpinner 
+                            value={this.state.selectedSeconds}
+                            style={styles.spinner}
+                            editable={false}
+                            skin="modern"
+                            height={30}           
+                            onChange={(num: number) => {
+                                this.setState({selectedSeconds: num});
+                            }}
+                        />
+                    </View>
           </View>
+          
         )
     }
 }
 
-const styles = StyleSheet.create ({
-
-    button: {
-        backgroundColor: '#222222',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: 40,
-        borderRadius: 20,
-        width: width-120,
-        margin: 10,
-        borderWidth: 2,
-        borderColor: "#ffa31a",
-        shadowOffset: { width: 0, height: 5 },
-        shadowOpacity: 1.00,
-        shadowRadius: 10,
-        elevation: 10,
-    },
-
-    text: {
-        color: '#fff',
-        fontSize: 20,
-    }
+const styles = StyleSheet.create({    
+    spinner: {
+		flex: 1,	
+        minWidth: 1,	
+        marginBottom: 10
+	},
 })

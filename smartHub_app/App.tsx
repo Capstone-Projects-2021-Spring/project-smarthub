@@ -1,7 +1,7 @@
 import React, {Component, PureComponent} from 'react';
 import { DrawerActions, getFocusedRouteNameFromRoute, NavigationContainer } from '@react-navigation/native';
 import {createStackNavigator, StackHeaderLeftButtonProps} from '@react-navigation/stack';
-import { StyleSheet, TouchableOpacity} from 'react-native';
+import { StyleSheet, TouchableOpacity, View, Text} from 'react-native';
 import ProfilePage from './components/pages/ProfilePage';
 import {LiveRecordingDevices, LiveIntercomDevices, ImageCaptureDevices, SavedRecordings, SavedImages} from './components/VideoComponent';
 import HomePage from './components/pages/HomePage';
@@ -16,7 +16,7 @@ import SmartLight from './components/pages/SmartLightsPage';
 import { showImage } from './components/pages/SavedImagePage';
 import { SmartLockDevices } from './components/LockComponent';
 import SmartLock from './components/pages/SmartLockPage';
-import { FeaturesList } from './components/lists/FeaturesList';
+import { FeaturesList } from './components/lists/FeaturesImageList';
 import TakePhoto from './components/pages/TakePhotoPage';
 import Intercom from './components/pages/IntercomPage';
 import Toast from 'react-native-toast-message';
@@ -36,10 +36,11 @@ function CustomDrawerContent(props : any) {
   return (
     <DrawerContentScrollView {...props}>
       <DrawerItemList {...props} />
-      <DrawerItem label="Sign Out"  
+      <DrawerItem label="Sign Out"
+        labelStyle={{color:"#fff"}}  
         onPress={() => props.navigation.navigate('Sign In')}
         icon={({color, size}) => (
-        <Icon name="exit" style={{fontSize: size, color: color}} />)}
+        <Icon name="exit" style={{fontSize: size, color: "#fff"}} />)}
       />
     </DrawerContentScrollView>
   );
@@ -125,14 +126,22 @@ class SelectedProfileNavigation extends Component<{route: any, navigation: any}>
       )
     }
    
-    return(
-      <Drawer.Navigator drawerContent={props => <CustomDrawerContent {...props} />}>
+    return( 
+      <Drawer.Navigator   drawerContentOptions={{
+        activeBackgroundColor: '#E0A458'}} drawerContent={props => <CustomDrawerContent {...props} />}   drawerStyle={{backgroundColor: "#1C1D2B"}}>
         <Drawer.Screen
           options={{
-            drawerIcon:({color, size}) => (
-              <Icon name="home" style={{fontSize: size, color: color}} />
+            drawerIcon:({size}) => (
+              <Icon name="home" style={{fontSize: size, color: "#fff"}} />
             ),
+            drawerLabel:() => (
+              <View>
+                <Text style={{color:"#fff"}}>Profile Page</Text>
+              </View>
+            ),
+            headerTitleAlign: 'center',
           }}
+          
           name = "Profile Page" 
           component={profilePage}
         />
@@ -140,8 +149,15 @@ class SelectedProfileNavigation extends Component<{route: any, navigation: any}>
         <Drawer.Screen 
           options={{
             drawerIcon:({color, size}) => (
-              <Icon name="film" style={{fontSize: size, color: color}} />
-            ), }}
+              <Icon name="film" style={{fontSize: size, color: "#fff"}} />
+            ), 
+            drawerLabel:() => (
+              <View>
+                <Text style={{color:"#fff"}}>Saved Recordings</Text>
+              </View>
+            ),
+            headerTitleAlign: 'center',
+          }}
           name="Saved Recordings" 
           component={savedRecordings}
         />
@@ -149,8 +165,15 @@ class SelectedProfileNavigation extends Component<{route: any, navigation: any}>
         <Drawer.Screen 
           options={{
           drawerIcon:({color, size}) => (
-            <Icon name="camera" style={{fontSize: size, color: color}} />
-          ), }}
+            <Icon name="camera" style={{fontSize: size, color: "#fff"}} />
+          ), 
+          drawerLabel:() => (
+            <View>
+              <Text style={{color:"#fff"}}>Saved Images</Text>
+            </View>
+          ),
+          headerTitleAlign: 'center',
+          }}
           name="Saved Images" 
           component= {savedImages} 
         />
@@ -158,8 +181,14 @@ class SelectedProfileNavigation extends Component<{route: any, navigation: any}>
         <Drawer.Screen 
           options={{
           drawerIcon:({color, size}) => (
-            <Icon name="person" style={{fontSize: size, color: color}} />
-          ), 
+            <Icon name="person" style={{fontSize: size, color: "#fff"}} />
+          ),
+          drawerLabel:() => (
+            <View>
+              <Text style={{color:"#fff"}}>My Recognized Faces</Text>
+            </View>
+          ),
+          headerTitleAlign: 'center',
           }}
           name="My Recognized Faces" 
           component= {savedFacialRecognitions} 
@@ -168,17 +197,23 @@ class SelectedProfileNavigation extends Component<{route: any, navigation: any}>
         <Drawer.Screen 
           options={{
           drawerIcon:({color, size}) => (
-            <Icon name="person" style={{fontSize: size, color: color}} />
+            <Icon name="person" style={{fontSize: size, color: "#fff"}} />
+          ),
+          drawerLabel:() => (
+            <View>
+              <Text style={{color:"#fff"}}>Detected Faces</Text>
+            </View>
           ), 
+          headerTitleAlign: 'center',
           }}
           name="Detected Faces" 
           component= {detectedFacialRecognitions} 
         />
-
-        {/* <Drawer.Screen 
+        {/* 
+        <Drawer.Screen 
           options={{
           drawerIcon:({color, size}) => (
-            <Icon name="person" style={{fontSize: size, color: color}} />
+            <Icon name="person" style={{fontSize: size, color: "#fff"}} />
           ), 
           }}
           name="Facial Recognition Recordings" 
@@ -188,7 +223,12 @@ class SelectedProfileNavigation extends Component<{route: any, navigation: any}>
         <Drawer.Screen 
           options={{
           drawerIcon:({color, size}) => (
-            <Icon name="person" style={{fontSize: size, color: color}} />
+            <Icon name="person" style={{fontSize: size, color: "#fff"}} />
+          ),
+          drawerLabel:() => (
+            <View>
+              <Text style={{color:"#fff"}}>Motion Captures</Text>
+            </View>
           ), 
           }}
           name="Motion Captures" 
@@ -214,204 +254,234 @@ class SelectedProfileNavigation extends Component<{route: any, navigation: any}>
 export default function App(){
   console.warn = () => {}
   return (  
-  <NavigationContainer>
-    <Toast style={{zIndex: 1}} config={getToastConfig()} ref={(ref) => Toast.setRef(ref)} />
-    <Stack.Navigator initialRouteName="Login">
-      
-      <Stack.Screen 
-        options={{
-          headerShown: false
-        }}
-        name="Sign In" 
-        component= {Login}
-      />
+  <View style={{ flex: 1, backgroundColor: '#151621' }}>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Login">
+        
+        <Stack.Screen 
+          options={{
+            headerShown: false
+          }}
+          name="Sign In" 
+          component= {Login}
+        />
 
+        <Stack.Screen 
+          options={{
+            headerStyle: {
+            backgroundColor: '#E0A458'
+            },
+            headerTitleAlign: 'center',
+          }}
+          name="Sign Up" 
+          component= {SignUp}
+        />
+
+        <Stack.Screen 
+          options={{
+            headerStyle: {
+              backgroundColor: '#E0A458',
+            },
+            headerLeft: ((props: StackHeaderLeftButtonProps) => null),
+            gestureEnabled: false,
+            headerTitleAlign: 'center',
+          }}
+          name="Home" 
+          component= {HomePage}
+        />
+
+        <Stack.Screen 
+          name="Profile" 
+          component= {SelectedProfileNavigation} 
+          options={({ route }) => {
+            const routeName = getFocusedRouteNameFromRoute(route) ?? 'Profile Page';
+        
+            switch (routeName) {
+              case 'Profile Page': {
+                return {
+                  headerTitle: 'Profile Page',
+                  headerStyle: {
+                    backgroundColor: '#E0A458',
+                  },
+                  headerTitleAlign: 'center',
+                };
+              }
+              case 'Saved Images': {
+                return {
+                  headerTitle: 'Saved Images',
+                  headerStyle: {
+                    backgroundColor: '#E0A458'
+                  },
+                  headerTitleAlign: 'center',
+                };
+              }
+              case 'Saved Recordings':
+              default: {
+                return {
+                  headerTitle: 'Saved Recordings',
+                  headerStyle: {
+                    backgroundColor: '#E0A458'
+                  },
+                  headerTitleAlign: 'center', 
+                };
+              }
+            }
+          }}
+        /> 
+
+      {/* <Stack.Screen 
+          options={{
+            headerStyle: {
+            backgroundColor: '#E0A458'
+          }}} 
+          name="Live Streaming Devices" 
+          component= {LiveStreamingDevices} 
+        />
+        
+        <Stack.Screen 
+          options={{
+            headerStyle: {
+            backgroundColor: '#E0A458'
+          }}} 
+          name="Streaming Devices" 
+          component= {Streaming} 
+        /> */}
+        
       <Stack.Screen 
-        options={{
-          headerStyle: {
-          backgroundColor: '#FF9900'
+          options={{
+            headerStyle: {
+            backgroundColor: '#E0A458'
           },
-        }}
-        name="Sign Up" 
-        component= {SignUp}
-      />
-
-      <Stack.Screen 
-        options={{
-          headerStyle: {
-            backgroundColor: '#FF9900',
+          headerTitleAlign: 'center',
+          }}
+          name="Live Intercom Devices" 
+          component= {LiveIntercomDevices} 
+        /> 
+        
+        <Stack.Screen 
+          options={{
+            headerStyle: {
+            backgroundColor: '#E0A458'
           },
-          headerLeft: ((props: StackHeaderLeftButtonProps) => null),
-          gestureEnabled: false
-        }}
-        name="Home" 
-        component= {HomePage}
-      />
+          headerTitleAlign: 'center',
+          }} 
+          name="Intercom Devices" 
+          component= {Intercom} 
+        />
 
-      <Stack.Screen 
-        name="Profile" 
-        component= {SelectedProfileNavigation} 
-        options={({ route }) => {
-          const routeName = getFocusedRouteNameFromRoute(route) ?? 'Profile Page';
-      
-          switch (routeName) {
-            case 'Profile Page': {
-              return {
-                headerTitle: 'Profile Page',
-                headerStyle: {
-                  backgroundColor: '#FF9900',
-                } 
-              };
-            }
-            case 'Saved Images': {
-              return {
-                headerTitle: 'Saved Images',
-                headerStyle: {
-                  backgroundColor: '#FF9900'
-                } 
-              };
-            }
-            case 'Saved Recordings':
-            default: {
-              return {
-                headerTitle: 'Saved Recordings',
-                headerStyle: {
-                  backgroundColor: '#FF9900'
-                } 
-              };
-            }
-          }
-        }}
-      /> 
+        <Stack.Screen 
+          options={{
+            headerStyle: {
+            backgroundColor: '#E0A458'
+            },
+            headerTitleAlign: 'center',
+          }} 
+          name="Live Recording Devices"
+          component={LiveRecordingDevices} 
+        />
+        
+        <Stack.Screen 
+          options={{
+            headerStyle: {
+            backgroundColor: '#E0A458'
+            },
+            headerTitleAlign: 'center',
+          }} 
+          name="Recording Devices" 
+          component= {Recording} 
+        />
+        
+        <Stack.Screen 
+          options={{
+            headerStyle: {
+            backgroundColor: '#E0A458'
+            },
+            headerTitleAlign: 'center',
+          }} 
+          name="Recorded Video Screen" 
+          component= {PlayVideos} 
+        />  
+        
+        <Stack.Screen 
+          options={{
+            headerStyle: {
+            backgroundColor: '#E0A458'
+          },
+          headerTitleAlign: 'center',
+          }} 
+          name="Image Capture Devices" 
+          component={ImageCaptureDevices} 
+        />
 
-     {/* <Stack.Screen 
-        options={{
-          headerStyle: {
-          backgroundColor: '#FF9900'
-        }}} 
-        name="Live Streaming Devices" 
-        component= {LiveStreamingDevices} 
-      />
-      
-      <Stack.Screen 
-        options={{
-          headerStyle: {
-          backgroundColor: '#FF9900'
-        }}} 
-        name="Streaming Devices" 
-        component= {Streaming} 
-      /> */}
-      
-     <Stack.Screen 
-        options={{
-          headerStyle: {
-          backgroundColor: '#FF9900'
-        }}} 
-        name="Live Intercom Devices" 
-        component= {LiveIntercomDevices} 
-      /> 
-      
-      <Stack.Screen 
-        options={{
-          headerStyle: {
-          backgroundColor: '#FF9900'
-        }}} 
-        name="Intercom Devices" 
-        component= {Intercom} 
-      />
+        <Stack.Screen 
+          options={{
+            headerStyle: {
+            backgroundColor: '#E0A458'
+          },
+          headerTitleAlign: 'center',
+          }} 
+          name="Take Photo" 
+          component= {TakePhoto} 
+        />
 
-      <Stack.Screen 
-        options={{
-          headerStyle: {
-          backgroundColor: '#FF9900'
-        }}} 
-        name="Live Recording Devices" 
-        component={LiveRecordingDevices} 
-      />
-      
-      <Stack.Screen 
-        options={{
-          headerStyle: {
-          backgroundColor: '#FF9900'
-        }}} 
-        name="Recording Devices" 
-        component= {Recording} 
-      />
-      
-      <Stack.Screen 
-        options={{
-          headerStyle: {
-          backgroundColor: '#FF9900'
-        }}} 
-        name="Recorded Video Screen" 
-        component= {PlayVideos} 
-      />  
-      
-       <Stack.Screen 
-        options={{
-          headerStyle: {
-          backgroundColor: '#FF9900'
-        }}} 
-        name="Image Capture Devices" 
-        component={ImageCaptureDevices} 
-      />
+        <Stack.Screen 
+          options={{
+            headerStyle: {
+            backgroundColor: '#E0A458'
+          },
+          headerTitleAlign: 'center',
+          }} 
+          name="Image Screen" 
+          component= {showImage} 
+        />
 
-      <Stack.Screen 
-        options={{
-          headerStyle: {
-          backgroundColor: '#FF9900'
-        }}} 
-        name="Take Photo" 
-        component= {TakePhoto} 
-      />
+        <Stack.Screen 
+          options={{
+            headerStyle: {
+            backgroundColor: '#E0A458'
+          },
+          headerTitleAlign: 'center',
+          }} 
+          name="Smart Light Devices" 
+          component={SmartLightDevices} 
+        />
 
-      <Stack.Screen 
-        options={{
-          headerStyle: {
-          backgroundColor: '#FF9900'
-        }}} 
-        name="Image Screen" 
-        component= {showImage} 
-      />
+        <Stack.Screen 
+          options={{
+            headerStyle: {
+            backgroundColor: '#E0A458'
+          },
+          headerTitleAlign: 'center',
+          }}
+          name="Smart Lights" 
+          component={SmartLight} 
+        />
 
-      <Stack.Screen 
-        options={{
-          headerStyle: {
-          backgroundColor: '#FF9900'
-        }}} 
-        name="Smart Light Devices" 
-        component={SmartLightDevices} 
-      />
+        <Stack.Screen 
+          options={{
+            headerStyle: {
+            backgroundColor: '#E0A458'
+          },
+          headerTitleAlign: 'center',
+          }}
+          name="Smart Lock Devices" 
+          component={SmartLockDevices} 
+        />
 
-      <Stack.Screen 
-        options={{
-          headerStyle: {
-          backgroundColor: '#FF9900'
-        }}} 
-        name="Smart Lights" 
-        component={SmartLight} 
-      />
+        <Stack.Screen 
+          options={{
+            headerStyle: {
+            backgroundColor: '#E0A458'
+          },
+          headerTitleAlign: 'center',
+          }}
+          name="Smart Lock" 
+          component={SmartLock} 
+        />
 
-      <Stack.Screen 
-        options={{
-          headerStyle: {
-          backgroundColor: '#FF9900'
-        }}} 
-        name="Smart Lock Devices" 
-        component={SmartLockDevices} 
-      />
-
-      <Stack.Screen 
-        options={{
-          headerStyle: {
-          backgroundColor: '#FF9900'
-        }}} 
-        name="Smart Lock" 
-        component={SmartLock} 
-      />
-
-    </Stack.Navigator>
-  </NavigationContainer>
+      </Stack.Navigator>
+    </NavigationContainer>
+  </View>
     );
 }
 

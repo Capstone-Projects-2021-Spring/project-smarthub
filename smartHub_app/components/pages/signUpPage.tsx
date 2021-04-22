@@ -101,7 +101,7 @@ export default class SignUp extends Component<{navigation: any}>{
     render(){
         return(
             <Animated.View style={[styles.container, this.Animatedcontainer]}>
-                <LinearGradient style={[styles.centerAlign, {height: "100%"}]} colors={["#FF9900", "#000000"]}>
+                <LinearGradient style={[styles.centerAlign, {height: "100%"}]} colors={["#E0A458", "#000000"]}>
                     
                 </LinearGradient>
                 <View style={[styles.centerAlign, {marginTop: 2, backgroundColor: "rgba(200,200,200,0.9", height: height}]}>
@@ -129,7 +129,7 @@ export default class SignUp extends Component<{navigation: any}>{
                                 <TouchableOpacity onPress={() => {
                                     this.userSignUp();
                                 }}>   
-                                    <LinearGradient style={{ width: 390/1.3, padding: 10, borderRadius: 20, }} colors={["#FF9900", "#000000"]}>
+                                    <LinearGradient style={{ width: 390/1.3, padding: 10, borderRadius: 20, }} colors={["#E0A458", "#000000"]}>
                                         <Text style={{color: "#FFFFFF", fontSize: 15, fontWeight: "bold", textAlign: "center"}}>Sign Up</Text>
                                     </LinearGradient>
                                 </TouchableOpacity>
@@ -137,7 +137,7 @@ export default class SignUp extends Component<{navigation: any}>{
                             <View style={{ alignItems: "center", marginTop: 20, flexDirection: "row", marginLeft: 85}}>
                                 <Text style={{fontSize: 15}}>Go Back To</Text>
                                     <TouchableOpacity style={{marginLeft: 10}} onPress={() => this.signInPressHandler()}>   
-                                        <Text style={{color: "#FF9900", fontSize: 15}}>Login</Text>
+                                        <Text style={{color: "#E0A458", fontSize: 15}}>Login</Text>
                                     </TouchableOpacity>
                             </View> 
                         </View>

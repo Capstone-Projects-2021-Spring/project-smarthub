@@ -5,6 +5,7 @@ import {Icon} from 'native-base';
 import axios from 'axios';
 import DeviceModal from '../modals/modalForAddingDevice';
 import {getAddressString} from '../../utils/utilities';
+import RoundedDeviceListButton from '../buttons/RoundedDeviceListButton';
 
 var width : number = Dimensions.get('window').width;
 var height : number = Dimensions.get('window').height;
@@ -90,12 +91,11 @@ class ListItem extends Component<PropVariables,StateVariables>{
             sectionId: 1
         };
         return(
-            <Swipeout {...swipeSettings} style={{backgroundColor:"#222222"}}>
-            <TouchableOpacity
-            style={styles.pillButton}
-            onPress={() => this.props.navigation.navigate(this.props.stackScreen, routeObject)}>
-            <Text style={{color: '#000', fontSize: 20}}>{this.props.item.device_name}</Text>
-            </TouchableOpacity>
+            <Swipeout {...swipeSettings} style={{backgroundColor:"#151621"}}>
+            <RoundedDeviceListButton
+            onPress={() => this.props.navigation.navigate(this.props.stackScreen, routeObject)}
+            buttonText={this.props.item.device_name}>
+            </RoundedDeviceListButton>
             </Swipeout>
         );
     }
@@ -152,7 +152,7 @@ export class DevicesList extends Component<{navigation: any, stackScreen: string
     }
     render(){
        return (
-            <View style={{flex: 1, backgroundColor: "#222222", alignItems: 'center', paddingTop: 20}}>
+            <View style={{flex: 1, backgroundColor: "#151621", alignItems: 'center', paddingTop: 20}}>
                 <FlatList
                     data={this.state.deviceList}
                     renderItem={({item, index} : any)=>{
@@ -165,9 +165,9 @@ export class DevicesList extends Component<{navigation: any, stackScreen: string
                         if(this.state.checkData){
                             return(
                                 <View style={{marginTop: height/12, flex: 1, alignItems: 'center', height: height/2, justifyContent: 'center'}}>
-                                    <Text style={{paddingTop: 18, fontSize: 19, color: "#fff", fontWeight: 'bold'}}>Looks like you haven't added any Devices.</Text>
-                                    <Text style={{paddingTop: 18, fontSize: 16, color: "#fff", fontWeight: 'bold', paddingBottom: 20}}>Click the "+" on the top right to add a new Device.</Text>
-                                    <Image style={styles.ImageStyle} source={{uri: 'https://www.pngkit.com/png/full/118-1180951_image-transparent-icons-free-color-desktops-and-gadgets.png'}}/>
+                                    <Text style={{paddingTop: 18, fontSize: width/21, color: "#fff", fontWeight: 'bold'}}>Looks like you haven't added any Devices.</Text>
+                                    <Text style={{paddingTop: 18, fontSize: width/23, color: "#fff", fontWeight: 'bold', paddingBottom: 20}}>Click the "+" on the top right to add a new Device.</Text>
+                                    <Image resizeMode={'contain'} style={styles.ImageStyle} source={{uri: 'https://www.pngkit.com/png/full/118-1180951_image-transparent-icons-free-color-desktops-and-gadgets.png'}}/>
                                 </View>
                         )}else{
                             return null;
@@ -181,28 +181,9 @@ export class DevicesList extends Component<{navigation: any, stackScreen: string
 }
 
 const styles = StyleSheet.create ({
-
-    pillButton: {
-        borderWidth:1,
-        justifyContent:'center',
-        alignItems:'center',
-        margin: 5,
-        width:width-20,
-        height:50,        
-        borderRadius:20,
-        backgroundColor: '#FF9900',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 3 },
-        shadowOpacity: 0.5,
-        shadowRadius: 5, 
-    },
-
+    
     ImageStyle: {
-        flex:1,
-        justifyContent:'center',
-        alignItems:'center',
-        width: width-40,
-        height: height
+        width: "100%",
+        height: "76%"
     }
-
 })
