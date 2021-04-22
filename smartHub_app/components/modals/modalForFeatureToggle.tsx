@@ -107,7 +107,7 @@ export default class FeatureModal extends Component<{deviceIP: String, feature: 
                     </Switch>
                 </View>
                 <View style={{flex:1, flexDirection: "column", paddingTop: 0, marginTop: 0}}>
-                    <View style={{flexDirection: "row", paddingLeft:25,  paddingBottom: 10, paddingTop: 0}}>
+                    <View style={{flexDirection: "row", paddingLeft:25,  paddingTop: 0}}>
                         <Text style={{fontSize: screen.width/23, fontWeight: "bold", paddingTop: 5, color: "#fff", paddingLeft: 15, paddingRight: 0}}>Enable Push Notifications? </Text>    
                         <CheckBox
                             onClick={() => {
@@ -182,9 +182,9 @@ export default class FeatureModal extends Component<{deviceIP: String, feature: 
                         />
                     </View> */}
                 </View>
-                <View style={{ marginBottom: 10}}>
+                <View style={{ marginBottom:30, justifyContent: 'center', alignItems:'center'}}>
                     <Button
-                        style={{paddingTop: 8, fontSize: screen.width/20, color: '#fff'}}
+                        style={{justifyContent: 'center', fontSize: screen.width/20, color: '#fff'}}
                         containerStyle={styles.buttonStyle}
                         onPress={()=>{
                             this.setState({wasSaved: true}); 
@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
         borderColor: '#E0A458',
         borderWidth: 2,
         width: screen.width - 50,
-        height: screen.height/2.6
+        height: screen.height/2.9
     },
     buttonStyle: {
         marginLeft: 70,
