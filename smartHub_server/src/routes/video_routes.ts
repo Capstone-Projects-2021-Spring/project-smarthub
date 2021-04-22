@@ -153,7 +153,7 @@ routes.post("/takeFaceImage", async (req: any, res: any) => {
 	const imageName: string = req.body.image_name;
 
 	// Initiate a callback on controller to fetch image of current video stream.
-	controller.getPicture( async () => {
+	controller.getPicture( async (dataURI: string) => {
 		// Use API to convert dataURI into a tensor object.
 		const tensor = await recognizer.loadImage(dataURI);
 		// Use API to detect faces in the tensor object.
@@ -433,6 +433,7 @@ routes.post('/start_motion_detection', async (req: any, res: any) => {
 				});
 
 			}, deviceConfig.device_config.recordingTime * 1000);
+		}
 
 	}, profileId + "");
 
