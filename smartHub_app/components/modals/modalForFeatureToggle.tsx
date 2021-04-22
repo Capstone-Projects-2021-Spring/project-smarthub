@@ -113,7 +113,7 @@ export default class FeatureModal extends Component<{deviceIP: String, feature: 
                 <View style={{flex:1, flexDirection: "column", paddingTop: 0, marginTop: 0}}>
                     <View style={{flexDirection: "row", paddingLeft:25,  paddingTop: 0}}>
                         <Text style={{fontSize: screen.width/23, fontWeight: "bold", paddingTop: 5, color: "#fff", paddingLeft: 15, paddingRight: 0}}>Enable Push Notifications? </Text>    
-                        <View style={{position: 'absolute', right: screen.width/11}}>
+                        <View style={{position: 'absolute', right: screen.width/11, top: 5}}>
                             <CheckBox
                                 onClick={() => {
                                     if(!this.state.isToggledFacial && !this.state.isToggledMotion){
@@ -188,7 +188,7 @@ export default class FeatureModal extends Component<{deviceIP: String, feature: 
                         />
                     </View> */}
                 </View>
-                <View style={{alignItems: 'center', justifyContent: 'center', marginBottom: 30}}>
+                <View style={{alignItems: 'center', justifyContent: 'center', position: 'absolute', bottom:20, left:0, right:0, top: 250, marginBottom: 50}}>
                     <Button
                         style={{justifyContent: 'center', fontSize: screen.width/20, color: '#fff'}}
                         containerStyle={styles.buttonStyle}
