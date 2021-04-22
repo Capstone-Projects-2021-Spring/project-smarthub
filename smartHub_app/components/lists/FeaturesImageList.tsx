@@ -13,13 +13,19 @@ var height : number = Dimensions.get('window').height;
 interface PropVariables{
     item: any,
     navigation: any,
+    type: any
 }
 
 class FeatureListItem extends Component<PropVariables>{
     render(){
+        console.log(this.props.type)
         return(
             <View style={{backgroundColor:"#151621"}}>
-                <RoundedDeviceListButton onPress={() => this.props.navigation.navigate("Image Screen", this.props.item.image_link)} buttonText={this.props.item.image_name}></RoundedDeviceListButton>
+                {this.props.type === 1 ?
+                    <RoundedDeviceListButton onPress={() => this.props.navigation.navigate("Image Screen", this.props.item.image_link)} buttonText={this.props.item.image_name}></RoundedDeviceListButton>                
+                :
+                    <RoundedDeviceListButton onPress={() => this.props.navigation.navigate("Image Screen", this.props.item.image_link)} buttonText={this.props.item.date_created}></RoundedDeviceListButton>
+                }
             </View>
         );
     }
@@ -70,7 +76,7 @@ export class FeaturesList extends Component<{type: number, navigation: any, rout
                             data={this.state.featuresList}
                             renderItem={({item, index} : any)=>{
                                 return(
-                                    <FeatureListItem item={item} navigation={this.props.navigation}/>
+                                    <FeatureListItem  type={this.props.type} item={item} navigation={this.props.navigation}/>
                                 );
                             }}
                         />

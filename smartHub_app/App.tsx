@@ -256,7 +256,6 @@ export default function App(){
   return (  
   <View style={{ flex: 1, backgroundColor: '#151621' }}>
     <NavigationContainer>
-      <Toast style={{zIndex: 1}} config={getToastConfig()} ref={(ref) => Toast.setRef(ref)} />
       <Stack.Navigator initialRouteName="Login">
         
         <Stack.Screen 
