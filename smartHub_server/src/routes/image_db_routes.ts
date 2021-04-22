@@ -13,9 +13,26 @@ routes.post("/getImages", async (req: any, res: any) => {
 
   const images = await Images.getImages(imageType, profileId);
 
-  console.log(images);
+	// Loop through images to check their expiration dates, and update signed URL is required.
+	for(let i = 0; i < images.length; i++) {
+		// Current date.
+		const current_date: Date = new Date();
+		// Expired date in database.
+		const expired_date: Date = new Date(images[i].date_expired);
+		// Compare current to expired date.
+		if(current_date >= expired_date) {
+			// Extend expired date by approximately one week.
+			expired_date.setSeconds(expired_date.getSeconds() + 600000);
+			// Generate a new signed URL.
+			const newLink = await generateSignedURL(images[i].aws_s3_key);
+			// Update the image link and expiration date.
+			const image = await Images.updateImageLink(images[i].image_id, newLink, expired_date.toISOString());
+		}
+	}
 
-	return res.status(200).json({images});
+	const newImages = await Images.getImages(imageType, profileId);
+
+	return res.status(200).json({newImages});
 });
 
 routes.post("/deleteImage", async (req: any, res: any) => {

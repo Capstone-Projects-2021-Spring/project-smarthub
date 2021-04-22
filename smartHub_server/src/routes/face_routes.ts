@@ -17,7 +17,7 @@ const routes = express.Router({
 routes.post("/addFaceImage", async (req: any, res: any) => {
 
 		const dataURI: string = req.body.data_uri;
-		const name: string = req.body.image_name;
+		const imageName: string = req.body.image_name;
 		const profileId: number = req.body.profile_id;
 
 		const accountName: string = req.body.user_email;
@@ -35,14 +35,12 @@ routes.post("/addFaceImage", async (req: any, res: any) => {
 		}
 
 		const refImages = [dataURI];
-		const labels = [name];
+		const labels = [imageName];
 
 		const labeledFaceDescriptors = await recognizer.labelDescriptors(labels, refImages);
 
-		console.log(labeledFaceDescriptors);
-
 		// Add image face data to faces table.
-		Faces.addFace(name, JSON.stringify(labeledFaceDescriptors), profileId).then( (face: any) => {
+		Faces.addFace(imageName, JSON.stringify(labeledFaceDescriptors), profileId).then( (face: any) => {
 			if(!face) {
 					return res.status(500).json({message: "Unable to insert face."});
 				}
@@ -55,7 +53,7 @@ routes.post("/addFaceImage", async (req: any, res: any) => {
 
 		const imageLink = await generateSignedURL(obj.key);
 
-		Images.addImage(name, imageLink, 1, obj.key, profileId).then( (image: any) => {
+		Images.addImage(imageName, imageLink, 1, obj.key, profileId).then( (image: any) => {
 				if(!image) {
 					return res.status(500).json({message: "Unable to insert image."});
 				}
