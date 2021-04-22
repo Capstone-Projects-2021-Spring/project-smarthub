@@ -6,7 +6,7 @@ const envVars = process.env;
 const accountSid = envVars.TWILIO_ACCOUNT_SID;
 const authToken = envVars.TWILIO_AUTH_TOKEN;
 
-const fromSMS = '+15702430225';
+const fromSMS = '+15702430216';
 //const fromWA = 'whatsapp:+14155238886';
 const client = require('twilio')(accountSid, authToken);
 
