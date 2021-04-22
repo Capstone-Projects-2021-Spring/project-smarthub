@@ -7,7 +7,6 @@ import { VideoController } from '../controllers/VideoController';
 const Faces = require('../db/faces');
 const Images = require('../db/images');
 const Devices = require('../db/devices');
-const Recordings = require('../db/recordings');
 const youauth = require('youauth');
 const { createFolder, storeImage, storeRecording, generateSignedURL } = require('../aws/amazon_s3');
 const { sendSMS } = require('../notifications/twilioPushNotification');
@@ -319,29 +318,6 @@ async function processDetections (params: any) {
 		});
 	}
 
-	// If recording is enabled in configs. Record for the set amount of seconds.
-	if(deviceConfig.device_config.recording) {
-		controller.startRecording();
-
-		setTimeout( async () => {
-
-			controller.stopRecording();
-			const obj = await storeRecording(params.accountName, params.profileName, params.componentName, localStoragePath);
-			deleteLocalFile(localStoragePath);
-
-			const recordingLink = await generateSignedURL(obj.key);
-
-			const response = await Recordings.addRecording(recordingLink, 1, obj.key, params.profileId);
-
-			sendSMS({
-				messageBody: "smartHub new recording available: Face(s) Detected! - " + message,
-				phoneNumber: params.phoneNumber
-			});
-
-		}, deviceConfig.device_config.recordingTime * 1000 );
-
-	}
-
 }
 
 // Function that starts continous fetching of face images from controller.
@@ -411,28 +387,6 @@ routes.post('/start_motion_detection', async (req: any, res: any) => {
 				phoneNumber: phoneNumber,
 				mediaContent: imageLink
 			});
-		}
-
-		if (deviceConfig.device_config.recording) {
-
-			controller.startRecording();
-
-			setTimeout(async () => {
-
-				controller.stopRecording();
-				const obj = await storeRecording(accountName, profileName, componentName, localStoragePath);
-				deleteLocalFile(localStoragePath);
-
-				const recordingLink = await generateSignedURL(obj.key);
-
-				const response = await Recordings.addRecording(recordingLink, 2, obj.key, profileId);
-
-				sendSMS({
-					messageBody: "smartHub new recording available: Motion Detected!",
-					phoneNumber: phoneNumber
-				});
-
-			}, deviceConfig.device_config.recordingTime * 1000);
 		}
 
 	}, profileId + "");

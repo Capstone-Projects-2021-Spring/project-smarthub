@@ -29,7 +29,7 @@ function addImage(imageName: string, imageLink: string, imageType: number, key: 
 function getImages(imageType: number, profileId: string) {
 
     return knex("images")
-        .select("image_name", "image_link", "aws_s3_key", "date_created")
+        .select("image_id", "image_name", "image_link", "aws_s3_key", "date_created", "date_expired")
         .where( function (this:any) {
           this.where("profile_id", profileId)
           .andWhere("image_type_id", imageType);
@@ -55,8 +55,23 @@ function deleteImage(imageName: string, profileId: string) {
       });
 }
 
+
+/*
+    Use: Updates an image's signed URL and expiration date.
+    Params: image id, signed URL, expiration date
+*/
+function updateImageLink(imageId: number, imageLink: string, newExpireDate: string) {
+  return knex("images")
+      .where("image_id", imageId)
+      .update({image_link: imageLink, date_expired: newExpireDate})
+      .then((image: any) => {
+          return image;
+      });
+}
+
 module.exports = {
   addImage,
   getImages,
-  deleteImage
+  deleteImage,
+  updateImageLink
 }
