@@ -30,6 +30,8 @@ routes.post("/getImages", async (req: any, res: any) => {
 		}
 	}
 
+	const images = await Images.getImages(imageType, profileId);
+
 	return res.status(200).json({images});
 });
 
