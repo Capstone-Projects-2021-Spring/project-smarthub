@@ -30,9 +30,9 @@ routes.post("/getImages", async (req: any, res: any) => {
 		}
 	}
 
-	const images = await Images.getImages(imageType, profileId);
+	const newImages = await Images.getImages(imageType, profileId);
 
-	return res.status(200).json({images});
+	return res.status(200).json({newImages});
 });
 
 routes.post("/deleteImage", async (req: any, res: any) => {
