@@ -53,7 +53,7 @@ const styles = StyleSheet.create ({
 
     ImageStyle: {
         width: "20%",
-        height: "90%",
+        height: "80%",
         position: 'absolute',
         left:0,
         marginLeft: 20,
