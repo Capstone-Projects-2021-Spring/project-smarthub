@@ -1,32 +1,41 @@
-import {View, Image, Text, Animated, Dimensions, Easing, Pressable} from 'react-native';
+import {View, Image, Text, Animated, Dimensions, Easing, Pressable, StyleSheet, ImageBackground} from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
 import React, { Component } from 'react';
 
-import {styles} from "../../styles/style";
+// import {styles} from "../../styles/style";
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import { CheckBox } from 'native-base';
 import SignUp from "./signUpPage";
 import { NavigationActions, StackActions } from 'react-navigation';
 import axios from 'axios';
+import RoundedButton from '../buttons/RoundedButton';
+import { greaterThan } from 'react-native-reanimated';
+import RoundedTextInput from '../buttons/RoundedTextInput';
 
-const {height} = Dimensions.get("screen");
+const {width, height} = Dimensions.get("screen");
+
+const image = { uri: "smartHub_app/assets/Gordon_Ramsay.jpg" };
 
 export default class Login extends Component<{navigation: any}>{
 
-    
+    constructor(props: any) {
+        super(props);
+        this.updateTypeHandler = this.updateTypeHandler.bind(this);
+    }
 
     state = {
         screenAnimation: new Animated.Value(height),
         inputAnimation: new Animated.Value(0),
-        username: "",
+        email: "",
         password: "",
         user_id: -1,
     };
 
 
+    //Animated background. height/3 for top third
     AnimateContainer = () => {
         Animated.timing(this.state.screenAnimation, {
-            toValue: height/3,
+            toValue: height,
             duration: 1500,
             useNativeDriver: false,
             easing: Easing.elastic(1.3),
@@ -35,12 +44,13 @@ export default class Login extends Component<{navigation: any}>{
 
     AnimateInput = () => {
         Animated.timing(this.state.inputAnimation, {
-            toValue: -height / 5,
+            toValue: -height / 8,
             duration: 800,
             useNativeDriver: false,
         }).start();
     };
 
+    //Bounce animation
     reverseAnimateInput = () => {
         Animated.timing(this.state.inputAnimation, {
             toValue: 0,
@@ -53,7 +63,7 @@ export default class Login extends Component<{navigation: any}>{
         this.AnimateContainer();
     }
 
-    Animatedcontainer = {
+    AnimatedContainer = {
         height: this.state.screenAnimation
     };
 
@@ -65,18 +75,25 @@ export default class Login extends Component<{navigation: any}>{
         ]
     }
 
+    //Updates the type of input box / sets state with new text.
+    updateTypeHandler(type: string, value: string) {
+        //Printing state in here will show that it's one character behind because setState is async, but it should be a problem in the rest of the app.
+        if(type === "email") {
+            this.setState({email : value});
+        }
+        else if(type === "password") {
+            this.setState({password : value});
+        }
+        else {
+            console.log("ERROR! Invalid state from input text.");
+        }
+    }
+
     signUpPressHandler(){
         this.props.navigation.navigate("Sign Up");
     }
 
     signInPressHandler(){
-        // this.props.navigation.pop("Sign In");
-        // StackActions.pop();
-        // const resetAction = StackActions.reset({
-        // index: 0,
-        // actions: [NavigationActions.navigate({ routeName: "Home" })],
-        // });
-        // this.props.navigation.dispatch(resetAction);
         console.log(this.state.user_id);
         this.props.navigation.navigate("Home", this.state.user_id);
         
@@ -84,7 +101,7 @@ export default class Login extends Component<{navigation: any}>{
 
     userSignIn(){
         let collection: any = {}
-        collection.email=this.state.username
+        collection.email=this.state.email
         collection.password=this.state.password
         // console.warn(collection);
 
@@ -101,57 +118,87 @@ export default class Login extends Component<{navigation: any}>{
     }
 
     
-        
+    
     render(){
         return(
-            <Animated.View style={[styles.container, this.Animatedcontainer]}>
-                <LinearGradient style={[styles.centerAlign, {height: "100%"}]} colors={["#E0A458", "#000000"]}>
+            // Opening animation.
+            <Animated.View style={[this.AnimatedContainer]}>
+                {/* <LinearGradient style={[styles.centerAlign, {height: "30%"}]} colors={["#E0A458", "#000000"]} /> */}
+
+                {/* <LinearGradient style={[{height: "10%"}]} colors={["rgba(21,22,33,1) 0%", "rgba(28,28,41,1) 35%", "rgba(53,53,72,1) 49%", "rgba(172,130,83,1) 78%", "rgba(224,164,88,1) 100%"]} /> */}
+                {/* View that gets animated. Background. */}
+                <View style={[styles.background]}>
                     
-                </LinearGradient>
-                <View style={[styles.centerAlign, {marginTop: 2, backgroundColor: "rgba(200,200,200,0.9", height: height}]}>
-                    <Animated.View style={[styles.inputContainer, this.AnimatedInput]}>
-                        <Text style={{fontSize: 20, fontWeight: "bold", textAlign: "center"}}>SIGN IN</Text>
-                        <View style={{marginTop: 30, marginBottom: 10}}>
-                            <TextInput onBlur={() => this.reverseAnimateInput()} onFocus={() => this.AnimateInput()} placeholder="email" style={styles.input} onChangeText={(value) => this.setState({username: value})} />
-                            <TextInput onBlur={() => this.reverseAnimateInput()} onFocus={() => this.AnimateInput()} secureTextEntry={true} placeholder="password" style={styles.input} onChangeText={(value) => this.setState({password: value})} />
-                        </View>
-                        <View>
-                            {/* <View style={{flex: 0.5}}>
-                                <CheckBox style={{ width: 20, height: 20, borderColor: "#aaa"}} />
-                                <Text style={{ marginLeft: 20}}>Remember Password</Text>
+                    {/* Input fields animation. */}
+                    <Animated.View style={[this.AnimatedInput]}>
+                        
+                        <View style={[styles.signUpContainer]}>
+                            <Text style={{textAlign: "center", color: "#E0A458", fontSize: 25}}>Sign In</Text>
+
+                            <View style={[]}>
+                                <RoundedTextInput onBlur={this.reverseAnimateInput} onFocus={this.AnimateInput} placeholder="email" inputType={this.updateTypeHandler}/>
+                                <RoundedTextInput onBlur={this.reverseAnimateInput} onFocus={this.AnimateInput} placeholder="password" inputType={this.updateTypeHandler}/>
                             </View>
-                            <View style={{flex: 0.5, alignItems: "flex-end"}}>
-                                <TouchableOpacity>   
-                                    <Text style={{color: "#c08"}}>Forgot Password</Text>
-                                </TouchableOpacity>
-                            </View> */}
-                            <View style={{ alignItems: "center", marginTop: 20}}>
-                                <TouchableOpacity onPress={() => {
-                                    if(this.state.username.length != 0 && this.state.password.length != 0)
-                                    {
-                                        // this.signInPressHandler();
-                                        this.userSignIn();
-                                    }
-                                    else{ alert("You must enter all credentials before signing in.")}
-                                }}>   
-                                    <LinearGradient style={{ width: 390/1.3, padding: 10, borderRadius: 20, }} colors={["#E0A458", "#000000"]}>
-                                        <Text style={{color: "#FFFFFF", fontSize: 15, fontWeight: "bold", textAlign: "center"}}>Sign In</Text>
-                                    </LinearGradient>
-                                </TouchableOpacity>
+
+                            <View>
+
+                                <View style={[]}>
+                                    
+                                    {/* Sign In Button */}
+                                    <RoundedButton onPress={this.userSignIn} buttonText="Sign In" />
+                                    
+                                </View>
+                                <View style={[]}>
+                                    <Text style={[]}>Don't Have An Account?</Text>
+                                        <TouchableOpacity style={[]} onPress={() => this.signUpPressHandler()}>   
+                                            <Text style={[]}>Sign Up</Text>
+                                        </TouchableOpacity>
+                                </View> 
                             </View>
-                            <View style={{ alignItems: "center", marginTop: 20, flexDirection: "row", marginLeft: 35}}>
-                                <Text style={{fontSize: 15}}>Don't Have An Account?</Text>
-                                    <TouchableOpacity style={{marginLeft: 10}} onPress={() => this.signUpPressHandler()}>   
-                                        <Text style={{color: "#E0A458", fontSize: 15}}>Sign Up</Text>
-                                    </TouchableOpacity>
-                            </View> 
                         </View>
+                        
                     </Animated.View>
                 </View>
             </Animated.View>
         )
     }
 }
+
+const styles = StyleSheet.create({
+    background: {
+        backgroundColor: "linear-gradient( "
+                        + "rgba(21,22,33,1) 0%," //Dark Blue
+                        + "rgba(28,28,41,1) 35%," 
+                        + "rgba(53,53,72,1) 49%,"
+                        + "rgba(172,130,83,1) 78%,"
+                        + "rgba(224,164,88,1) 100%" //Orange
+                        + ")",
+        // backgroundColor: "linear-gradient( "
+        //                 + "0deg,"
+        //                 + "rgb(255,0,0) 0%," //Dark Blue
+        //                 + "rgb(0,255,0) 40%,"
+        //                 + "rgb(0,0,255) 60%" //Orange
+        //                 + ")",
+        // backgroundColor: "background: linear-gradient(0deg, rgba(172,130,83,1) 5%, rgba(28,28,41,1) 8%, rgba(53,53,72,1) 9%, rgba(21,22,33,1) 20%, rgba(224,164,88,1) 100%)",
+        height: "100%"
+    },
+
+    signUpContainer: {
+        backgroundColor: "white",
+        marginLeft: "5%",
+        marginRight: "5%",
+        marginTop: "80%",
+        padding: "4%",
+        minHeight: 400,
+        borderRadius: 20,
+    },
+
+    signIn: {
+        backgroundColor: "#E0A458",
+
+    }
+
+});
 
 
 
