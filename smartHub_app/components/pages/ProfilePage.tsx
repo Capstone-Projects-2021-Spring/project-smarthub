@@ -29,7 +29,7 @@ export default class ProfilePage extends Component<{navigation: any, routeObject
                 <RoundedListImageButton
                     onPress={() => this.props.navigation.navigate('Live Intercom Devices', this.props.routeObject)}
                     buttonText="Intercom"
-                    imageLink='https://brandslogos.com/wp-content/uploads/images/large/intercom-logo-1.png'>
+                    imageLink='https://img.icons8.com/cotton/2x/microphone.png'>
                 </RoundedListImageButton>  
                 </View>   
             </View>

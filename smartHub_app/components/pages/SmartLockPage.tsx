@@ -5,7 +5,6 @@ import hexRgb from 'hex-rgb';
 import Toast, {BaseToast} from 'react-native-toast-message';
 import axios from 'axios';
 import {getAddressString} from '../../utils/utilities';
-import LockModal from '../modals/modalForLockTimerConfiguration';
 import RoundedButton from '../buttons/RoundedButton';
 import InputSpinner from 'react-native-input-spinner';
 
@@ -22,19 +21,10 @@ export default class SmartLock extends Component<{navigation: any, route: any},{
             selectedSeconds: 0,
             // lockFunction: this.unlock,
             // lockText: "Unlock",
-        });
-        // this.launchModal = this.launchModal.bind(this);
-
-        
+        });        
     }
 
-    // launchModal = () => {
-    //     this.refs.LockModal.showModal();
-    // }
-
-    // getLockTime = (seconds: any) => {
-    //     this.setState({selectedSeconds: seconds});
-    //  }
+    
   
 
 
@@ -88,21 +78,14 @@ export default class SmartLock extends Component<{navigation: any, route: any},{
     }
 
     render(){
-        // console.log(this.state.lockText);
         return(
             <View style={{flex:1, backgroundColor: '#151621', paddingTop: 20, alignItems: 'center'}}>
                 
-                {/* <TouchableOpacity
-                    style={styles.button}
-                    onPress={this.lock}>
-                    <Text style={styles.text}>Lock</Text>
-                </TouchableOpacity> */}
                 <RoundedButton
                     
                     onPress={this.unlock}
                     buttonText={"Unlock"}
                 >
-                    {/* <Text style={styles.text}>Unlock</Text> */}
                 </RoundedButton>
 
                 <RoundedButton
@@ -110,13 +93,7 @@ export default class SmartLock extends Component<{navigation: any, route: any},{
                     onPress={this.lock}
                     buttonText={"Lock"}
                 >
-                    {/* <Text style={styles.text}>Unlock</Text> */}
                 </RoundedButton>
-                {/* <RoundedButton
-                    
-                    onPress={this.launchModal}
-                    buttonText="Set Time"
-                /> */}
                     
 
                     <View style={{ flexDirection: "row", paddingBottom: 25}}>
@@ -135,12 +112,6 @@ export default class SmartLock extends Component<{navigation: any, route: any},{
                             }}
                         />
                     </View>
-               
-                {/* <CustomButton buttonText="Record">
-
-                </CustomButton> */}
-                
-                <LockModal ref={'LockModal'} lockTime={this} device_id={this.state.device_id}/>
           </View>
           
         )
