@@ -87,7 +87,7 @@ export default class FeatureModal extends Component<{deviceIP: String, feature: 
                     textAlign: 'center',
                 }}>Choose a feature below: </Text>
                 <View style={{flexDirection: "row", paddingLeft: 20, paddingTop: 20, paddingBottom: 20}}>
-                    <Text style={{fontSize: screen.width/21, fontWeight: "bold",  paddingLeft: 20, color: "#fff", paddingRight: 40}}>Facial Recognition: </Text>    
+                    <Text style={{fontSize: screen.width/21, paddingLeft: 20, color: "#fff", paddingRight: 40}}>Facial Recognition: </Text>    
                     <View style={{position: 'absolute', right: screen.width/20, top: screen.height/50}}>
                         <Switch
                             value={this.state.isToggledFacial}
@@ -99,7 +99,7 @@ export default class FeatureModal extends Component<{deviceIP: String, feature: 
                     </View>
                 </View>
                 <View style={{flexDirection: "row", paddingLeft: 10, paddingBottom: 20}}>
-                    <Text style={{fontSize: screen.width/21, fontWeight: "bold", paddingLeft: 30, color: "#fff", paddingRight: 40}}>Motion Detection: </Text>    
+                    <Text style={{fontSize: screen.width/21, paddingLeft: 30, color: "#fff", paddingRight: 40}}>Motion Detection: </Text>    
                     <View style={{position: 'absolute', right: screen.width/20}}>
                         <Switch
                             value={this.state.isToggledMotion}
@@ -112,7 +112,7 @@ export default class FeatureModal extends Component<{deviceIP: String, feature: 
                 </View>
                 <View style={{flex:1, flexDirection: "column", paddingTop: 0, marginTop: 0}}>
                     <View style={{flexDirection: "row", paddingLeft:25,  paddingTop: 0}}>
-                        <Text style={{fontSize: screen.width/23, fontWeight: "bold", paddingTop: 5, color: "#fff", paddingLeft: 15, paddingRight: 0}}>Enable Push Notifications? </Text>    
+                        <Text style={{fontSize: screen.width/23, paddingTop: 5, color: "#fff", paddingLeft: 15, paddingRight: 0}}>Enable Push Notifications? </Text>    
                         <View style={{position: 'absolute', right: screen.width/11, top: 5}}>
                             <CheckBox
                                 onClick={() => {
@@ -216,10 +216,11 @@ const styles = StyleSheet.create({
         height: screen.height/2.9
     },
     buttonStyle: {
+        paddingTop: 5, 
         marginLeft: 70,
         marginRight: 70,
         marginBottom: 15,
-        marginTop: 40,
+        marginTop: 0,
         height: 40,
         width: screen.width/2,
         borderRadius: 6,

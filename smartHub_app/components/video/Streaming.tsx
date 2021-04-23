@@ -2,14 +2,14 @@ import axios from 'axios';
 import Toast, { BaseToast } from 'react-native-toast-message'
 import { WebView } from 'react-native-webview'
 import React, { Component } from 'react';
-import {StyleSheet, View, Text, TouchableOpacity, Dimensions} from 'react-native';
-import {
-    RTCPeerConnection,
-    RTCIceCandidate,
-    RTCSessionDescription,
-    RTCView,
-    mediaDevices,
-} from 'react-native-webrtc';
+import {StyleSheet, View, Text, TouchableOpacity, Dimensions, Image} from 'react-native';
+// import { //UNCOMMENT THIS
+//     RTCPeerConnection,
+//     RTCIceCandidate,
+//     RTCSessionDescription,
+//     RTCView,
+//     mediaDevices,
+// } from 'react-native-webrtc';
 import FeatureModal from '../modals/modalForFeatureToggle';
 import { Icon } from 'native-base';
 import Record from './Recording';
@@ -21,9 +21,11 @@ import RoundedButton from '../buttons/RoundedButton';
 
 const io = require("socket.io-client");
 var width: number = Dimensions.get('window').width;
+var height: number = Dimensions.get('window').height;
 
-
-export default class Stream extends Component<{type: number, deviceId: number, navigation: any},{profileId: number, phoneNumber: String, deviceIP: String, userEmail: String, profileName: String, featureType: String, checkStream: boolean, remoteVideoStream: any, videoSocket: any, peerVideoConnection: any, remoteAudioStream: any, audioSocket: any, peerAudioConnection: any, streamText: string, streamFunction: any, intercomText: string, intercomFunction: any}>{
+//peerAudioConnection: any, put this stuff in state variables
+// peerVideoConnection: any,
+export default class Stream extends Component<{type: number, deviceId: number, navigation: any},{profileId: number, phoneNumber: String, deviceIP: String, userEmail: String, profileName: String, featureType: String, checkStream: boolean, remoteVideoStream: any, videoSocket: any,  remoteAudioStream: any, audioSocket: any,  streamText: string, streamFunction: any, intercomText: string, intercomFunction: any, intercomImage: any}>{
 
     constructor(props: any) {
         super(props);
@@ -39,38 +41,40 @@ export default class Stream extends Component<{type: number, deviceId: number, n
             remoteVideoStream: { toURL: () => null },
             remoteAudioStream: { toURL: () => null },
             audioSocket: null,
-            peerVideoConnection: new RTCPeerConnection({
-                iceServers: [
-                    {
-                        urls: 'stun:stun.l.google.com:19302',
-                    },
-                    {
-                        urls: 'stun:stun1.l.google.com:19302',
-                    },
-                    {
-                        urls: 'stun:stun2.l.google.com:19302',
-                    },
-                ]
-            }),
-            peerAudioConnection: new RTCPeerConnection({
-                iceServers: [
-                    {
-                        urls: 'stun:stun.l.google.com:19302',
-                    },
-                    {
-                        urls: 'stun:stun1.l.google.com:19302',
-                    },
-                    {
-                        urls: 'stun:stun2.l.google.com:19302',
-                    },
-                ]
-            }), 
+            // peerVideoConnection: new RTCPeerConnection({ //UNCOMMENT THIS
+            //     iceServers: [
+            //         {
+            //             urls: 'stun:stun.l.google.com:19302',
+            //         },
+            //         {
+            //             urls: 'stun:stun1.l.google.com:19302',
+            //         },
+            //         {
+            //             urls: 'stun:stun2.l.google.com:19302',
+            //         },
+            //     ]
+            // }),
+            // peerAudioConnection: new RTCPeerConnection({
+            //     iceServers: [
+            //         {
+            //             urls: 'stun:stun.l.google.com:19302',
+            //         },
+            //         {
+            //             urls: 'stun:stun1.l.google.com:19302',
+            //         },
+            //         {
+            //             urls: 'stun:stun2.l.google.com:19302',
+            //         },
+            //     ]
+            // }), 
             
             streamFunction: this.beginStream,
             streamText: "Start Stream",
 
             intercomText: "Talk",
             intercomFunction: this.beginAudio,
+
+            intercomImage: require('../../assets/mic-off.png') 
         })
     }
 
@@ -230,25 +234,27 @@ export default class Stream extends Component<{type: number, deviceId: number, n
 
         // this.setState({ videoSocket: null });
 
-        this.state.peerVideoConnection.close();
+        // this.state.peerVideoConnection.close(); UNCOMMENT THIS
         console.log("Stop intercom success");
 
-        this.setState({
-            peerVideoConnection:
-                new RTCPeerConnection({
-                    iceServers: [
-                        {
-                            urls: 'stun:stun.l.google.com:19302',
-                        },
-                        {
-                            urls: 'stun:stun1.l.google.com:19302',
-                        },
-                        {
-                            urls: 'stun:stun2.l.google.com:19302',
-                        },
-                    ]
-                })
-        });
+        //UNCOMMENT THIS
+
+        // this.setState({
+        //     peerVideoConnection:
+        //         new RTCPeerConnection({
+        //             iceServers: [
+        //                 {
+        //                     urls: 'stun:stun.l.google.com:19302',
+        //                 },
+        //                 {
+        //                     urls: 'stun:stun1.l.google.com:19302',
+        //                 },
+        //                 {
+        //                     urls: 'stun:stun2.l.google.com:19302',
+        //                 },
+        //             ]
+        //         })
+        // });
 
         this.setState({ remoteAudioStream: { toURL: () => null } });
         this.setVideoRemoteStream({ toURL: () => null });
@@ -262,33 +268,33 @@ export default class Stream extends Component<{type: number, deviceId: number, n
     
     async handleVideoOffer (id: any, description: any) {
 
-        console.log("Handling offer from audio origin.");
+        // console.log("Handling offer from audio origin."); UNCOMMENT THIS
 
-        try {
+        // try {
 
-            this.state.peerVideoConnection.onaddstream = (event: any) => this.setVideoRemoteStream(event.stream);
+        //     this.state.peerVideoConnection.onaddstream = (event: any) => this.setVideoRemoteStream(event.stream);
 
-            this.state.peerVideoConnection.onicecandidate = (event: any) => {
-                if (event.candidate) {
-                    this.state.videoSocket.emit("candidate", id, event.candidate);
-                }
-            };
+        //     this.state.peerVideoConnection.onicecandidate = (event: any) => {
+        //         if (event.candidate) {
+        //             this.state.videoSocket.emit("candidate", id, event.candidate);
+        //         }
+        //     };
 
-            await this.state.peerVideoConnection.setRemoteDescription(new RTCSessionDescription(description));
+        //     // await this.state.peerVideoConnection.setRemoteDescription(new RTCSessionDescription(description)); //UNCOMMENT THIS
 
-            const answer: any = await this.state.peerVideoConnection.createAnswer();
+        //     const answer: any = await this.state.peerVideoConnection.createAnswer();
 
-            await this.state.peerVideoConnection.setLocalDescription(answer);
+        //     await this.state.peerVideoConnection.setLocalDescription(answer);
 
-            this.state.videoSocket.emit("answer", id, this.state.peerVideoConnection.localDescription);
+        //     this.state.videoSocket.emit("answer", id, this.state.peerVideoConnection.localDescription);
 
-            //this.setState({peerConnection: this.state.peerConnection});
+        //     //this.setState({peerConnection: this.state.peerConnection});
 
-        } catch (err) {
+        // } catch (err) {
 
-            console.log("Offer went wrong, Error: " + err);
+        //     console.log("Offer went wrong, Error: " + err);
 
-        }
+        // }
 
     }
     
@@ -299,7 +305,7 @@ export default class Stream extends Component<{type: number, deviceId: number, n
 
         try{
 
-            await this.state.peerVideoConnection.addIceCandidate(new RTCIceCandidate(candidate));
+            // await this.state.peerVideoConnection.addIceCandidate(new RTCIceCandidate(candidate)); //UNCOMMENT THIS
 
         } catch (err) {
 
@@ -316,31 +322,31 @@ export default class Stream extends Component<{type: number, deviceId: number, n
     // -------------------------------- Audio Socket Handling Functions ---------------------
     async handleAudioOffer(id: any, description: any) {
 
-        console.log("Handling offer from audio origin.");
+        // console.log("Handling offer from audio origin."); UNCOMMENT THIS
 
-        try {
+        // try {
 
-            this.state.peerAudioConnection.onaddstream = (event: any) => this.setAudioRemoteStream(event.stream);
+        //     this.state.peerAudioConnection.onaddstream = (event: any) => this.setAudioRemoteStream(event.stream);
 
-            this.state.peerAudioConnection.onicecandidate = (event: any) => {
-                if (event.candidate) {
-                    this.state.audioSocket.emit("candidate", id, event.candidate);
-                }
-            };
+        //     this.state.peerAudioConnection.onicecandidate = (event: any) => {
+        //         if (event.candidate) {
+        //             this.state.audioSocket.emit("candidate", id, event.candidate);
+        //         }
+        //     };
 
-            await this.state.peerAudioConnection.setRemoteDescription(new RTCSessionDescription(description));
+        //     // await this.state.peerAudioConnection.setRemoteDescription(new RTCSessionDescription(description)); //UNCOMMENT THIS
 
-            const answer: any = await this.state.peerAudioConnection.createAnswer();
+        //     const answer: any = await this.state.peerAudioConnection.createAnswer();
 
-            await this.state.peerAudioConnection.setLocalDescription(answer);
+        //     await this.state.peerAudioConnection.setLocalDescription(answer);
 
-            this.state.audioSocket.emit("answer", id, this.state.peerAudioConnection.localDescription);
+        //     this.state.audioSocket.emit("answer", id, this.state.peerAudioConnection.localDescription);
 
-        } catch (err) {
+        // } catch (err) {
 
-            console.log("Offer went wrong, Error: " + err);
+        //     console.log("Offer went wrong, Error: " + err);
 
-        }
+        // }
 
     }
 
@@ -351,7 +357,7 @@ export default class Stream extends Component<{type: number, deviceId: number, n
 
         try {
 
-            await this.state.peerAudioConnection.addIceCandidate(new RTCIceCandidate(candidate));
+            // await this.state.peerAudioConnection.addIceCandidate(new RTCIceCandidate(candidate)); //UNCOMMENT THIS
 
         } catch (err) {
 
@@ -377,7 +383,7 @@ export default class Stream extends Component<{type: number, deviceId: number, n
 
         await axios.post(url).then((response) => {
             console.log(response.data)
-            this.setState({intercomFunction: this.stopAudio, intercomText:"Stop Talking"});
+            this.setState({intercomFunction: this.stopAudio, intercomText:"Stop Talking", intercomImage: require('../../assets/mic-on.png')});
         }, (error) => {
             console.log(error);
         })
@@ -399,21 +405,21 @@ export default class Stream extends Component<{type: number, deviceId: number, n
 
         const constraints: any = { audio: true };
 
-        try {
+        // try { UNCOMMENT THIS
 
-            let stream = await mediaDevices.getUserMedia(constraints);
+        //     let stream = await mediaDevices.getUserMedia(constraints);
 
-            this.state.peerAudioConnection.addStream(stream);
+        //     this.state.peerAudioConnection.addStream(stream);
 
-            console.log("Start intercom success");
-            if(this.props.type === 2) alert("The Intercom has started.");
+        //     console.log("Start intercom success");
+        //     if(this.props.type === 2) alert("The Intercom has started.");
 
-            this.state.audioSocket.emit("audio_join");
+        //     this.state.audioSocket.emit("audio_join");
 
-        } catch (err) {
-            console.log("Start intercom error");
-            console.log(err);
-        }
+        // } catch (err) {
+        //     console.log("Start intercom error");
+        //     console.log(err);
+        // }
     }
 
     stopAudio = async() => {
@@ -422,7 +428,7 @@ export default class Stream extends Component<{type: number, deviceId: number, n
         
         await axios.post(url).then((response) => {
             console.log(response.data);
-            this.setState({intercomFunction: this.beginAudio, intercomText:"Talk"});
+            this.setState({intercomFunction: this.beginAudio, intercomText:"Talk", intercomImage: require('../../assets/mic-off.png')});
         }, (error) => {
             console.log(error);
         })
@@ -435,26 +441,26 @@ export default class Stream extends Component<{type: number, deviceId: number, n
 
         this.setState({ audioSocket: null });
 
-        this.state.peerAudioConnection.close();
+        // this.state.peerAudioConnection.close(); UNCOMMENT THIS
         console.log("Stop intercom success");
-        if(this.props.type === 2) alert("The Intercom has stopped.");
+        // if(this.props.type === 2) alert("The Intercom has stopped.");
 
-        this.setState({
-            peerAudioConnection:
-                new RTCPeerConnection({
-                    iceServers: [
-                        {
-                            urls: 'stun:stun.l.google.com:19302',
-                        },
-                        {
-                            urls: 'stun:stun1.l.google.com:19302',
-                        },
-                        {
-                            urls: 'stun:stun2.l.google.com:19302',
-                        },
-                    ]
-                })
-        });
+        // this.setState({ //UNCOMMENT THIS
+        //     peerAudioConnection:
+        //         new RTCPeerConnection({
+        //             iceServers: [
+        //                 {
+        //                     urls: 'stun:stun.l.google.com:19302',
+        //                 },
+        //                 {
+        //                     urls: 'stun:stun1.l.google.com:19302',
+        //                 },
+        //                 {
+        //                     urls: 'stun:stun2.l.google.com:19302',
+        //                 },
+        //             ]
+        //         })
+        // });
 
         this.setState({ remoteAudioStream: { toURL: () => null } });
 
@@ -573,20 +579,21 @@ export default class Stream extends Component<{type: number, deviceId: number, n
                 {this.props.type === 1 || this.props.type === 3 ?
                 <View style={styles.videoContainer}>
                      <View style={[styles.videos, styles.remoteVideos]}>
-                        <RTCView
+                        <Image style={{flex: 1, resizeMode: 'contain', marginLeft: 140}} source={require("../../assets/video-cam-icon.png")} />
+                        {/* <RTCView //UNCOMMENT THIS
                             streamURL={this.state.remoteVideoStream.toURL()}
                             style={styles.remoteVideo}
                             objectFit={'cover'}
-                        />
+                        /> */}
                     </View>
-                    {/* <WebView
+                    {/* <WebView //UNCOMMENT THIS
                         style={{flex: 1,}}
                         originWhitelist={['*']}
                         source={{html: '<iframe style="box-sizing: border-box; width: 100%; height: 100%; border: 15px solid #FF9900; background-color: #222222"; src="http://' + this.state.deviceIP + ':4000/watch.html" frameborder="0" allow="autoplay encrypted-media" allowfullscreen></iframe>'}} 
                         mediaPlaybackRequiresUserAction={false}
                     /> */}
-                    <RTCView streamURL={this.state.remoteAudioStream.toURL()} />    
-                    <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingTop: 30, paddingBottom: 10 }}>
+                    {/* <RTCView streamURL={this.state.remoteAudioStream.toURL()} />     */}
+                    <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingTop: 30}}>
                         <RoundedButton
                             onPress={this.state.streamFunction}
                             buttonText={this.state.streamText}>
@@ -604,7 +611,10 @@ export default class Stream extends Component<{type: number, deviceId: number, n
                 }
                 </View>
                 :
-                <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', padding: 50, paddingBottom: 30}}>
+                <View style={{justifyContent: 'center', alignItems: 'center', padding: 50}}>
+                    <View style={{width: '45%', height: '40%', marginBottom: 100}}>
+                        <Image style={{flex: 1, resizeMode: 'contain',  alignContent: 'center'}} source={this.state.intercomImage}/>
+                    </View>
                     <RoundedButton
                             onPress={this.state.intercomFunction}
                             buttonText={this.state.intercomText}>
@@ -650,13 +660,16 @@ photoButton: {
 videoContainer: {
     flex: 1,
     minHeight: 450,
-    width: width
+    width: width,
+    paddingTop: 25
+    
 },
 videos: {
     width: width,
     flex: 1,
     position: 'relative',
     overflow: 'hidden',
+    backgroundColor: "#1C1D2B"
 },
 localVideos: {
     height: 100,

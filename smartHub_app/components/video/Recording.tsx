@@ -105,7 +105,7 @@ export default class Record extends Component<{deviceIP: String, userEmail: Stri
 
     render(){
         return(
-            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingTop: 30, paddingBottom: 35 }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingTop: 10, paddingBottom: 10}}>
             <RoundedButton
                 onPress={this.state.recordFunction}
                 buttonText={this.state.recordText}>

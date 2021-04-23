@@ -130,10 +130,11 @@ export default class DeviceModal extends Component<PropVariables, StateVariables
 const styles = StyleSheet.create({
     
     buttonStyle: {
+        paddingTop: 5, 
         marginLeft: 70,
         marginRight: 70,
         marginBottom: 15,
-        marginTop: 40,
+        marginTop: 0,
         height: 40,
         width: screen.width/2,
         borderRadius: 6,

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, Text, TouchableOpacity, Dimensions} from 'react-native';
+import {StyleSheet, View, Text, TouchableOpacity, Dimensions, Image} from 'react-native';
 import { ColorPicker } from 'react-native-color-picker'
 import hexRgb from 'hex-rgb';
 import Toast, {BaseToast} from 'react-native-toast-message';
@@ -11,7 +11,7 @@ import InputSpinner from 'react-native-input-spinner';
 var width : number = Dimensions.get('window').width;
 var height : number = Dimensions.get('window').height;
 
-export default class SmartLock extends Component<{navigation: any, route: any},{deviceIP: string, device_id: number, selectedSeconds: number}>{
+export default class SmartLock extends Component<{navigation: any, route: any},{deviceIP: string, device_id: number, selectedSeconds: number, lockImage: any}>{
 
     constructor(props: any){
         super(props);
@@ -19,12 +19,11 @@ export default class SmartLock extends Component<{navigation: any, route: any},{
             deviceIP: "",
             device_id: this.props.route.params.device_id,
             selectedSeconds: 0,
+            lockImage: require('../../assets/lock-locked.png'),
             // lockFunction: this.unlock,
             // lockText: "Unlock",
         });        
     }
-
-    
   
 
 
@@ -37,6 +36,7 @@ export default class SmartLock extends Component<{navigation: any, route: any},{
         axios.post('http://' + this.state.deviceIP + ':4000/lock/lock').then((response) => {
             console.log(response.data);
             // this.setState({lockFunction: this.unlock, lockText:"Unlock"});
+            this.setState({lockImage: require('../../assets/lock-locked.png')});
         }, (error) => {
             console.log(error);
         })
@@ -54,6 +54,11 @@ export default class SmartLock extends Component<{navigation: any, route: any},{
         axios.post('http://' + this.state.deviceIP + ':4000/lock/unlock', collection).then((response) => {
             console.log(response.data);
             // this.setState({lockFunction: this.lock, lockText:"Lock"});
+            this.setState({lockImage: require('../../assets/lock-unlocked.png')});
+            if(this.state.selectedSeconds != 0)
+            {
+                setTimeout(() => {this.setState({lockImage: require('../../assets/lock-locked.png')});}, this.state.selectedSeconds*1000);
+            }
         }, (error) => {
             console.log(error);
         })
@@ -80,7 +85,10 @@ export default class SmartLock extends Component<{navigation: any, route: any},{
     render(){
         return(
             <View style={{flex:1, backgroundColor: '#151621', paddingTop: 20, alignItems: 'center'}}>
-                
+                {/* <Image style={{flex: 1, resizeMode: 'contain', marginLeft: 140}} source={require("../../assets/video-cam-icon.png")} /> */}
+                <View style={{width: '35%', height: '40%'}}>
+                <Image style={{flex: 1, resizeMode: 'contain',  alignContent: 'center'}} source={this.state.lockImage}/>
+                </View>
                 <RoundedButton
                     
                     onPress={this.unlock}
@@ -96,8 +104,8 @@ export default class SmartLock extends Component<{navigation: any, route: any},{
                 </RoundedButton>
                     
 
-                    <View style={{ flexDirection: "row", paddingBottom: 25}}>
-                        <Text style={{fontSize: 14, fontWeight: "bold", paddingTop: 5, color: "#fff" , paddingRight: 0}}>Set Time</Text>    
+                    <View style={{ flexDirection: "row", paddingBottom: 25, marginTop: 40}}>
+                        <Text style={{textAlign: "center", fontSize: 20, paddingTop: 5, color: "#fff" , paddingRight: 0}}>Set Time</Text>    
                     </View>
                     <View style={{flex: 1,maxHeight: 30,  justifyContent: 'center', alignItems: 'center'}}> 
                     {/* max={15} min={5} */}
@@ -106,7 +114,7 @@ export default class SmartLock extends Component<{navigation: any, route: any},{
                             style={styles.spinner}
                             editable={false}
                             skin="modern"
-                            height={30}           
+                            height={40}           
                             onChange={(num: number) => {
                                 this.setState({selectedSeconds: num});
                             }}
