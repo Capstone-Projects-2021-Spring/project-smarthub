@@ -12,9 +12,9 @@ interface SmartHubInput {
     onBlur: any;
     onFocus: any;
     inputType: any;
+    secure?: any;
 
 }
-
 
 //,{usingText: string, usingFunction: any}
 export default class RoundedTextInput extends Component<SmartHubInput>{
@@ -24,7 +24,7 @@ export default class RoundedTextInput extends Component<SmartHubInput>{
     
     render(){
         return(
-            <Shadow distance={10} size={[320,40]} offset={[5,15]} radius={20} startColor={"#E0A458"} finalColor={"transparent"} >
+            <Shadow distance={10} size={[320,40]} offset={[8,15]} radius={20} startColor={"#E0A458"} finalColor={"transparent"} >
                 <TextInput
                     onBlur={ () => this.props.onBlur()}
                     onFocus={() => this.props.onFocus()}
@@ -32,6 +32,7 @@ export default class RoundedTextInput extends Component<SmartHubInput>{
                     placeholderTextColor="#E0A458"
                     style={[styles.textField]}
                     onChangeText={(value) => this.props.inputType(this.props.placeholder, value)}
+                    secureTextEntry={this.props.secure}
                 />
             </Shadow>
             
@@ -67,6 +68,7 @@ const styles = StyleSheet.create ({
         textAlign: "center",
         marginTop: 10,
         marginBottom: 10,
+        marginLeft: 3
     },
 })
 

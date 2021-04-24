@@ -21,6 +21,7 @@ export default class Login extends Component<{navigation: any}>{
     constructor(props: any) {
         super(props);
         this.updateTypeHandler = this.updateTypeHandler.bind(this);
+        this.userSignIn = this.userSignIn.bind(this);
     }
 
     state = {
@@ -116,28 +117,31 @@ export default class Login extends Component<{navigation: any}>{
             alert(response.data.message);
         })
     }
-
-    
     
     render(){
         return(
             // Opening animation.
+
+
             <Animated.View style={[this.AnimatedContainer]}>
                 {/* <LinearGradient style={[styles.centerAlign, {height: "30%"}]} colors={["#E0A458", "#000000"]} /> */}
 
-                {/* <LinearGradient style={[{height: "10%"}]} colors={["rgba(21,22,33,1) 0%", "rgba(28,28,41,1) 35%", "rgba(53,53,72,1) 49%", "rgba(172,130,83,1) 78%", "rgba(224,164,88,1) 100%"]} /> */}
+                <LinearGradient style={[{height: "100%"}]} colors={["rgba(21,22,33,1) 0%", "rgba(28,28,41,1) 35%", "rgba(53,53,72,1) 49%", "rgba(172,130,83,1) 78%", "rgba(224,164,88,1) 100%"]} >
                 {/* View that gets animated. Background. */}
-                <View style={[styles.background]}>
+                <View >
+                {/* style={[styles.background]} */}
+                    
+                    
                     
                     {/* Input fields animation. */}
                     <Animated.View style={[this.AnimatedInput]}>
                         
                         <View style={[styles.signUpContainer]}>
-                            <Text style={{textAlign: "center", color: "#E0A458", fontSize: 25}}>Sign In</Text>
+                            <Text style={{textAlign: "center", color: "#E0A458", fontSize: 25, marginBottom: 15}}>Sign In</Text>
 
                             <View style={[]}>
                                 <RoundedTextInput onBlur={this.reverseAnimateInput} onFocus={this.AnimateInput} placeholder="email" inputType={this.updateTypeHandler}/>
-                                <RoundedTextInput onBlur={this.reverseAnimateInput} onFocus={this.AnimateInput} placeholder="password" inputType={this.updateTypeHandler}/>
+                                <RoundedTextInput onBlur={this.reverseAnimateInput} onFocus={this.AnimateInput} placeholder="password" inputType={this.updateTypeHandler} secure={true}/>
                             </View>
 
                             <View>
@@ -145,20 +149,22 @@ export default class Login extends Component<{navigation: any}>{
                                 <View style={[]}>
                                     
                                     {/* Sign In Button */}
-                                    <RoundedButton onPress={this.userSignIn} buttonText="Sign In" />
+                                    <RoundedButton onPress={this.userSignIn} buttonText="Sign In" buttonColor="#E0A458"/>
                                     
                                 </View>
                                 <View style={[]}>
-                                    <Text style={[]}>Don't Have An Account?</Text>
-                                        <TouchableOpacity style={[]} onPress={() => this.signUpPressHandler()}>   
-                                            <Text style={[]}>Sign Up</Text>
-                                        </TouchableOpacity>
+                                    <Text style={[{textAlign: "center", marginTop: 10}]}>
+                                        Don't Have An Account? <Text style={[{color: "#E0A458"}]} onPress={() => this.signUpPressHandler()}>Sign Up</Text>
+                                    </Text>
+                                    {/* <h1 ></h1> */}
                                 </View> 
                             </View>
                         </View>
                         
                     </Animated.View>
+                    
                 </View>
+                </LinearGradient>
             </Animated.View>
         )
     }
