@@ -104,7 +104,7 @@ export default class SmartLock extends Component<{navigation: any, route: any},{
                 </RoundedButton>
                     
 
-                    <View style={{ flexDirection: "row", paddingBottom: 25, marginTop: 40}}>
+                    <View style={{ flexDirection: "row", paddingBottom: 25, marginTop: 5}}>
                         <Text style={{textAlign: "center", fontSize: 20, paddingTop: 5, color: "#fff" , paddingRight: 0}}>Set Time</Text>    
                     </View>
                     <View style={{flex: 1,maxHeight: 30,  justifyContent: 'center', alignItems: 'center'}}> 

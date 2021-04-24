@@ -4,6 +4,7 @@ import axios from 'axios';
 import {Icon} from 'native-base'
 import FacialRecognitionModal from '../modals/modalForFacialRecognition';
 import RoundedDeviceListButton from '../buttons/RoundedDeviceListButton';
+import RoundedButton from '../buttons/RoundedButton';
 
 var width : number = Dimensions.get('window').width;
 var height : number = Dimensions.get('window').height;
@@ -55,8 +56,10 @@ export class FeaturesList extends Component<{type: number, navigation: any, rout
         collection.profile_id = this.props.routeObject.params.item.profile_id;
         console.log(collection);
         await axios.post('http://petepicam1234.zapto.org:4000/images/getImages', collection).then(async (response) => {
-            this.setState({featuresList: response.data.images});
+            console.log(response.data);
+            this.setState({featuresList: response.data.newImages});
         }, (error) => {
+            console.log("ERROR HERE");
             console.log(error);
         })
     }
@@ -66,17 +69,16 @@ export class FeaturesList extends Component<{type: number, navigation: any, rout
             <View style={{flex: 1, backgroundColor: "#151621", alignItems: 'center', paddingTop: 20}}>
                 <View>
                     {this.props.type === 1 ?
-                    <View>
-                        <TouchableOpacity
-                            style={styles.pillButtonNew}
-                            onPress={this.launchModal}>
-                            <Icon name="ios-add" />
-                        </TouchableOpacity>           
+                    <View style={{alignItems: "center"}}>
+                        <RoundedButton
+                            onPress={this.launchModal}
+                            buttonText="+" />
+                                                             
                         <FlatList
                             data={this.state.featuresList}
                             renderItem={({item, index} : any)=>{
                                 return(
-                                    <FeatureListItem  type={this.props.type} item={item} navigation={this.props.navigation}/>
+                                    <FeatureListItem type={this.props.type} item={item} navigation={this.props.navigation}/>
                                 );
                             }}
                         />
@@ -86,7 +88,7 @@ export class FeaturesList extends Component<{type: number, navigation: any, rout
                     data={this.state.featuresList}
                     renderItem={({item, index} : any)=>{
                         return(
-                            <FeatureListItem item={item} navigation={this.props.navigation}/>
+                            <FeatureListItem type={this.props.type} item={item} navigation={this.props.navigation}/>
                         );
                     }}
                 />}

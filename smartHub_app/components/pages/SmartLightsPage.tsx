@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, Text, TouchableOpacity, Dimensions} from 'react-native';
+import {StyleSheet, View, Text, TouchableOpacity, Dimensions, Image} from 'react-native';
 import { ColorPicker } from 'react-native-color-picker'
 import hexRgb from 'hex-rgb';
 import Toast, {BaseToast} from 'react-native-toast-message';
@@ -10,12 +10,13 @@ import RoundedButton from '../buttons/RoundedButton';
 var width : number = Dimensions.get('window').width;
 var height : number = Dimensions.get('window').height;
 
-export default class SmartLight extends Component<{navigation: any, route: any},{deviceIP: string}>{
+export default class SmartLight extends Component<{navigation: any, route: any},{deviceIP: string, lightImage: any}>{
 
     constructor(props: any){
         super(props);
         this.state = ({
             deviceIP: "",
+            lightImage: require("../../assets/light-off-icon.png"),
         })
     }
 
@@ -42,6 +43,16 @@ export default class SmartLight extends Component<{navigation: any, route: any},
                 text1: response.data,
                 visibilityTime: 2000
             })
+            console.log(obj);
+            if((obj.blue == 0 && obj.green == 0 && obj.red == 0) || obj.randomize == true)
+            {
+                this.setState({lightImage: require("../../assets/light-off-icon.png")});    
+            }
+            else
+            {   
+                this.setState({lightImage: require("../../assets/light-on-icon.png")});
+            }
+
         }, (error) => {
             console.log(error);
             Toast.show({
@@ -77,6 +88,8 @@ export default class SmartLight extends Component<{navigation: any, route: any},
                 text1: response.data,
                 visibilityTime: 2000
             })
+
+            this.setState({lightImage: require("../../assets/light-on-icon.png")});
         }, (error) => {
             console.log(error);
             Toast.show({
@@ -108,6 +121,8 @@ export default class SmartLight extends Component<{navigation: any, route: any},
                 text1: response.data,
                 visibilityTime: 2000
             })
+
+            this.setState({lightImage: require("../../assets/light-on-icon.png")});
         }, (error) => {
             console.log(error);
             Toast.show({
@@ -146,7 +161,6 @@ export default class SmartLight extends Component<{navigation: any, route: any},
                 contentContainerStyle={{ paddingHorizontal: 15 }}
                 text1Style={{
                   fontSize: width/22,
-                  fontWeight: 'bold'
                 }}
                 text2Style={{
                     color: "#000",
@@ -164,7 +178,6 @@ export default class SmartLight extends Component<{navigation: any, route: any},
                   contentContainerStyle={{ paddingHorizontal: 15 }}
                   text1Style={{
                     fontSize:width/21,
-                    fontWeight: 'bold'
                   }}
                   text2Style={{
                       color: "#000",
@@ -176,12 +189,15 @@ export default class SmartLight extends Component<{navigation: any, route: any},
               )
         }
         return(
-            <View style={{flex:1, backgroundColor:'#151621', paddingTop: 20, alignItems: 'center'}}>
+            <View style={{flex:1, backgroundColor:'#151621', paddingTop: 10, alignItems: 'center'}}>
                 <Toast style={{zIndex: 1}} config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
+                <View style={{width: '10%', height: '10%', marginBottom: -30}}>
+                        <Image style={{flex: 1, resizeMode: 'contain', marginLeft: width/5}} source={this.state.lightImage}/>
+                </View> 
                 <ColorPicker
                     onColorSelected={color => (this.singleColor(hexRgb(color)))}
                     hideSliders={false}
-                    style={{width: width-60, height: height/2, paddingBottom: 20}}
+                    style={{width: width-60, height: height/2.3, paddingBottom: 20}}
                 />
                 <RoundedButton
                     onPress={()=>this.randomize()}
