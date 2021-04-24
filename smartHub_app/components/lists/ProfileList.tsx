@@ -172,8 +172,10 @@ export default class ProfileList extends Component<{navigation: any, user_id: nu
                         if(this.state.checkData){
                             return(
                                 <View style={{marginTop: height/7, flex: 1, alignItems: 'center', height: height/2, justifyContent: 'center'}}>
-                                    <Text style={{paddingTop: 18, fontSize: width/21, color: "#fff", fontWeight: 'bold'}}>Looks like you haven't added any Profiles.</Text>
-                                    <Text style={{paddingTop: 18, fontSize: width/24, color: "#fff", fontWeight: 'bold', paddingBottom: 20}}>Click the "+" on the top right to add a new Profile.</Text>
+                                    {/* <Text style={{paddingTop: 18, fontSize: width/21, color: "#fff", fontWeight: 'bold', textAlign: "center"}}>Looks like you haven't added</Text>  */}
+                                    <Text style={{paddingTop: 18, fontSize: width/21, color: "#fff", textAlign: "center"}}>Looks like you haven't added any Profiles.</Text> 
+                                    <Text style={{paddingTop: 18, fontSize: width/23, color: "#fff", textAlign: "center"}}>Click the "+" on the top right to add a new Profile.</Text> 
+                                    {/* <Text style={{paddingTop: 18, fontSize: width/24, color: "#fff", fontWeight: 'bold', paddingBottom: 20, textAlign: "center"}}>Click the "+" on the top right to add a new Profile.</Text> */}
                                     <Image resizeMode={'contain'} style={styles.ImageStyle} source={{uri: 'https://image.flaticon.com/icons/png/512/122/122935.png'}}/>
                                 </View>
                             )

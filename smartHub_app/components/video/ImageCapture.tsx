@@ -110,7 +110,7 @@ export default class ImageCapture extends Component<{profileId: number, type: St
 
     render(){
         return(
-            <View style={{ alignItems: 'center', paddingBottom: 10 }}>
+            <View style={{ alignItems: 'center', paddingBottom: 50 }}>
                 <RoundedButton
                     onPress={this.takePhoto}
                     buttonText={"Take Photo"}>

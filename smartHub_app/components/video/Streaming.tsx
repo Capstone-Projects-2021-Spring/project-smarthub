@@ -2,8 +2,8 @@ import axios from 'axios';
 import Toast, { BaseToast } from 'react-native-toast-message'
 import { WebView } from 'react-native-webview'
 import React, { Component } from 'react';
-import {StyleSheet, View, Text, TouchableOpacity, Dimensions} from 'react-native';
-import {
+import {StyleSheet, View, Text, TouchableOpacity, Dimensions, Image} from 'react-native';
+import { 
     RTCPeerConnection,
     RTCIceCandidate,
     RTCSessionDescription,
@@ -21,9 +21,9 @@ import RoundedButton from '../buttons/RoundedButton';
 
 const io = require("socket.io-client");
 var width: number = Dimensions.get('window').width;
+var height: number = Dimensions.get('window').height;
 
-
-export default class Stream extends Component<{type: number, deviceId: number, navigation: any},{profileId: number, phoneNumber: String, deviceIP: String, userEmail: String, profileName: String, featureType: String, checkStream: boolean, remoteVideoStream: any, videoSocket: any, peerVideoConnection: any, remoteAudioStream: any, audioSocket: any, peerAudioConnection: any, streamText: string, streamFunction: any, intercomText: string, intercomFunction: any}>{
+export default class Stream extends Component<{type: number, deviceId: number, navigation: any},{profileId: number, phoneNumber: String, deviceIP: String, userEmail: String, profileName: String, featureType: String, checkStream: boolean, remoteVideoStream: any, videoSocket: any,  remoteAudioStream: any, audioSocket: any,  streamText: string, streamFunction: any, intercomText: string, intercomFunction: any, intercomImage: any, liveImage: any, peerAudioConnection: any, peerVideoConnection: any,}>{
 
     constructor(props: any) {
         super(props);
@@ -39,7 +39,7 @@ export default class Stream extends Component<{type: number, deviceId: number, n
             remoteVideoStream: { toURL: () => null },
             remoteAudioStream: { toURL: () => null },
             audioSocket: null,
-            peerVideoConnection: new RTCPeerConnection({
+            peerVideoConnection: new RTCPeerConnection({ 
                 iceServers: [
                     {
                         urls: 'stun:stun.l.google.com:19302',
@@ -71,6 +71,10 @@ export default class Stream extends Component<{type: number, deviceId: number, n
 
             intercomText: "Talk",
             intercomFunction: this.beginAudio,
+
+            intercomImage: require('../../assets/mic-off.png'), 
+            liveImage: "",
+
         })
     }
 
@@ -165,7 +169,7 @@ export default class Stream extends Component<{type: number, deviceId: number, n
                 }
                 ,
                 5000);
-                this.setState({streamFunction: this.stopStream, streamText:"Stop Stream"});
+                this.setState({streamFunction: this.stopStream, streamText:"Stop Stream", liveImage: require('../../assets/LIVE.png')});
                 this.beginAudio();
             }, (error) => {
                 console.log(error);
@@ -215,7 +219,7 @@ export default class Stream extends Component<{type: number, deviceId: number, n
                     stopFaceRec(this.state.deviceIP);
                 }
 
-                this.setState({streamFunction: this.beginStream, streamText:"Start Stream"});
+                this.setState({streamFunction: this.beginStream, streamText:"Start Stream", liveImage: ""});
                 
             }, (error) => {
                 console.log(error);
@@ -224,14 +228,15 @@ export default class Stream extends Component<{type: number, deviceId: number, n
             alert("The stream is no longer live.")
         }
 
-        // if (this.state.videoSocket !== null) {
-        //     this.state.videoSocket.disconnect();
-        // }
+        if (this.state.videoSocket !== null) {
+            this.state.videoSocket.disconnect();
+        }
 
-        // this.setState({ videoSocket: null });
+        this.setState({ videoSocket: null });
 
-        this.state.peerVideoConnection.close();
+        this.state.peerVideoConnection.close(); 
         console.log("Stop intercom success");
+
 
         this.setState({
             peerVideoConnection:
@@ -262,7 +267,7 @@ export default class Stream extends Component<{type: number, deviceId: number, n
     
     async handleVideoOffer (id: any, description: any) {
 
-        console.log("Handling offer from audio origin.");
+        console.log("Handling offer from audio origin."); 
 
         try {
 
@@ -299,7 +304,7 @@ export default class Stream extends Component<{type: number, deviceId: number, n
 
         try{
 
-            await this.state.peerVideoConnection.addIceCandidate(new RTCIceCandidate(candidate));
+            await this.state.peerVideoConnection.addIceCandidate(new RTCIceCandidate(candidate)); 
 
         } catch (err) {
 
@@ -377,7 +382,7 @@ export default class Stream extends Component<{type: number, deviceId: number, n
 
         await axios.post(url).then((response) => {
             console.log(response.data)
-            this.setState({intercomFunction: this.stopAudio, intercomText:"Stop Talking"});
+            this.setState({intercomFunction: this.stopAudio, intercomText:"Stop Talking", intercomImage: require('../../assets/mic-on.png')});
         }, (error) => {
             console.log(error);
         })
@@ -399,14 +404,14 @@ export default class Stream extends Component<{type: number, deviceId: number, n
 
         const constraints: any = { audio: true };
 
-        try {
+        try { 
 
             let stream = await mediaDevices.getUserMedia(constraints);
 
             this.state.peerAudioConnection.addStream(stream);
 
             console.log("Start intercom success");
-            if(this.props.type === 2) alert("The Intercom has started.");
+            // if(this.props.type === 2) alert("The Intercom has started.");
 
             this.state.audioSocket.emit("audio_join");
 
@@ -422,7 +427,7 @@ export default class Stream extends Component<{type: number, deviceId: number, n
         
         await axios.post(url).then((response) => {
             console.log(response.data);
-            this.setState({intercomFunction: this.beginAudio, intercomText:"Talk"});
+            this.setState({intercomFunction: this.beginAudio, intercomText:"Talk", intercomImage: require('../../assets/mic-off.png')});
         }, (error) => {
             console.log(error);
         })
@@ -435,11 +440,11 @@ export default class Stream extends Component<{type: number, deviceId: number, n
 
         this.setState({ audioSocket: null });
 
-        this.state.peerAudioConnection.close();
+        this.state.peerAudioConnection.close(); 
         console.log("Stop intercom success");
-        if(this.props.type === 2) alert("The Intercom has stopped.");
+        // if(this.props.type === 2) alert("The Intercom has stopped.");
 
-        this.setState({
+        this.setState({ 
             peerAudioConnection:
                 new RTCPeerConnection({
                     iceServers: [
@@ -571,22 +576,28 @@ export default class Stream extends Component<{type: number, deviceId: number, n
                 <Toast style={{zIndex: 1}} config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
                 <FeatureModal ref="featureModal" deviceIP={this.state.deviceIP} deviceId={this.props.deviceId} feature={this}/>                
                 {this.props.type === 1 || this.props.type === 3 ?
+                
+
                 <View style={styles.videoContainer}>
+                    <View style={{width: '10%', height: '3%', margin: 8}}>
+                        <Image style={{flex: 1, resizeMode: 'contain', marginLeft: width/10}} source={this.state.liveImage}/>
+                    </View>                    
                      <View style={[styles.videos, styles.remoteVideos]}>
-                        <RTCView
+                        <Image style={{flex: 1, resizeMode: 'contain', marginLeft: 140}} source={require("../../assets/video-cam-icon.png")} />
+                        <RTCView 
                             streamURL={this.state.remoteVideoStream.toURL()}
                             style={styles.remoteVideo}
                             objectFit={'cover'}
                         />
                     </View>
-                    {/* <WebView
+                    {/* <WebView 
                         style={{flex: 1,}}
                         originWhitelist={['*']}
                         source={{html: '<iframe style="box-sizing: border-box; width: 100%; height: 100%; border: 15px solid #FF9900; background-color: #222222"; src="http://' + this.state.deviceIP + ':4000/watch.html" frameborder="0" allow="autoplay encrypted-media" allowfullscreen></iframe>'}} 
                         mediaPlaybackRequiresUserAction={false}
                     /> */}
                     <RTCView streamURL={this.state.remoteAudioStream.toURL()} />    
-                    <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingTop: 30, paddingBottom: 10 }}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingTop: 30}}>
                         <RoundedButton
                             onPress={this.state.streamFunction}
                             buttonText={this.state.streamText}>
@@ -604,7 +615,10 @@ export default class Stream extends Component<{type: number, deviceId: number, n
                 }
                 </View>
                 :
-                <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', padding: 50, paddingBottom: 30}}>
+                <View style={{justifyContent: 'center', alignItems: 'center', padding: 50}}>
+                    <View style={{width: '45%', height: '40%', marginBottom: 100}}>
+                        <Image style={{flex: 1, resizeMode: 'contain',  alignContent: 'center'}} source={this.state.intercomImage}/>
+                    </View>
                     <RoundedButton
                             onPress={this.state.intercomFunction}
                             buttonText={this.state.intercomText}>
@@ -650,13 +664,16 @@ photoButton: {
 videoContainer: {
     flex: 1,
     minHeight: 450,
-    width: width
+    width: width,
+    // paddingTop: 25
+    
 },
 videos: {
     width: width,
     flex: 1,
     position: 'relative',
     overflow: 'hidden',
+    backgroundColor: "#1C1D2B"
 },
 localVideos: {
     height: 100,

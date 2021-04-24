@@ -22,6 +22,7 @@ import Intercom from './components/pages/IntercomPage';
 import Toast from 'react-native-toast-message';
 import getToastConfig from './components/configurations/toastConfig';
 import { FeaturesRecordingsList } from './components/lists/FeaturesRecordingsList';
+import { Shadow } from 'react-native-shadow-2';
 
 //App.tsx handles the navigation of the application
 
@@ -255,7 +256,9 @@ export default function App(){
   console.warn = () => {}
   return (  
   <View style={{ flex: 1, backgroundColor: '#151621' }}>
-    <NavigationContainer>
+              
+      
+    <NavigationContainer>      
       <Stack.Navigator initialRouteName="Login">
         
         <Stack.Screen 

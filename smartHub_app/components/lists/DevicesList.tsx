@@ -165,8 +165,8 @@ export class DevicesList extends Component<{navigation: any, stackScreen: string
                         if(this.state.checkData){
                             return(
                                 <View style={{marginTop: height/12, flex: 1, alignItems: 'center', height: height/2, justifyContent: 'center'}}>
-                                    <Text style={{paddingTop: 18, fontSize: width/21, color: "#fff", fontWeight: 'bold'}}>Looks like you haven't added any Devices.</Text>
-                                    <Text style={{paddingTop: 18, fontSize: width/23, color: "#fff", fontWeight: 'bold', paddingBottom: 20}}>Click the "+" on the top right to add a new Device.</Text>
+                                    <Text style={{paddingTop: 18, fontSize: width/21, color: "#fff", textAlign: "center"}}>Looks like you haven't added any Devices.</Text>
+                                    <Text style={{paddingTop: 18, fontSize: width/23, color: "#fff", paddingBottom: 20, textAlign: "center"}}>Click the "+" on the top right to add a new Device.</Text>
                                     <Image resizeMode={'contain'} style={styles.ImageStyle} source={{uri: 'https://www.pngkit.com/png/full/118-1180951_image-transparent-icons-free-color-desktops-and-gadgets.png'}}/>
                                 </View>
                         )}else{

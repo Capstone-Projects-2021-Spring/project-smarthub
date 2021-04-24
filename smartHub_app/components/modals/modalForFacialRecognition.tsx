@@ -49,19 +49,19 @@ export default class FacialRecognitionModal extends Component<PropVariables, Sta
                     right:0,
                     color: "#fff"
                 }}>Add a face to be recognized: </Text>
-                <View style={{marginTop: 85}}>
-                <TouchableOpacity 
-                    style={styles.buttonStyle}
-                    onPress={() => ImagePickerPage(this, this.props.routeObject, this.props.parentFlatList)}>
-                    <Text style={{textAlign: 'center', fontWeight: 'bold', fontSize: screen.width/26, color: '#fff'}}>Upload from Camera Roll</Text>
-                </TouchableOpacity>
+                <View style={{marginTop: 50, position: 'absolute', top:20, right:0, left:0}}>
+                    <TouchableOpacity 
+                        style={styles.buttonStyle}
+                        onPress={() => ImagePickerPage(this, this.props.routeObject, this.props.parentFlatList)}>
+                        <Text style={{textAlign: 'center', fontWeight: 'bold', fontSize: screen.width/26, color: '#fff', paddingTop: 3}}>Upload from Camera Roll</Text>
+                    </TouchableOpacity>
                 </View>
-                <View>
-                <TouchableOpacity 
-                    style={styles.buttonStyle}
-                    onPress={() => this.props.navigation.navigate('Image Capture Devices', this.props.routeObject)}>
-                <Text style={{textAlign: 'center', fontWeight: 'bold', fontSize: screen.width/26, color: '#fff'}}>Take Photo</Text>
-                </TouchableOpacity>
+                <View style={{marginTop: 65, position: 'absolute', top:70, right:0, left:0}}>
+                    <TouchableOpacity 
+                        style={styles.buttonStyle}
+                        onPress={() => this.props.navigation.navigate('Image Capture Devices', this.props.routeObject)}>
+                        <Text style={{textAlign: 'center', fontWeight: 'bold', fontSize: screen.width/26, color: '#fff', paddingTop: 3}}>Take Photo</Text>
+                    </TouchableOpacity>
                 </View>
 
             </Modal>
@@ -72,14 +72,24 @@ export default class FacialRecognitionModal extends Component<PropVariables, Sta
 const styles = StyleSheet.create({
     
     buttonStyle: {
-        padding: 8,
-        marginLeft: 70,
-        marginRight: 70,
-        marginBottom: 30,
+        paddingTop: 5, 
+        marginLeft: 60,
+        marginRight: 90,
+        marginBottom: 15,
+        marginTop: 0,
         height: 40,
-        borderRadius: 6,
         width: screen.width/2,
+        borderRadius: 6,
         backgroundColor: '#E0A458'
+
+        // padding: 8,
+        // marginLeft: 70,
+        // marginRight: 90,
+        // marginBottom: 30,
+        // height: 40,
+        // borderRadius: 6,
+        // width: screen.width/2,
+        // backgroundColor: '#E0A458'
     },
 
     modalStyling: {

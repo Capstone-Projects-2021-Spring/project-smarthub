@@ -4,6 +4,7 @@ import Stream from '../video/Streaming';
 
 export default class Intercom extends Component<{ route: any, navigation: any }>{
 
+    
     componentDidMount = async() => {
         this.props.navigation.setOptions({
             headerTitle: this.props.route.params.device_name,
