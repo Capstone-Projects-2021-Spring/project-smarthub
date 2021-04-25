@@ -183,7 +183,7 @@ module.exports.getKeyList = async function (accountName : String, profileName : 
   for (var i = 0; i < allKeys.length; i++){
 
      var newPair: any = {};
-     newPair["key"] = allKeys[i];
+     newPair["key"] = allKeys[i].split('/')[3];
      newPair["url"] = await generateSignedURL(allKeys[i]);
 
      keyUrlPairs[i] = newPair;
