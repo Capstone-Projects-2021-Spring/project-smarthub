@@ -12,3 +12,4 @@ smartHub_app/android/app/build
 smartHub_app/android/build
 smartHub_app/android/app/smarthub.keystore
 smartHub_app/android/.gradle/6.3/
+testing/node_modules
