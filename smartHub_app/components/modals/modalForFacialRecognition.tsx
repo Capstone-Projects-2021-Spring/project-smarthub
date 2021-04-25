@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     
     buttonStyle: {
         paddingTop: 5, 
-        marginLeft: 60,
+        marginLeft: 50,
         marginRight: 90,
         marginBottom: 15,
         marginTop: 0,

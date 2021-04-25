@@ -24,7 +24,7 @@ export default class RoundedTextInput extends Component<SmartHubInput>{
     
     render(){
         return(
-            <Shadow distance={10} size={[320,40]} offset={[8,15]} radius={20} startColor={"#E0A458"} finalColor={"transparent"} >
+            <Shadow distance={10} size={[300,40]} offset={[6,14]} radius={20} startColor={"#E0A458"} finalColor={"transparent"} >
                 <TextInput
                     onBlur={ () => this.props.onBlur()}
                     onFocus={() => this.props.onFocus()}

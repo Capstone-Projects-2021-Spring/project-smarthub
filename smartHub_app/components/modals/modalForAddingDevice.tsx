@@ -74,7 +74,7 @@ export default class DeviceModal extends Component<PropVariables, StateVariables
                         />
                     </View>
                 </View>
-                <View style={{alignItems: 'center', justifyContent: 'center', position: 'absolute', bottom:0, left:0, right:0, top: 300, marginBottom: 50}}>
+                <View style={{alignItems: 'center', justifyContent: 'center', position: 'absolute', bottom:0, left:0, right:0, top: 250, marginBottom: 50}}>
                     <Button
                         style={{ textAlign: 'center', justifyContent: 'center', fontSize: screen.width/20, color: '#fff'}}
                         containerStyle={styles.buttonStyle}
@@ -145,8 +145,8 @@ const styles = StyleSheet.create({
         borderBottomColor: '#E0A458',
         marginLeft: 30,
         marginRight: 30,
-        marginTop: 30,
-        marginBottom: 15,
+        marginTop: 10,
+        marginBottom: 20,
         borderBottomWidth: 1,
         fontSize: screen.width/27,
         color: "#fff"
