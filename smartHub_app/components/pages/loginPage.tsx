@@ -146,7 +146,7 @@ export default class Login extends Component<{navigation: any}>{
 
                             <View>
 
-                                <View style={[]}>
+                                <View style={[{marginLeft: -5}]}>
                                     
                                     {/* Sign In Button */}
                                     <RoundedButton onPress={this.userSignIn} buttonText="Sign In" buttonColor="#E0A458"/>

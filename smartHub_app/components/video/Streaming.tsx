@@ -23,7 +23,7 @@ const io = require("socket.io-client");
 var width: number = Dimensions.get('window').width;
 var height: number = Dimensions.get('window').height;
 
-export default class Stream extends Component<{type: number, deviceId: number, navigation: any},{profileId: number, phoneNumber: String, deviceIP: String, userEmail: String, profileName: String, featureType: String, checkStream: boolean, remoteVideoStream: any, videoSocket: any,  remoteAudioStream: any, audioSocket: any,  streamText: string, streamFunction: any, intercomText: string, intercomFunction: any, intercomImage: any, liveImage: any, peerAudioConnection: any, peerVideoConnection: any,}>{
+export default class Stream extends Component<{type: number, deviceId: number, navigation: any},{localAudioStream: any,profileId: number, phoneNumber: String, deviceIP: String, userEmail: String, profileName: String, featureType: String, checkStream: boolean, remoteVideoStream: any, videoSocket: any,  remoteAudioStream: any, audioSocket: any,  streamText: string, streamFunction: any, intercomText: string, intercomFunction: any, intercomImage: any, liveImage: any, peerAudioConnection: any, peerVideoConnection: any,}>{
 
     constructor(props: any) {
         super(props);
@@ -38,6 +38,7 @@ export default class Stream extends Component<{type: number, deviceId: number, n
             profileId: 0,
             remoteVideoStream: { toURL: () => null },
             remoteAudioStream: { toURL: () => null },
+            localAudioStream: { toURL: () => null },
             audioSocket: null,
             peerVideoConnection: new RTCPeerConnection({ 
                 iceServers: [
@@ -86,7 +87,7 @@ export default class Stream extends Component<{type: number, deviceId: number, n
             this.setState({checkStream: response.data.streaming})
             if(this.state.checkStream == true)
             {
-                this.setState({streamFunction: this.stopStream, streamText:"Stop Stream"});
+                this.setState({streamFunction: this.stopStream, streamText:"Stop Stream", liveImage: require('../../assets/LIVE.png')});
             }
             else
             {
@@ -136,6 +137,39 @@ export default class Stream extends Component<{type: number, deviceId: number, n
         videoSocket.on("broadcaster", () => this.handleVideoOrigin());
         this.setState({ videoSocket: videoSocket })
         if(this.state.checkStream) this.state.videoSocket.emit("watcher");
+
+        url = 'http://' + this.state.deviceIP + ':4000/audio'
+
+        const audioSocket = io.connect(url);
+        
+        // setTimeout(() => {
+        //     console.log("SET TIMEOUT"); 
+            
+            
+        // }, 5000);
+        audioSocket.on("offer", (id: any, description: any) => this.handleAudioOffer(id, description));
+        audioSocket.on("candidate", (id: any, description: any) => this.handleAudioCandidate(id, description));
+        audioSocket.on("audio_origin", () => this.handleAudioOrigin());
+        this.setState({ audioSocket: audioSocket });
+
+        const constraints: any = { audio: true };
+
+        try { 
+
+            let stream = await mediaDevices.getUserMedia(constraints);
+
+            // this.state.peerAudioConnection.addStream(stream);
+            this.setState({localAudioStream: stream});
+
+            console.log("Start intercom success");
+            // if(this.props.type === 2) alert("The Intercom has started.");
+            // callback();
+            // this.state.audioSocket.emit("audio_join");
+
+        } catch (err) {
+            console.log("Start intercom error");
+            console.log(err);
+        }
     }
 
     beginStream = async () => {
@@ -322,30 +356,34 @@ export default class Stream extends Component<{type: number, deviceId: number, n
     async handleAudioOffer(id: any, description: any) {
 
         console.log("Handling offer from audio origin.");
+        // this.getLocalAudio(  async() => {
+            try {
 
-        try {
+                this.state.peerAudioConnection.onaddstream = (event: any) => this.setAudioRemoteStream(event.stream);
+                this.state.peerAudioConnection.addStream(this.state.localAudioStream);
+                this.state.peerAudioConnection.onicecandidate = (event: any) => {
+                    if (event.candidate) {
+                        this.state.audioSocket.emit("candidate", id, event.candidate);
+                    }
+                };
 
-            this.state.peerAudioConnection.onaddstream = (event: any) => this.setAudioRemoteStream(event.stream);
+                await this.state.peerAudioConnection.setRemoteDescription(new RTCSessionDescription(description));
 
-            this.state.peerAudioConnection.onicecandidate = (event: any) => {
-                if (event.candidate) {
-                    this.state.audioSocket.emit("candidate", id, event.candidate);
-                }
-            };
+                const answer: any = await this.state.peerAudioConnection.createAnswer();
 
-            await this.state.peerAudioConnection.setRemoteDescription(new RTCSessionDescription(description));
+                await this.state.peerAudioConnection.setLocalDescription(answer);
 
-            const answer: any = await this.state.peerAudioConnection.createAnswer();
+                this.state.audioSocket.emit("answer", id, this.state.peerAudioConnection.localDescription);
 
-            await this.state.peerAudioConnection.setLocalDescription(answer);
+                
 
-            this.state.audioSocket.emit("answer", id, this.state.peerAudioConnection.localDescription);
+            } catch (err) {
 
-        } catch (err) {
+                console.log("Offer went wrong, Error: " + err);
 
-            console.log("Offer went wrong, Error: " + err);
-
-        }
+            }
+        // })
+        
 
     }
 
@@ -391,34 +429,12 @@ export default class Stream extends Component<{type: number, deviceId: number, n
         //     alert(this.props.route.params.device_name + ' not compatible for live streaming.')
         //     return;
         // }
+        this.state.audioSocket.emit("audio_join");
+        
+    
+        
 
-        url = 'http://' + this.state.deviceIP + ':4000/audio'
-
-        const audioSocket = io.connect(url);
-
-        audioSocket.on("offer", (id: any, description: any) => this.handleAudioOffer(id, description));
-        audioSocket.on("candidate", (id: any, description: any) => this.handleAudioCandidate(id, description));
-        audioSocket.on("audio_origin", () => this.handleAudioOrigin());
-
-        this.setState({ audioSocket: audioSocket });
-
-        const constraints: any = { audio: true };
-
-        try { 
-
-            let stream = await mediaDevices.getUserMedia(constraints);
-
-            this.state.peerAudioConnection.addStream(stream);
-
-            console.log("Start intercom success");
-            // if(this.props.type === 2) alert("The Intercom has started.");
-
-            this.state.audioSocket.emit("audio_join");
-
-        } catch (err) {
-            console.log("Start intercom error");
-            console.log(err);
-        }
+        // await this.getLocalAudio()
     }
 
     stopAudio = async() => {
@@ -434,11 +450,11 @@ export default class Stream extends Component<{type: number, deviceId: number, n
 
         // Code to stop audio.
 
-        if (this.state.audioSocket !== null) {
-            this.state.audioSocket.disconnect();
-        }
+        // if (this.state.audioSocket !== null) {
+        //     this.state.audioSocket.disconnect();
+        // }
 
-        this.setState({ audioSocket: null });
+        // this.setState({ audioSocket: null });
 
         this.state.peerAudioConnection.close(); 
         console.log("Stop intercom success");
@@ -596,7 +612,7 @@ export default class Stream extends Component<{type: number, deviceId: number, n
                         source={{html: '<iframe style="box-sizing: border-box; width: 100%; height: 100%; border: 15px solid #FF9900; background-color: #222222"; src="http://' + this.state.deviceIP + ':4000/watch.html" frameborder="0" allow="autoplay encrypted-media" allowfullscreen></iframe>'}} 
                         mediaPlaybackRequiresUserAction={false}
                     /> */}
-                    <RTCView streamURL={this.state.remoteAudioStream.toURL()} />    
+                    <RTCView streamURL={this.state.remoteAudioStream.toURL()} />  
                     <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingTop: 30}}>
                         <RoundedButton
                             onPress={this.state.streamFunction}

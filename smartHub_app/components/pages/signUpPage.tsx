@@ -150,29 +150,31 @@ export default class SignUp extends Component<{navigation: any}>{
             <Animated.View style={[]}>
                 {/* <LinearGradient style={[styles.centerAlign, {height: "30%"}]} colors={["#E0A458", "#000000"]} /> */}
 
-                {/* <LinearGradient style={[{height: "10%"}]} colors={["rgba(21,22,33,1) 0%", "rgba(28,28,41,1) 35%", "rgba(53,53,72,1) 49%", "rgba(172,130,83,1) 78%", "rgba(224,164,88,1) 100%"]} /> */}
+                <LinearGradient style={[{height: "100%"}]} colors={["rgba(21,22,33,1) 0%", "rgba(28,28,41,1) 35%", "rgba(53,53,72,1) 49%", "rgba(172,130,83,1) 78%", "rgba(224,164,88,1) 100%"]} >
                 {/* View that gets animated. Background. */}
-                <View style={[styles.background]}>
-                    
-                    {/* Input fields animation. */}
-                    <Animated.View style={[this.AnimatedInput]}>
+                    <View style={[]}>
                         
-                        <View style={[styles.signUpContainer]}>
-                            <Text style={{textAlign: "center", color: "#E0A458", fontSize: 25, marginBottom: 10}}>Sign Up</Text>
-                            <ScrollView style={[{paddingLeft: 0}]} showsVerticalScrollIndicator={false}>
-                                <View style={[]}>
-                                        <RoundedTextInput onBlur={this.reverseAnimateInput} onFocus={this.AnimateInput} placeholder="first name" inputType={this.updateTypeHandler}/>
-                                        <RoundedTextInput onBlur={this.reverseAnimateInput} onFocus={this.AnimateInput} placeholder="last name" inputType={this.updateTypeHandler}/>
-                                        <RoundedTextInput onBlur={this.reverseAnimateInput} onFocus={this.AnimateInput} placeholder="phone" inputType={this.updateTypeHandler}/>
-                                        <RoundedTextInput onBlur={this.reverseAnimateInput} onFocus={this.AnimateInput} placeholder="email" inputType={this.updateTypeHandler}/>
-                                        <RoundedTextInput onBlur={this.reverseAnimateInput} onFocus={this.AnimateInput} placeholder="password" inputType={this.updateTypeHandler} secure={true}/>
-                                        <RoundedTextInput onBlur={this.reverseAnimateInput} onFocus={this.AnimateInput} placeholder="confirm password" inputType={this.updateTypeHandler} secure={true}/>
-                                    
-                                </View>
+                        {/* Input fields animation. */}
+                        <Animated.View style={[this.AnimatedInput]}>
+                            
+                            <View style={[styles.signUpContainer]}>
+                                <Text style={{textAlign: "center", color: "#E0A458", fontSize: 25, marginBottom: 10}}>Sign Up</Text>
+                                <ScrollView style={[{paddingLeft: 0}]} showsVerticalScrollIndicator={false}>
+                                    <View style={[]}>
+                                            <RoundedTextInput onBlur={this.reverseAnimateInput} onFocus={this.AnimateInput} placeholder="first name" inputType={this.updateTypeHandler}/>
+                                            <RoundedTextInput onBlur={this.reverseAnimateInput} onFocus={this.AnimateInput} placeholder="last name" inputType={this.updateTypeHandler}/>
+                                            <RoundedTextInput onBlur={this.reverseAnimateInput} onFocus={this.AnimateInput} placeholder="phone" inputType={this.updateTypeHandler}/>
+                                            <RoundedTextInput onBlur={this.reverseAnimateInput} onFocus={this.AnimateInput} placeholder="email" inputType={this.updateTypeHandler}/>
+                                            <RoundedTextInput onBlur={this.reverseAnimateInput} onFocus={this.AnimateInput} placeholder="password" inputType={this.updateTypeHandler} secure={true}/>
+                                            <RoundedTextInput onBlur={this.reverseAnimateInput} onFocus={this.AnimateInput} placeholder="confirm password" inputType={this.updateTypeHandler} secure={true}/>
+                                        
+                                    </View>
 
+                                    
+                                </ScrollView>
                                 <View>
 
-                                    <View style={[]}>
+                                    <View style={[{marginLeft: -5}]}>
                                         
                                         {/* Sign In Button */}
                                         <RoundedButton onPress={this.userSignUp} buttonText="Sign Up" buttonColor="#E0A458"/>
@@ -180,16 +182,14 @@ export default class SignUp extends Component<{navigation: any}>{
                                     </View>
                                     <View style={[]}>
                                         <Text style={[{textAlign: "center", marginTop: 10}]}>
-                                            Already have an account? <Text style={[{color: "#E0A458"}]} onPress={() => this.signInPressHandler()}>Sign Up</Text>
+                                            Already have an account? <Text style={[{color: "#E0A458"}]} onPress={() => this.signInPressHandler()}>Sign In</Text>
                                         </Text>
                                     </View> 
                                 </View>
-                            </ScrollView>
-                        </View>
-                        
-                        
-                    </Animated.View>
-                </View>
+                            </View>                                                
+                        </Animated.View>
+                    </View>
+                </LinearGradient>
             </Animated.View>
         )
     }
@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
         padding: "4%",
         minHeight: 400,
         borderRadius: 20,
-        maxHeight: 500,
+        maxHeight: 400,
     },
 
     signIn: {
