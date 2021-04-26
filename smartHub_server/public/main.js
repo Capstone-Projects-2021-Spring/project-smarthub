@@ -18,7 +18,7 @@ const localAudio = document.getElementById("localAudio");
 const remoteAudio = document.getElementById("remoteAudio");
 
 let mediaRecorder;
-let faceRegInterval;
+let faceRegInterval = null;
 
 const canvas = document.getElementById("canvas");
 
@@ -183,6 +183,7 @@ async function startFaceReg() {
   videoCanvas.height = 320;
 
   if(!faceRegInterval) {
+      console.log("Face Reg Started!");
       faceRegInterval = setInterval( async () => {
           const context = videoCanvas.getContext("2d");
           context.drawImage(localVideo, 0, 0);
@@ -195,6 +196,7 @@ async function startFaceReg() {
 async function stopFaceReg() {
 	console.log("Face Reg Stopped!");
 	clearInterval(faceRegInterval);
+        faceRegInterval = null;
 }
 
 // ----------------------------------------- Image Taking Function ---------------------------------------
