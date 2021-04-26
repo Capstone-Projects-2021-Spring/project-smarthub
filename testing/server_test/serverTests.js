@@ -2,9 +2,7 @@ var axios = require('axios');
 var assert = require('assert');
 
 function testUnlock(unlockTime, expectedUnlockTime) {
-
     console.log("=========================== UNLOCK TESTING ===========================");
-
     var data = {};
     var url = "http://localhost:4000";
     data.lockTimeout = unlockTime;
@@ -22,13 +20,10 @@ function testUnlock(unlockTime, expectedUnlockTime) {
     }).catch( (error) => {
         console.log(error);
     });
-
 }
 
 function testStartStream(expectedResult) {
-
     console.log("=========================== START STREAM TESTING ===========================");
-
     var data = {};
     var url = "http://petepicam1234.zapto.org:4000";
 
@@ -44,18 +39,13 @@ function testStartStream(expectedResult) {
     }).catch( (error) => {
         console.log(error);
     });
-
 }
 
 function testStopStream(expectedResult) {
-
     console.log("=========================== START STREAM TESTING ===========================");
-
     var data = {};
     var url = "http://petepicam1234.zapto.org:4000";
-
     console.log("Expects: " + expectedResult);
-
     axios.post(url + "/video/stop_stream", data).then((response) => {
         
         console.log("Request Success Result: " + response.status);
@@ -66,18 +56,13 @@ function testStopStream(expectedResult) {
     }).catch( (error) => {
         console.log(error);
     });
-
 }
 
 function testStartIntercom(expectedResult) {
-
     console.log("=========================== START INTERCOM TESTING ===========================");
-
     var data = {};
     var url = "http://petepicam1234.zapto.org:4000";
-
     console.log("Expects: " + expectedResult);
-
     axios.post(url + "/audio/start_intercom", data).then((response) => {
         
         console.log("Request Success Result: " + response.status);
@@ -88,18 +73,13 @@ function testStartIntercom(expectedResult) {
     }).catch( (error) => {
         console.log(error);
     });
-
 }
 
 function testStopIntercom(expectedResult) {
-
     console.log("=========================== STOP INTERCOM TESTING ===========================");
-
     var data = {};
     var url = "http://petepicam1234.zapto.org:4000";
-
     console.log("Expects: " + expectedResult);
-
     axios.post(url + "/audio/stop_intercom", data).then((response) => {
         
         console.log("Request Success Result: " + response.status);
@@ -110,19 +90,18 @@ function testStopIntercom(expectedResult) {
     }).catch( (error) => {
         console.log(error);
     });
-
 }
 
-function testStartLights(expectedResult) {
-
-    console.log("=========================== STOP INTERCOM TESTING ===========================");
-
+function testToggleLights(expectedResult) {
+    console.log("=========================== TOGGLE LIGHT TESTING ===========================");
     var data = {};
-    var url = "http://petepicam1234.zapto.org:4000";
-
+    data.red = 1;
+    data.green = 1;
+    data.blue = 1;
+    data.randomize = false;
+    var url = "http://johnnyspi.ddns.net:4000";
     console.log("Expects: " + expectedResult);
-
-    axios.post(url + "/audio/stop_intercom", data).then((response) => {
+    axios.post(url + "/lights", data).then((response) => {
         
         console.log("Request Success Result: " + response.status);
         
@@ -132,29 +111,6 @@ function testStartLights(expectedResult) {
     }).catch( (error) => {
         console.log(error);
     });
-
-}
-
-function testStopLights(expectedResult) {
-
-    console.log("=========================== STOP INTERCOM TESTING ===========================");
-
-    var data = {};
-    var url = "http://petepicam1234.zapto.org:4000";
-
-    console.log("Expects: " + expectedResult);
-
-    axios.post(url + "/audio/stop_intercom", data).then((response) => {
-        
-        console.log("Request Success Result: " + response.status);
-        
-        //COMPARING EXPECTED AND RECEIVED RESULTS.
-        assert.strictEqual(expectedResult, response.status, "The resulting status did not match the expected message.");
-
-    }).catch( (error) => {
-        console.log(error);
-    });
-
 }
 
 (() => {
@@ -164,6 +120,7 @@ function testStopLights(expectedResult) {
     //testStopStream(200);
     //testStartIntercom(200);
     //testStopIntercom(200);
+    testToggleLights(200);
 
 
 })();
