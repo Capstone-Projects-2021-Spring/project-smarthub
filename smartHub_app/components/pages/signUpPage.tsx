@@ -1,16 +1,60 @@
-import {View, Image, Text, Animated, Dimensions, Easing, Pressable} from 'react-native';
+import {View, Image, Text, Animated, Dimensions, Easing, Pressable, StyleSheet, ScrollView} from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
 import React, { Component } from 'react';
 
 ;
-import {styles} from "../../styles/signUpStyle";
+// import {styles} from "../../styles/signUpStyle";
 import { TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 import { CheckBox } from 'native-base';
 import axios from 'axios';
+import RoundedButton from '../buttons/RoundedButton';
+import RoundedTextInput from '../buttons/RoundedTextInput';
 
 const {height} = Dimensions.get("screen");
 
 export default class SignUp extends Component<{navigation: any}>{
+
+    constructor(props: any) {
+        super(props);
+        this.updateTypeHandler = this.updateTypeHandler.bind(this);
+        this.userSignUp = this.userSignUp.bind(this);
+    }
+
+    //Updates the type of input box / sets state with new text.
+    updateTypeHandler(type: string, value: string) {
+        //Printing state in here will show that it's one character behind because setState is async, but it should be a problem in the rest of the app.
+        // if(type === "email") {
+        //     this.setState({email : value});
+        // }
+        // else if(type === "password") {
+        //     this.setState({password : value});
+        // }
+        // else {
+        //     console.log("ERROR! Invalid state from input text.");
+        // }
+        console.log(type + " " + value);
+        switch(type) {
+            case "first name":
+                this.setState({firstName: value});
+                break;
+            case "last name":
+                this.setState({lastName: value});
+                break;
+            case "phone":
+                this.setState({phoneNumber: value});
+                break;
+            case "email":
+                this.setState({email: value});
+                break;
+            case "password":
+                this.setState({password: value});
+                break;
+            case "confirm password":
+                this.setState({passwordConfirmation: value});
+                break;
+        }
+    }
+
     state = {
         screenAnimation: new Animated.Value(height),
         inputAnimation: new Animated.Value(0),
@@ -64,6 +108,8 @@ export default class SignUp extends Component<{navigation: any}>{
         ]
     }
 
+    
+
     signInPressHandler(){
         this.props.navigation.navigate("Sign In");
     }
@@ -100,53 +146,91 @@ export default class SignUp extends Component<{navigation: any}>{
         
     render(){
         return(
-            <Animated.View style={[styles.container, this.Animatedcontainer]}>
-                <LinearGradient style={[styles.centerAlign, {height: "100%"}]} colors={["#FF9900", "#000000"]}>
-                    
+            // Opening animation.
+            <Animated.View style={[]}>
+                {/* <LinearGradient style={[styles.centerAlign, {height: "30%"}]} colors={["#E0A458", "#000000"]} /> */}
+
+                <LinearGradient style={[{height: "100%"}]} colors={["rgba(21,22,33,1) 0%", "rgba(28,28,41,1) 35%", "rgba(53,53,72,1) 49%", "rgba(172,130,83,1) 78%", "rgba(224,164,88,1) 100%"]} >
+                {/* View that gets animated. Background. */}
+                    <View style={[]}>
+                        
+                        {/* Input fields animation. */}
+                        <Animated.View style={[this.AnimatedInput]}>
+                            
+                            <View style={[styles.signUpContainer]}>
+                                <Text style={{textAlign: "center", color: "#E0A458", fontSize: 25, marginBottom: 10}}>Sign Up</Text>
+                                <ScrollView style={[{paddingLeft: 0}]} showsVerticalScrollIndicator={false}>
+                                    <View style={[]}>
+                                            <RoundedTextInput onBlur={this.reverseAnimateInput} onFocus={this.AnimateInput} placeholder="first name" inputType={this.updateTypeHandler}/>
+                                            <RoundedTextInput onBlur={this.reverseAnimateInput} onFocus={this.AnimateInput} placeholder="last name" inputType={this.updateTypeHandler}/>
+                                            <RoundedTextInput onBlur={this.reverseAnimateInput} onFocus={this.AnimateInput} placeholder="phone" inputType={this.updateTypeHandler}/>
+                                            <RoundedTextInput onBlur={this.reverseAnimateInput} onFocus={this.AnimateInput} placeholder="email" inputType={this.updateTypeHandler}/>
+                                            <RoundedTextInput onBlur={this.reverseAnimateInput} onFocus={this.AnimateInput} placeholder="password" inputType={this.updateTypeHandler} secure={true}/>
+                                            <RoundedTextInput onBlur={this.reverseAnimateInput} onFocus={this.AnimateInput} placeholder="confirm password" inputType={this.updateTypeHandler} secure={true}/>
+                                        
+                                    </View>
+
+                                    
+                                </ScrollView>
+                                <View>
+
+                                    <View style={[{marginLeft: -5}]}>
+                                        
+                                        {/* Sign In Button */}
+                                        <RoundedButton onPress={this.userSignUp} buttonText="Sign Up" buttonColor="#E0A458"/>
+                                        
+                                    </View>
+                                    <View style={[]}>
+                                        <Text style={[{textAlign: "center", marginTop: 10}]}>
+                                            Already have an account? <Text style={[{color: "#E0A458"}]} onPress={() => this.signInPressHandler()}>Sign In</Text>
+                                        </Text>
+                                    </View> 
+                                </View>
+                            </View>                                                
+                        </Animated.View>
+                    </View>
                 </LinearGradient>
-                <View style={[styles.centerAlign, {marginTop: 2, backgroundColor: "rgba(200,200,200,0.9", height: height}]}>
-                    <Animated.View style={[styles.inputContainer, this.AnimatedInput]}>
-                        <Text style={{fontSize: 20, fontWeight: "bold", textAlign: "center"}}>SIGN UP</Text>
-                        <View style={{marginTop: 30, marginBottom: 10}}>
-                            <TextInput onBlur={() => this.reverseAnimateInput()} onFocus={() => this.AnimateInput()} placeholder="first name" style={styles.input} onChangeText={(value) => this.setState({firstName: value})} />
-                            <TextInput onBlur={() => this.reverseAnimateInput()} onFocus={() => this.AnimateInput()} placeholder="last name" style={styles.input} onChangeText={(value) => this.setState({lastName: value})} />
-                            <TextInput onBlur={() => this.reverseAnimateInput()} onFocus={() => this.AnimateInput()} placeholder="phone number: 1-xxx-xxx-xxxx" style={styles.input} onChangeText={(value) => this.setState({phoneNumber: value})} />
-                            <TextInput onBlur={() => this.reverseAnimateInput()} onFocus={() => this.AnimateInput()} placeholder="email" style={styles.input} onChangeText={(value) => this.setState({email: value})} />
-                            <TextInput onBlur={() => this.reverseAnimateInput()} onFocus={() => this.AnimateInput()} secureTextEntry={true} placeholder="password" style={styles.input} onChangeText={(value) => this.setState({password: value})} />
-                            <TextInput onBlur={() => this.reverseAnimateInput()} onFocus={() => this.AnimateInput()} secureTextEntry={true} placeholder="confirm password" style={styles.input} onChangeText={(value) => this.setState({passwordConfirmation: value})} />
-                        </View>
-                        <View>
-                            {/* <View style={{flex: 0.5}}>
-                                <CheckBox style={{ width: 20, height: 20, borderColor: "#aaa"}} />
-                                <Text style={{ marginLeft: 20}}>Remember Password</Text>
-                            </View>
-                            <View style={{flex: 0.5, alignItems: "flex-end"}}>
-                                <TouchableOpacity>   
-                                    <Text style={{color: "#c08"}}>Forgot Password</Text>
-                                </TouchableOpacity>
-                            </View> */}
-                            <View style={{ alignItems: "center", marginTop: 20}}>
-                                <TouchableOpacity onPress={() => {
-                                    this.userSignUp();
-                                }}>   
-                                    <LinearGradient style={{ width: 390/1.3, padding: 10, borderRadius: 20, }} colors={["#FF9900", "#000000"]}>
-                                        <Text style={{color: "#FFFFFF", fontSize: 15, fontWeight: "bold", textAlign: "center"}}>Sign Up</Text>
-                                    </LinearGradient>
-                                </TouchableOpacity>
-                            </View>
-                            <View style={{ alignItems: "center", marginTop: 20, flexDirection: "row", marginLeft: 85}}>
-                                <Text style={{fontSize: 15}}>Go Back To</Text>
-                                    <TouchableOpacity style={{marginLeft: 10}} onPress={() => this.signInPressHandler()}>   
-                                        <Text style={{color: "#FF9900", fontSize: 15}}>Login</Text>
-                                    </TouchableOpacity>
-                            </View> 
-                        </View>
-                    </Animated.View>
-                </View>
             </Animated.View>
         )
     }
 }
+
+const styles = StyleSheet.create({
+    background: {
+        backgroundColor: "linear-gradient( "
+                        + "rgba(21,22,33,1) 0%," //Dark Blue
+                        + "rgba(28,28,41,1) 35%," 
+                        + "rgba(53,53,72,1) 49%,"
+                        + "rgba(172,130,83,1) 78%,"
+                        + "rgba(224,164,88,1) 100%" //Orange
+                        + ")",
+        // backgroundColor: "linear-gradient( "
+        //                 + "0deg,"
+        //                 + "rgb(255,0,0) 0%," //Dark Blue
+        //                 + "rgb(0,255,0) 40%,"
+        //                 + "rgb(0,0,255) 60%" //Orange
+        //                 + ")",
+        // backgroundColor: "background: linear-gradient(0deg, rgba(172,130,83,1) 5%, rgba(28,28,41,1) 8%, rgba(53,53,72,1) 9%, rgba(21,22,33,1) 20%, rgba(224,164,88,1) 100%)",
+        height: "100%"
+    },
+
+    signUpContainer: {
+        backgroundColor: "white",
+        marginLeft: "5%",
+        marginRight: "5%",
+        marginTop: "50%",
+        padding: "4%",
+        minHeight: 400,
+        borderRadius: 20,
+        maxHeight: 400,
+    },
+
+    signIn: {
+        backgroundColor: "#E0A458",
+
+    }
+
+});
 
 
 

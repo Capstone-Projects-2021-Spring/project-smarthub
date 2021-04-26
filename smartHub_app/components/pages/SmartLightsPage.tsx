@@ -1,20 +1,22 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, Text, TouchableOpacity, Dimensions} from 'react-native';
+import {StyleSheet, View, Text, TouchableOpacity, Dimensions, Image} from 'react-native';
 import { ColorPicker } from 'react-native-color-picker'
 import hexRgb from 'hex-rgb';
 import Toast, {BaseToast} from 'react-native-toast-message';
 import axios from 'axios';
 import {getAddressString} from '../../utils/utilities';
+import RoundedButton from '../buttons/RoundedButton';
 
 var width : number = Dimensions.get('window').width;
 var height : number = Dimensions.get('window').height;
 
-export default class SmartLight extends Component<{navigation: any, route: any},{deviceIP: string}>{
+export default class SmartLight extends Component<{navigation: any, route: any},{deviceIP: string, lightImage: any}>{
 
     constructor(props: any){
         super(props);
         this.state = ({
             deviceIP: "",
+            lightImage: require("../../assets/light-off-icon.png"),
         })
     }
 
@@ -41,6 +43,16 @@ export default class SmartLight extends Component<{navigation: any, route: any},
                 text1: response.data,
                 visibilityTime: 2000
             })
+            console.log(obj);
+            if((obj.blue == 0 && obj.green == 0 && obj.red == 0) || obj.randomize == true)
+            {
+                this.setState({lightImage: require("../../assets/light-off-icon.png")});    
+            }
+            else
+            {   
+                this.setState({lightImage: require("../../assets/light-on-icon.png")});
+            }
+
         }, (error) => {
             console.log(error);
             Toast.show({
@@ -76,6 +88,8 @@ export default class SmartLight extends Component<{navigation: any, route: any},
                 text1: response.data,
                 visibilityTime: 2000
             })
+
+            this.setState({lightImage: require("../../assets/light-on-icon.png")});
         }, (error) => {
             console.log(error);
             Toast.show({
@@ -107,6 +121,8 @@ export default class SmartLight extends Component<{navigation: any, route: any},
                 text1: response.data,
                 visibilityTime: 2000
             })
+
+            this.setState({lightImage: require("../../assets/light-on-icon.png")});
         }, (error) => {
             console.log(error);
             Toast.show({
@@ -132,13 +148,6 @@ export default class SmartLight extends Component<{navigation: any, route: any},
     componentDidMount = () => {
         this.props.navigation.setOptions({
             headerTitle: this.props.route.params.device_name,
-            headerLeft: () => 
-            <View>
-                <TouchableOpacity
-                    onPress={()=>{this.props.navigation.navigate('Smart Light Devices')}}>
-                <Text style={{paddingLeft: 20, paddingBottom: 10, fontSize:15, fontWeight: 'bold'}}>Back</Text>
-                </TouchableOpacity>
-            </View>
         })
         this.getDeviceIP();
     }
@@ -151,12 +160,11 @@ export default class SmartLight extends Component<{navigation: any, route: any},
                 style={{ borderLeftColor: '#FF9900', backgroundColor: "#fff" }}
                 contentContainerStyle={{ paddingHorizontal: 15 }}
                 text1Style={{
-                  fontSize: 18,
-                  fontWeight: 'bold'
+                  fontSize: width/22,
                 }}
                 text2Style={{
                     color: "#000",
-                    fontSize: 12
+                    fontSize: width/25
                 }}
                 text1={text1}
                 text2={text2}
@@ -169,12 +177,11 @@ export default class SmartLight extends Component<{navigation: any, route: any},
                   style={{ borderLeftColor: '#FF9900', backgroundColor: "#fff" }}
                   contentContainerStyle={{ paddingHorizontal: 15 }}
                   text1Style={{
-                    fontSize: 18,
-                    fontWeight: 'bold'
+                    fontSize:width/21,
                   }}
                   text2Style={{
                       color: "#000",
-                      fontSize: 10
+                      fontSize: width/26
                   }}
                   text1={text1}
                   text2={text2}
@@ -182,58 +189,33 @@ export default class SmartLight extends Component<{navigation: any, route: any},
               )
         }
         return(
-            <View style={{flex:1, backgroundColor: '#222222', paddingTop: 20, alignItems: 'center'}}>
+            <View style={{flex:1, backgroundColor:'#151621', paddingTop: 10, alignItems: 'center'}}>
                 <Toast style={{zIndex: 1}} config={toastConfig} ref={(ref) => Toast.setRef(ref)} />
+                <View style={{width: '10%', height: '10%', marginBottom: -30}}>
+                        <Image style={{flex: 1, resizeMode: 'contain', marginLeft: width/5}} source={this.state.lightImage}/>
+                </View> 
                 <ColorPicker
                     onColorSelected={color => (this.singleColor(hexRgb(color)))}
                     hideSliders={false}
-                    style={{width: width-60, height: height/2, paddingBottom: 20}}
+                    style={{width: width-60, height: height/2.3, paddingBottom: 20}}
                 />
-                <TouchableOpacity
-                    style={styles.button}
-                    onPress={()=>this.randomize()}>
-                    <Text style={styles.text}>Randomize</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={styles.button}
-                    onPress={()=>this.preset('halloween')}>
-                    <Text style={styles.text}>Halloween Theme</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={styles.button}
-                    onPress={()=>this.preset('christmas')}>
-                    <Text style={styles.text}>Christmas Theme</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={styles.button}
-                    onPress={()=>this.singleColor({})}>
-                    <Text style={styles.text}>Off</Text>
-                </TouchableOpacity>
+                <RoundedButton
+                    onPress={()=>this.randomize()}
+                    buttonText="Randomize">
+                </RoundedButton>
+                <RoundedButton
+                    onPress={()=>this.preset('halloween')}
+                    buttonText="Halloween Theme">
+                </RoundedButton>
+                <RoundedButton
+                    onPress={()=>this.preset('christmas')}
+                    buttonText="Christmas Theme">
+                </RoundedButton>
+                <RoundedButton
+                    onPress={()=>this.singleColor({})}
+                    buttonText="Off">
+                </RoundedButton>
           </View>
         )
     }
 }
-
-const styles = StyleSheet.create ({
-
-    button: {
-        backgroundColor: '#222222',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: 40,
-        borderRadius: 20,
-        width: width-120,
-        margin: 10,
-        borderWidth: 2,
-        borderColor: "#ffa31a",
-        shadowOffset: { width: 0, height: 5 },
-        shadowOpacity: 1.00,
-        shadowRadius: 10,
-        elevation: 10,
-    },
-
-    text: {
-        color: '#fff',
-        fontSize: 20,
-    }
-})

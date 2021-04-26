@@ -36,22 +36,28 @@ export default class ProfileModal extends Component<PropVariables, StateVariable
             <Modal
                 ref={"profileModal"} 
                 style={styles.modalStyling}
-                position='center'
-                backdrop={true}   
+         
             >
                 <Text style={{
-                    fontSize: 20,
+                    fontSize: screen.width/18,
                     fontWeight: 'bold',
                     textAlign: 'center',
+                    color: '#fff',
+                    position: 'absolute',
+                    top: 0,
+                    left:0,
+                    right:0,
+                    paddingTop:25
                 }}>Create a new Profile: </Text>
                 <TextInput
                     style={styles.textInputStyling}
                     onChangeText={(text) => this.setState({newProfileName : text})}
                     placeholder="Profile Name"
+                    placeholderTextColor="#fff"
                     value={this.state.newProfileName}
-                    />
+                />
                 <Button
-                    style={{ fontSize: 18, color: '#000'}}
+                    style={{ fontSize: screen.width/20, justifyContent: 'center', color: '#fff'}}
                     containerStyle={styles.buttonStyle}
                     onPress={() => {
                         //handles empty profile name
@@ -88,7 +94,6 @@ export default class ProfileModal extends Component<PropVariables, StateVariable
                             console.log("ERROR IN ADDING A PROFILE");
                             console.log(error);
                         })
-
                         this.refs.profileModal.close();
                     }}
                 >Save</Button>
@@ -100,30 +105,37 @@ export default class ProfileModal extends Component<PropVariables, StateVariable
 const styles = StyleSheet.create({
     
     buttonStyle: {
-        padding: 8,
-        marginTop: 10,
+        position: 'absolute',
+        bottom: 0,
+        left:0,
+        right:0,
         marginLeft: 70,
         marginRight: 70,
-        height: 40,
+        marginBottom: 55,
+        padding: 10,
+        shadowRadius: 20,
         borderRadius: 6,
-        backgroundColor: '#FF9900'
+        shadowColor: "#000",
+        backgroundColor: '#E0A458'
     },
 
     textInputStyling: {
-        height: 40,
-        borderBottomColor: 'gray',
-        marginLeft: 30,
-        marginRight: 30,
-        marginTop: 20,
-        marginBottom: 10,
-        borderBottomWidth: 1
+        borderBottomColor: '#E0A458',
+        color: "#fff",
+        marginLeft: 35,
+        marginRight: 35,
+        marginBottom: 60, 
+        fontSize: screen.width/25,
+        borderBottomWidth: 1,
     },
 
     modalStyling: {
         justifyContent: 'center',
-        borderRadius: Platform.OS === 'ios' ? 30 : 0,
         shadowRadius: 10,
-        width: screen.width - 80,
-        height: 280
+        width: screen.width - 60,
+        height: screen.height/2.8,
+        backgroundColor: '#1C1D2B',
+        borderColor: '#E0A458',
+        borderWidth: 2,
     }
 })

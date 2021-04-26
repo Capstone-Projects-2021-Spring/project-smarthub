@@ -7,6 +7,8 @@ import ProfileModal from '../modals/modalForProfileList';
 import { BackHandler } from 'react-native';
 import axios from 'axios';
 import {getAddressString} from '../../utils/utilities';
+import SquareButton from '../buttons/RoundedListButton';
+import RoundedListButton from '../buttons/RoundedListButton';
 
 
 var width : number = Dimensions.get('window').width;
@@ -36,7 +38,6 @@ class ProfileListItem extends Component<PropVariables,StateVariables>{
     }
     render(){
         let item = this.props.item;
-        let {itemStyle} = styles;
         const swipeSettings = {
             autoClose: true,
             onClose: () => {
@@ -50,7 +51,6 @@ class ProfileListItem extends Component<PropVariables,StateVariables>{
             right: [
                 {
                     onPress: () => {
-                        const rowToDelete = this.state.activeRowKey;
                         Alert.alert(
                             'Alert',
                             'Are you sure you want to delete ' + item.profile_name + '?',
@@ -88,12 +88,8 @@ class ProfileListItem extends Component<PropVariables,StateVariables>{
             sectionId: 1
         };
         return(
-            <Swipeout {...swipeSettings} style={{backgroundColor:"#222222"}} >
-            <TouchableOpacity
-            style={itemStyle}
-            onPress={() => this.props.navigation.navigate('Profile', {item})}>
-            <Text style={{paddingLeft: 5, paddingTop: 5, fontWeight: 'bold', fontSize: 20, color: '#fff'}}>{item.profile_name}</Text>
-            </TouchableOpacity>
+            <Swipeout {...swipeSettings} style={{backgroundColor:'#151621'}}  >
+                <RoundedListButton onPress={() => this.props.navigation.navigate('Profile', {item})} buttonText={item.profile_name}></RoundedListButton>
             </Swipeout>
         );
     }
@@ -165,7 +161,6 @@ export default class ProfileList extends Component<{navigation: any, user_id: nu
         return (
             <View style={styles.container}>
                 <FlatList
-                    style={{flex:1}}
                     data={this.state.profileList}
                     renderItem={({item, index} : any)=>{
                         return(
@@ -177,9 +172,11 @@ export default class ProfileList extends Component<{navigation: any, user_id: nu
                         if(this.state.checkData){
                             return(
                                 <View style={{marginTop: height/7, flex: 1, alignItems: 'center', height: height/2, justifyContent: 'center'}}>
-                                    <Text style={{paddingTop: 18, fontSize: 18, color: "#fff", fontWeight: 'bold'}}>Looks like you haven't added any Profiles.</Text>
-                                    <Text style={{paddingTop: 18, fontSize: 15, color: "#fff", fontWeight: 'bold', paddingBottom: 20}}>Click the "+" on the top right to add a new Profile.</Text>
-                                    <Image style={styles.ImageStyle} source={{uri: 'https://image.flaticon.com/icons/png/512/122/122935.png'}}/>
+                                    {/* <Text style={{paddingTop: 18, fontSize: width/21, color: "#fff", fontWeight: 'bold', textAlign: "center"}}>Looks like you haven't added</Text>  */}
+                                    <Text style={{paddingTop: 18, fontSize: width/21, color: "#fff", textAlign: "center"}}>Looks like you haven't added any Profiles.</Text> 
+                                    <Text style={{paddingTop: 18, fontSize: width/23, color: "#fff", textAlign: "center"}}>Click the "+" on the top right to add a new Profile.</Text> 
+                                    {/* <Text style={{paddingTop: 18, fontSize: width/24, color: "#fff", fontWeight: 'bold', paddingBottom: 20, textAlign: "center"}}>Click the "+" on the top right to add a new Profile.</Text> */}
+                                    <Image resizeMode={'contain'} style={styles.ImageStyle} source={{uri: 'https://image.flaticon.com/icons/png/512/122/122935.png'}}/>
                                 </View>
                             )
                         }else{
@@ -197,18 +194,7 @@ export default class ProfileList extends Component<{navigation: any, user_id: nu
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#222222',
-    },
-    itemStyle: {
-        backgroundColor: '#000',
-        height: 90,
-        margin: 10,
-        borderWidth: 2,
-        borderColor: "#ffa31a",
-        shadowOffset: { width: 0, height: 5 },
-        shadowOpacity: 1.00,
-        elevation: 10,
-        flex:1
+        backgroundColor: '#151621',
     },
 
     itemText: {
@@ -227,10 +213,7 @@ const styles = StyleSheet.create({
     },
 
     ImageStyle: {
-        flex:1,
-        justifyContent:'center',
-        alignItems:'center',
-        width: width-60,
-        height: height-20
+        width: "100%",
+        height: "76%"
     }
 })
